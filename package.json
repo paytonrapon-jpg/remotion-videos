@@ -4,13 +4,14 @@
   "description": "",
   "scripts": {
     "dev": "remotion studio",
-    "render": "remotion render HelloWorld out/video.mp4",
+    "render": "remotion render TalkingHead out/talking-head.mp4",
     "upgrade": "remotion upgrade"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fontsource/montserrat": "^5.3.0",
     "@remotion/cli": "^4.0.538",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
