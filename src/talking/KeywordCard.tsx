@@ -24,14 +24,17 @@ export const KeywordCard: React.FC<{
     extrapolateRight: "clamp",
   });
 
+  // Réduit la taille du texte pour que les mots-clés longs tiennent sur la carte.
+  const fontSize = Math.min(150, Math.floor((icon ? 1000 : 1150) / text.length));
+
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 520 }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 420 }}>
       <div
         style={{
           width: "84%",
           background: color,
           borderRadius: 18,
-          padding: "70px 50px",
+          padding: "60px 50px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -45,8 +48,9 @@ export const KeywordCard: React.FC<{
           style={{
             fontFamily,
             fontWeight: 900,
-            fontSize: 150,
-            letterSpacing: -4,
+            fontSize,
+            letterSpacing: -fontSize / 40,
+            whiteSpace: "nowrap",
             color: colors.cream,
             transform: `translateY(${interpolate(textIn, [0, 1], [60, 0])}px)`,
             opacity: textIn,

@@ -10,6 +10,7 @@ import {
 import { CaptionLine } from "./Captions";
 import { IllustrationCard } from "./IllustrationCard";
 import { KeywordCard } from "./KeywordCard";
+import { PromptCard } from "./PromptCard";
 import { colors, fontFamily } from "./theme";
 import { TalkingHeadProps } from "./types";
 
@@ -60,7 +61,7 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ videoSrc, overlays, ca
           durationInFrames={Math.round((c.end - c.start) * fps)}
           layout="none"
         >
-          <CaptionLine text={c.text} />
+          <CaptionLine text={c.text} start={c.start} words={c.words} />
         </Sequence>
       ))}
 
@@ -72,6 +73,8 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ videoSrc, overlays, ca
         >
           {o.type === "keyword" ? (
             <KeywordCard text={o.text} icon={o.icon} color={o.color} />
+          ) : o.type === "prompt" ? (
+            <PromptCard title={o.title} text={o.text} />
           ) : (
             <IllustrationCard name={o.name} label={o.label} />
           )}

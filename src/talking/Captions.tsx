@@ -1,18 +1,26 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, fontFamily } from "./theme";
+import { Word } from "./types";
 
-// Met en surbrillance le mot prononcé, en répartissant les mots uniformément sur la durée.
-export const CaptionLine: React.FC<{ text: string }> = ({ text }) => {
+// Met en surbrillance le mot prononcé : selon son minutage s'il est connu,
+// sinon en répartissant les mots uniformément sur la durée.
+export const CaptionLine: React.FC<{ text: string; start: number; words?: Word[] }> = ({
+  text,
+  start,
+  words: timed,
+}) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const words = text.replace(/ ([?!:;])/g, "\u00a0$1").split(" ");
-  const current = Math.min(
-    words.length - 1,
-    Math.floor((frame / durationInFrames) * words.length),
-  );
+  const { fps, durationInFrames } = useVideoConfig();
+  const words = timed
+    ? timed.map((w) => w.word)
+    : text.replace(/ ([?!:;])/g, " $1").split(" ");
+  const time = start + frame / fps;
+  const current = timed
+    ? timed.reduce((acc, w, i) => (time >= w.start ? i : acc), 0)
+    : Math.min(words.length - 1, Math.floor((frame / durationInFrames) * words.length));
 
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 170 }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 150 }}>
       <div
         style={{
           width: "88%",

@@ -21,27 +21,35 @@ export const IllustrationCard: React.FC<{ name: IllustrationName; label?: string
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const float = Math.sin(frame / 12) * 8;
+  const float = Math.sin(frame / 12) * 6;
 
   return (
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: 220 }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 420 }}>
       <div
         style={{
           background: colors.cream,
-          borderRadius: 40,
-          padding: "50px 70px",
+          borderRadius: 36,
+          padding: "30px 60px",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          gap: 20,
+          gap: 30,
+          maxWidth: "88%",
           boxShadow: "0 25px 60px rgba(0,0,0,0.3)",
-          transform: `translateY(${interpolate(enter, [0, 1], [-200, 0]) + float}px) scale(${exit})`,
-          opacity: enter * exit,
+          transform: `translateY(${interpolate(enter, [0, 1], [250, 0]) + float}px) scale(${exit})`,
+          opacity: Math.min(enter * 2, 1) * exit,
         }}
       >
-        <Illustration name={name} size={340} />
+        <Illustration name={name} size={200} />
         {label ? (
-          <span style={{ fontFamily, fontWeight: 900, fontSize: 72, color: colors.ink }}>
+          <span
+            style={{
+              fontFamily,
+              fontWeight: 900,
+              fontSize: 64,
+              lineHeight: 1.05,
+              color: colors.ink,
+            }}
+          >
             {label}
           </span>
         ) : null}

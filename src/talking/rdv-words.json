@@ -1,0 +1,562 @@
+[
+{
+"start": 0.02,
+"end": 0.5,
+"word": "Tu"
+},
+{
+"start": 0.5,
+"end": 0.86,
+"word": "stresses"
+},
+{
+"start": 0.86,
+"end": 1.26,
+"word": "avant"
+},
+{
+"start": 1.26,
+"end": 1.6,
+"word": "chaque"
+},
+{
+"start": 1.6,
+"end": 2.18,
+"word": "rendez-vous"
+},
+{
+"start": 2.18,
+"end": 2.5,
+"word": "client"
+},
+{
+"start": 2.5,
+"end": 2.98,
+"word": "?"
+},
+{
+"start": 2.98,
+"end": 3.12,
+"word": "Moi,"
+},
+{
+"start": 3.34,
+"end": 3.46,
+"word": "je"
+},
+{
+"start": 3.46,
+"end": 3.74,
+"word": "n'arrive"
+},
+{
+"start": 3.74,
+"end": 4.08,
+"word": "plus"
+},
+{
+"start": 4.08,
+"end": 4.54,
+"word": "jamais"
+},
+{
+"start": 4.54,
+"end": 4.76,
+"word": "les"
+},
+{
+"start": 4.76,
+"end": 4.94,
+"word": "mains"
+},
+{
+"start": 4.94,
+"end": 5.28,
+"word": "vides."
+},
+{
+"start": 5.74,
+"end": 5.94,
+"word": "Le"
+},
+{
+"start": 5.94,
+"end": 6.36,
+"word": "problème,"
+},
+{
+"start": 6.84,
+"end": 7.02,
+"word": "tu"
+},
+{
+"start": 7.02,
+"end": 7.92,
+"word": "improvises,"
+},
+{
+"start": 8.06,
+"end": 8.14,
+"word": "tu"
+},
+{
+"start": 8.14,
+"end": 8.42,
+"word": "oublies"
+},
+{
+"start": 8.42,
+"end": 8.56,
+"word": "des"
+},
+{
+"start": 8.56,
+"end": 9.0,
+"word": "questions,"
+},
+{
+"start": 9.46,
+"end": 9.64,
+"word": "et"
+},
+{
+"start": 9.64,
+"end": 9.78,
+"word": "ton"
+},
+{
+"start": 9.78,
+"end": 10.12,
+"word": "client"
+},
+{
+"start": 10.12,
+"end": 10.5,
+"word": "sent"
+},
+{
+"start": 10.5,
+"end": 10.72,
+"word": "que"
+},
+{
+"start": 10.72,
+"end": 10.88,
+"word": "tu"
+},
+{
+"start": 10.88,
+"end": 11.04,
+"word": "n'es"
+},
+{
+"start": 11.04,
+"end": 11.2,
+"word": "pas"
+},
+{
+"start": 11.2,
+"end": 11.56,
+"word": "prête."
+},
+{
+"start": 11.94,
+"end": 12.28,
+"word": "Voici"
+},
+{
+"start": 12.28,
+"end": 12.46,
+"word": "mon"
+},
+{
+"start": 12.46,
+"end": 12.88,
+"word": "astuce"
+},
+{
+"start": 12.88,
+"end": 13.18,
+"word": "avec"
+},
+{
+"start": 13.18,
+"end": 13.64,
+"word": "Claude."
+},
+{
+"start": 14.22,
+"end": 14.4,
+"word": "Je"
+},
+{
+"start": 14.4,
+"end": 14.78,
+"word": "copie"
+},
+{
+"start": 14.78,
+"end": 14.98,
+"word": "ce"
+},
+{
+"start": 14.98,
+"end": 15.3,
+"word": "prompt."
+},
+{
+"start": 15.86,
+"end": 16.06,
+"word": "Je"
+},
+{
+"start": 16.06,
+"end": 16.3,
+"word": "suis"
+},
+{
+"start": 16.3,
+"end": 16.7,
+"word": "coach"
+},
+{
+"start": 16.7,
+"end": 17.04,
+"word": "et"
+},
+{
+"start": 17.04,
+"end": 17.24,
+"word": "j'ai"
+},
+{
+"start": 17.24,
+"end": 17.38,
+"word": "un"
+},
+{
+"start": 17.38,
+"end": 17.88,
+"word": "rendez-vous"
+},
+{
+"start": 17.88,
+"end": 18.2,
+"word": "demain"
+},
+{
+"start": 18.2,
+"end": 18.5,
+"word": "avec"
+},
+{
+"start": 18.5,
+"end": 18.76,
+"word": "une"
+},
+{
+"start": 18.76,
+"end": 19.36,
+"word": "cliente"
+},
+{
+"start": 19.36,
+"end": 19.44,
+"word": "qui"
+},
+{
+"start": 19.44,
+"end": 19.64,
+"word": "veut"
+},
+{
+"start": 19.64,
+"end": 20.0,
+"word": "lancer"
+},
+{
+"start": 20.0,
+"end": 20.2,
+"word": "son"
+},
+{
+"start": 20.2,
+"end": 20.98,
+"word": "activité."
+},
+{
+"start": 21.42,
+"end": 22.02,
+"word": "Prépare-moi"
+},
+{
+"start": 22.02,
+"end": 22.36,
+"word": "dix"
+},
+{
+"start": 22.36,
+"end": 22.72,
+"word": "questions"
+},
+{
+"start": 22.72,
+"end": 22.9,
+"word": "de"
+},
+{
+"start": 22.9,
+"end": 23.62,
+"word": "découverte,"
+},
+{
+"start": 24.06,
+"end": 24.32,
+"word": "trois"
+},
+{
+"start": 24.32,
+"end": 24.74,
+"word": "objections"
+},
+{
+"start": 24.74,
+"end": 25.38,
+"word": "possibles"
+},
+{
+"start": 25.38,
+"end": 25.56,
+"word": "avec"
+},
+{
+"start": 25.56,
+"end": 25.78,
+"word": "mes"
+},
+{
+"start": 25.78,
+"end": 26.4,
+"word": "réponses"
+},
+{
+"start": 26.4,
+"end": 26.86,
+"word": "et"
+},
+{
+"start": 26.86,
+"end": 27.0,
+"word": "une"
+},
+{
+"start": 27.0,
+"end": 27.54,
+"word": "proposition"
+},
+{
+"start": 27.54,
+"end": 28.12,
+"word": "d'étape"
+},
+{
+"start": 28.12,
+"end": 28.72,
+"word": "suivante."
+},
+{
+"start": 28.72,
+"end": 29.38,
+"word": "En"
+},
+{
+"start": 29.38,
+"end": 29.74,
+"word": "trente"
+},
+{
+"start": 29.74,
+"end": 30.52,
+"word": "secondes,"
+},
+{
+"start": 30.58,
+"end": 30.9,
+"word": "j'ai"
+},
+{
+"start": 30.9,
+"end": 31.0,
+"word": "un"
+},
+{
+"start": 31.0,
+"end": 31.22,
+"word": "plan"
+},
+{
+"start": 31.22,
+"end": 31.6,
+"word": "clair."
+},
+{
+"start": 32.2,
+"end": 32.46,
+"word": "Je"
+},
+{
+"start": 32.46,
+"end": 32.98,
+"word": "relis,"
+},
+{
+"start": 33.44,
+"end": 33.86,
+"word": "j'ajuste"
+},
+{
+"start": 33.86,
+"end": 34.12,
+"word": "avec"
+},
+{
+"start": 34.12,
+"end": 34.38,
+"word": "mes"
+},
+{
+"start": 34.38,
+"end": 34.66,
+"word": "mots"
+},
+{
+"start": 34.66,
+"end": 35.04,
+"word": "et"
+},
+{
+"start": 35.04,
+"end": 35.36,
+"word": "j'arrive"
+},
+{
+"start": 35.36,
+"end": 36.38,
+"word": "sereine."
+},
+{
+"start": 36.76,
+"end": 37.28,
+"word": "Résultat,"
+},
+{
+"start": 37.74,
+"end": 37.84,
+"word": "des"
+},
+{
+"start": 37.84,
+"end": 38.34,
+"word": "rendez-vous"
+},
+{
+"start": 38.34,
+"end": 39.12,
+"word": "efficaces."
+},
+{
+"start": 39.36,
+"end": 39.42,
+"word": "Et"
+},
+{
+"start": 39.42,
+"end": 39.7,
+"word": "plus"
+},
+{
+"start": 39.7,
+"end": 39.9,
+"word": "de"
+},
+{
+"start": 39.9,
+"end": 40.24,
+"word": "clients"
+},
+{
+"start": 40.24,
+"end": 40.46,
+"word": "qui"
+},
+{
+"start": 40.46,
+"end": 40.66,
+"word": "disent"
+},
+{
+"start": 40.66,
+"end": 40.98,
+"word": "oui."
+},
+{
+"start": 41.7,
+"end": 42.2,
+"word": "Écris"
+},
+{
+"start": 42.2,
+"end": 42.66,
+"word": "RDV"
+},
+{
+"start": 42.66,
+"end": 42.82,
+"word": "en"
+},
+{
+"start": 42.82,
+"end": 43.56,
+"word": "commentaire,"
+},
+{
+"start": 43.82,
+"end": 43.96,
+"word": "suis"
+},
+{
+"start": 43.96,
+"end": 44.14,
+"word": "le"
+},
+{
+"start": 44.14,
+"end": 44.54,
+"word": "compte"
+},
+{
+"start": 44.54,
+"end": 44.82,
+"word": "et"
+},
+{
+"start": 44.82,
+"end": 44.96,
+"word": "je"
+},
+{
+"start": 44.96,
+"end": 45.34,
+"word": "t'envoie"
+},
+{
+"start": 45.34,
+"end": 45.46,
+"word": "le"
+},
+{
+"start": 45.46,
+"end": 45.72,
+"word": "guide."
+}
+]
