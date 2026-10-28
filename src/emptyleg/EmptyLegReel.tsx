@@ -156,7 +156,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
             {p.fromCity} → {p.toCity} · {p.date}<br />{p.pricePerSeat}/pers. · {p.seats} places
           </div>
           <div style={{ marginTop: 20, background: c.amber, color: c.navy, fontWeight: 900, fontSize: 46, padding: "22px 48px", borderRadius: 999, transform: `scale(${1 + 0.04 * Math.sin((frame - outroStart) / 6)})` }}>
-            Lien en bio
+            Plus d’infos en DM
           </div>
         </AbsoluteFill>
       ) : null}
