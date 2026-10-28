@@ -1,4 +1,6 @@
 import { Composition } from "remotion";
+import { EmptyLeg, emptyLegDuration } from "./emptyleg/EmptyLeg";
+import { gvaMpl } from "./emptyleg/gva-mpl";
 import { HelloWorld } from "./HelloWorld";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
@@ -37,6 +39,15 @@ export const RemotionRoot: React.FC = () => {
         calculateMetadata={({ props }) => ({
           durationInFrames: Math.round(props.durationInSeconds * 30),
         })}
+      />
+      <Composition
+        id="EmptyLegGvaMpl"
+        component={EmptyLeg}
+        fps={30}
+        width={1080}
+        height={1920}
+        durationInFrames={emptyLegDuration * 30}
+        defaultProps={gvaMpl}
       />
     </>
   );
