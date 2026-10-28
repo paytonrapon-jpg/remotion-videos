@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-28",
+  "reels": [
+    {
+      "id": "zrh-str",
+      "flight": { "route": "ZRH → STR", "departure": "2026-11-10", "source": "Callajet Europe", "sourceUrl": "https://www.callajet.de/en/private-jet-empty-leg-flights/", "price": "2 490 EUR" },
+      "caption": "🇨🇭 Zurich → Stuttgart 🇩🇪 · 10 nov. 2026\n✈️ Citation M2 · 5 places · ≈ 35 min de vol\n💶 498 €/pers. si les 5 places sont prises · Total 2 490 €\n\nUn empty leg, c'est un jet privé qui repart à vide : on partage l'avion, on divise le prix.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #zurich #stuttgart #voyage #luxurytravel #skyelite",
+      "props": {
+        "clips": [],
+        "fromCity": "Zurich", "toCity": "Stuttgart", "fromFlag": "CH", "toFlag": "DE",
+        "date": "10 nov. 2026", "pricePerSeat": "498 €", "seats": 5, "total": "2 490 €",
+        "aircraft": "Citation M2", "flightTime": "≈ 35 min de vol",
+        "disclaimer": "Animation d'illustration · prix estimé HT, sous réserve de disponibilité"
+      }
+    },
+    {
+      "id": "lee-nas",
+      "flight": { "route": "LEE → NAS", "departure": "2026-11-12", "source": "Chartright", "sourceUrl": "https://www.chartright.com/empty-legs/", "price": "12 000 CAD" },
+      "caption": "🇺🇸 Floride → Nassau 🇧🇸 · 12 nov. 2026\n✈️ Global 5000 · 14 places · ≈ 55 min de vol\n💶 531 €/pers. si les 14 places sont prises · Total ≈ 7 440 €\n\nUn long-courrier de luxe pour un saut aux Bahamas, au prix d'un vol retour à vide.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #bahamas #nassau #floride #luxurytravel #skyelite",
+      "props": {
+        "clips": [],
+        "fromCity": "Floride", "toCity": "Nassau", "fromFlag": "US", "toFlag": "BS",
+        "date": "12 nov. 2026", "pricePerSeat": "531 €", "seats": 14, "total": "7 440 €",
+        "aircraft": "Global 5000", "flightTime": "≈ 55 min de vol",
+        "disclaimer": "Animation d'illustration · départ Leesburg (FL) · prix estimé HT converti depuis 12 000 CAD"
+      }
+    },
+    {
+      "id": "opf-cun",
+      "flight": { "route": "OPF → CUN", "departure": "2026-11-09", "source": "Callajet USA", "sourceUrl": "https://www.callajet.de/us/private-jet-empty-leg-flights/", "price": "19 590 USD" },
+      "caption": "🇺🇸 Miami → Cancún 🇲🇽 · 9 nov. 2026\n✈️ Gulfstream G-V · 16 places · ≈ 1 h 20 de vol\n💶 1 053 €/pers. si les 16 places sont prises · Total ≈ 16 850 €\n\nCap sur le Mexique en Gulfstream, entre amis ou en famille.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #miami #cancun #mexique #luxurytravel #skyelite",
+      "props": {
+        "clips": [],
+        "fromCity": "Miami", "toCity": "Cancún", "fromFlag": "US", "toFlag": "MX",
+        "date": "9 nov. 2026", "pricePerSeat": "1 053 €", "seats": 16, "total": "16 850 €",
+        "aircraft": "Gulfstream G-V", "flightTime": "≈ 1 h 20 de vol",
+        "disclaimer": "Animation d'illustration · prix estimé HT converti depuis 19 590 USD"
+      }
+    }
+  ]
+}
