@@ -13,6 +13,8 @@ export type IllustrationName =
   | "comment";
 
 // Tous les temps sont en secondes, par rapport au début de la vidéo.
+import { ScreenCardProps } from "./ScreenCard";
+
 export type Overlay =
   | {
       type: "keyword";
@@ -35,7 +37,8 @@ export type Overlay =
       end: number;
       title: string;
       text: string;
-    };
+    }
+  | ({ type: "screen"; start: number; end: number } & ScreenCardProps);
 
 export type Word = {
   start: number;

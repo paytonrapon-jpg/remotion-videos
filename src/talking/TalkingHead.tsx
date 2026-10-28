@@ -2,6 +2,7 @@ import {
   AbsoluteFill,
   OffthreadVideo,
   Sequence,
+  interpolate,
   spring,
   staticFile,
   useCurrentFrame,
@@ -11,6 +12,7 @@ import { CaptionLine } from "./Captions";
 import { IllustrationCard } from "./IllustrationCard";
 import { KeywordCard } from "./KeywordCard";
 import { PromptCard } from "./PromptCard";
+import { ScreenCard } from "./ScreenCard";
 import { colors, fontFamily } from "./theme";
 import { TalkingHeadProps } from "./types";
 
@@ -41,9 +43,30 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ videoSrc, overlays, ca
       return inRange ? acc + 0.06 * spring({ frame: local, fps, config: { damping: 20 } }) : acc;
     }, 1);
 
+  // Floute et assombrit la vidéo pendant les écrans d'application.
+  const t = frame / fps;
+  const screenFocus = overlays
+    .filter((o) => o.type === "screen")
+    .reduce(
+      (acc, o) =>
+        Math.max(
+          acc,
+          interpolate(t, [o.start, o.start + 0.4, o.end - 0.3, o.end], [0, 1, 1, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        ),
+      0,
+    );
+
   return (
     <AbsoluteFill style={{ background: colors.ink }}>
-      <AbsoluteFill style={{ transform: `scale(${zoom})` }}>
+      <AbsoluteFill
+        style={{
+          transform: `scale(${zoom + screenFocus * 0.08})`,
+          filter: screenFocus > 0 ? `blur(${screenFocus * 18}px) brightness(${1 - screenFocus * 0.55})` : undefined,
+        }}
+      >
         {videoSrc ? (
           <OffthreadVideo
             src={staticFile(videoSrc)}
@@ -75,6 +98,8 @@ export const TalkingHead: React.FC<TalkingHeadProps> = ({ videoSrc, overlays, ca
             <KeywordCard text={o.text} icon={o.icon} color={o.color} />
           ) : o.type === "prompt" ? (
             <PromptCard title={o.title} text={o.text} />
+          ) : o.type === "screen" ? (
+            <ScreenCard {...o} />
           ) : (
             <IllustrationCard name={o.name} label={o.label} />
           )}
