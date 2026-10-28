@@ -138,7 +138,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       </div>
       <div style={{ position: "absolute", top: BAND_TOP + BAND_HEIGHT + 182, left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", gap: 16, opacity: pop(62), color: c.white }}>
         <Logo size={58} />
-        <span style={{ fontWeight: 800, fontSize: 40, textShadow }}>Réserve ta place sur SkyElite</span>
+        <span style={{ fontWeight: 800, fontSize: 40, textShadow }}>Réserve ta place : DM @SkyElite</span>
       </div>
       <div style={{ position: "absolute", top: BAND_TOP + BAND_HEIGHT + 256, left: 80, right: 80, textAlign: "center", fontWeight: 600, fontSize: 24, color: c.mist, textShadow }}>
         {p.disclaimer}
@@ -148,7 +148,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       {frame >= outroStart ? (
         <AbsoluteFill style={{ background: `rgba(16,35,58,${0.94 * outro})`, alignItems: "center", justifyContent: "center", color: c.white, gap: 30, opacity: outro }}>
           <Logo size={170} />
-          <div style={{ fontWeight: 900, fontSize: 96, letterSpacing: -1 }}>SkyElite</div>
+          <div style={{ fontWeight: 900, fontSize: 96, letterSpacing: -1 }}>@SkyElite</div>
           <div style={{ fontWeight: 800, fontSize: 56, textAlign: "center", lineHeight: 1.2, padding: "0 80px" }}>
             Partage le jet.<br /><span style={{ color: c.amber }}>Divise le prix.</span>
           </div>
