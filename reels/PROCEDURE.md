@@ -34,3 +34,6 @@ Application SkyElite (catalogue des vols) : https://claude.ai/artifact/E3uurAWMh
 ```
 Tags utiles : code IATA ou nom de ville, code pays, thème (`mer`, `montagne`, `ville`, `desert`, `neige`), et `jet`, `cabine`, `tarmac` pour les plans génériques.
 Dans les props, un extrait s'écrit `{ "src": "footage/xxx.mp4", "from": 2, "seconds": 3.5 }`.
+Les entrées peuvent lister des `segments` (from/to, tags, description) : choisir les extraits dans ces plages.
+Avec des images propres (sans sous-titres incrustés) : mettre `"bandOpacity": 0.62` dans les props pour que la bande de prix laisse voir l'image, et pour les plans où le jet est en bas de l'image ajouter `"y": -240, "zoom": [1.28, 1.33]` à l'extrait afin de le remonter au-dessus de la bande (inutile pour les plans de cabine).
+Exemple complet : `reels/batches/2026-10-28.json`.

@@ -15,7 +15,8 @@ import * as Flags from "country-flag-icons/react/3x2";
 
 // Un extrait : fichier dans public/ (par défaut videoSrc), point de départ et durée en secondes.
 // zoom/origin servent à recadrer (ex. sortir un filigrane du cadre).
-export type Clip = { src?: string; from: number; seconds: number; zoom?: [number, number]; origin?: string };
+// y décale l'image verticalement (px, négatif = vers le haut) pour remonter un sujet caché par la bande de prix.
+export type Clip = { src?: string; from: number; seconds: number; zoom?: [number, number]; origin?: string; y?: number };
 
 export type EmptyLegReelProps = {
   videoSrc?: string;
@@ -32,6 +33,8 @@ export type EmptyLegReelProps = {
   aircraft: string;
   flightTime: string;
   disclaimer: string;
+  // Opacité de la bande de prix : 1 (défaut) masque des sous-titres incrustés, ~0.6 laisse voir l'image.
+  bandOpacity?: number;
 };
 
 const fontFamily = "Montserrat";
@@ -84,7 +87,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
     const len = Math.round(clip.seconds * fps);
     const el = (
       <Sequence key={i} from={cursor} durationInFrames={len}>
-        <ClipLayer src={clip.src ?? p.videoSrc ?? ""} startFrom={Math.round(clip.from * fps)} len={len} zoom={clip.zoom} origin={clip.origin} />
+        <ClipLayer src={clip.src ?? p.videoSrc ?? ""} startFrom={Math.round(clip.from * fps)} len={len} zoom={clip.zoom} origin={clip.origin} y={clip.y} />
       </Sequence>
     );
     cursor += len;
@@ -120,7 +123,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       </div>
 
       {/* Bande de prix (toujours opaque : elle masque les sous-titres d'origine) */}
-      <div style={{ position: "absolute", top: BAND_TOP, left: 0, right: 0, height: BAND_HEIGHT, background: c.navy, borderTop: `4px solid ${c.amber}`, borderBottom: `4px solid ${c.amber}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: c.white }}>
+      <div style={{ position: "absolute", top: BAND_TOP, left: 0, right: 0, height: BAND_HEIGHT, background: `rgba(16,35,58,${p.bandOpacity ?? 1})`, borderTop: `4px solid ${c.amber}`, borderBottom: `4px solid ${c.amber}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: c.white }}>
         <div style={{ transform: `scale(${pop(30)})`, fontWeight: 900, fontSize: 86, letterSpacing: -1 }}>
           {p.pricePerSeat}<span style={{ fontSize: 50, fontWeight: 800 }}>/pers.</span>
           <span style={{ fontSize: 50, fontWeight: 800, color: c.mist }}>  ·  Max {p.seats} pers.</span>
@@ -171,12 +174,12 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
   );
 };
 
-const ClipLayer: React.FC<{ src: string; startFrom: number; len: number; zoom?: [number, number]; origin?: string }> = ({ src, startFrom, len, zoom: range = [1.04, 1.1], origin = "50% 50%" }) => {
+const ClipLayer: React.FC<{ src: string; startFrom: number; len: number; zoom?: [number, number]; origin?: string; y?: number }> = ({ src, startFrom, len, zoom: range = [1.04, 1.1], origin = "50% 50%", y = 0 }) => {
   const frame = useCurrentFrame();
   const zoom = interpolate(frame, [0, len], range);
   const fade = interpolate(frame, [0, 6], [0.4, 1], { extrapolateRight: "clamp" });
   return (
-    <AbsoluteFill style={{ transform: `scale(${zoom})`, transformOrigin: origin, filter: `brightness(${fade})` }}>
+    <AbsoluteFill style={{ transform: `translateY(${y}px) scale(${zoom})`, transformOrigin: origin, filter: `brightness(${fade})` }}>
       <OffthreadVideo muted src={staticFile(src)} startFrom={startFrom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
     </AbsoluteFill>
   );

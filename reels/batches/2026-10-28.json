@@ -12,7 +12,43 @@
       },
       "caption": "🇦🇹 Vienne → Graz 🇦🇹 · 5 nov. 2026\n✈️ Citation M2 · 5 places · ≈ 35 min de vol\n💶 520 €/pers. si les 5 places sont prises · Total 2 600 €\n\nDe la capitale autrichienne à la ville du Schlossberg, en jet privé et sans file d'attente.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #vienne #graz #autriche #luxurytravel #skyelite",
       "props": {
-        "clips": [],
+        "clips": [
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 0.3,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 13.3,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 10.2,
+            "seconds": 2.7
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 19.2,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          }
+        ],
         "fromCity": "Vienne",
         "toCity": "Graz",
         "fromFlag": "AT",
@@ -23,7 +59,8 @@
         "total": "2 600 €",
         "aircraft": "Citation M2",
         "flightTime": "≈ 35 min de vol",
-        "disclaimer": "Animation d'illustration · prix estimé HT, sous réserve de disponibilité"
+        "disclaimer": "Images d'illustration · prix estimé HT, sous réserve de disponibilité",
+        "bandOpacity": 0.62
       }
     },
     {
@@ -37,7 +74,53 @@
       },
       "caption": "🇨🇭 Zurich → Stuttgart 🇩🇪 · 10 nov. 2026\n✈️ Citation M2 · 5 places · ≈ 35 min de vol\n💶 498 €/pers. si les 5 places sont prises · Total 2 490 €\n\nUn empty leg, c'est un jet privé qui repart à vide : on partage l'avion, on divise le prix.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #zurich #stuttgart #voyage #luxurytravel #skyelite",
       "props": {
-        "clips": [],
+        "clips": [
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 5.1,
+            "seconds": 1.8,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 7.2,
+            "seconds": 2.6
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 19.2,
+            "seconds": 3.6,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 13.5,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 23.2,
+            "seconds": 2.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          }
+        ],
         "fromCity": "Zurich",
         "toCity": "Stuttgart",
         "fromFlag": "CH",
@@ -48,7 +131,8 @@
         "total": "2 490 €",
         "aircraft": "Citation M2",
         "flightTime": "≈ 35 min de vol",
-        "disclaimer": "Animation d'illustration · prix estimé HT, sous réserve de disponibilité"
+        "disclaimer": "Images d'illustration · prix estimé HT, sous réserve de disponibilité",
+        "bandOpacity": 0.62
       }
     },
     {
@@ -62,7 +146,53 @@
       },
       "caption": "🇪🇸 Ibiza → Palma de Majorque 🇪🇸 · 15 janv. 2027\n✈️ Hawker 400XP · 7 places · ≈ 35 min de vol\n💶 713 €/pers. si les 7 places sont prises · Total 4 990 €\n\nUn saut d'île en île aux Baléares, en jet privé, au prix d'un vol retour à vide.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #ibiza #palma #mallorca #baleares #skyelite",
       "props": {
-        "clips": [],
+        "clips": [
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 13.2,
+            "seconds": 3.8,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 0.5,
+            "seconds": 3.2,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 10.2,
+            "seconds": 2.7
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 5.1,
+            "seconds": 1.8,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 19.5,
+            "seconds": 3.2,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          }
+        ],
         "fromCity": "Ibiza",
         "toCity": "Palma",
         "fromFlag": "ES",
@@ -73,7 +203,8 @@
         "total": "4 990 €",
         "aircraft": "Hawker 400XP",
         "flightTime": "≈ 35 min de vol",
-        "disclaimer": "Animation d'illustration · prix estimé HT, sous réserve de disponibilité"
+        "disclaimer": "Images d'illustration · prix estimé HT, sous réserve de disponibilité",
+        "bandOpacity": 0.62
       }
     }
   ]
