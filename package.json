@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render TalkingHead out/talking-head.mp4",
-    "upgrade": "remotion upgrade"
+    "upgrade": "remotion upgrade",
+    "drive": "node scripts/drive.mjs"
   },
   "keywords": [],
   "author": "",
