@@ -128,11 +128,14 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
           <span style={{ fontWeight: 800, fontSize: 44, color: c.mist, textTransform: "uppercase", letterSpacing: 2 }}>Vol entier</span>
           <span style={{ fontWeight: 900, fontSize: 104, letterSpacing: -2 }}>{p.total}</span>
         </div>
-        <div style={{ opacity: pop(38), fontWeight: 800, fontSize: 46, color: c.amber, whiteSpace: "nowrap" }}>Cofinancement dès {p.pricePerSeat}/pers.</div>
-        <div style={{ display: "flex", gap: 7, opacity: pop(38) }}>
-          {Array.from({ length: p.seats }, (_, i) => (
-            <div key={i} style={{ width: 22, height: 26, borderRadius: "7px 7px 3px 3px", background: i < seatsFilled ? c.amber : "rgba(255,255,255,.25)" }} />
-          ))}
+        <div style={{ opacity: pop(38), fontWeight: 800, fontSize: 42, color: c.amber, whiteSpace: "nowrap" }}>Cofinancement possible dès {p.pricePerSeat}/pers.</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, opacity: pop(44), fontWeight: 600, fontSize: 28, color: c.mist, whiteSpace: "nowrap" }}>
+          <span>selon le tarif du vol et {p.seats} personnes max</span>
+          <div style={{ display: "flex", gap: 5 }}>
+            {Array.from({ length: p.seats }, (_, i) => (
+              <div key={i} style={{ width: 14, height: 17, borderRadius: "5px 5px 2px 2px", background: i < seatsFilled ? c.amber : "rgba(255,255,255,.25)" }} />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -161,7 +164,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
             Partage le jet.<br /><span style={{ color: c.amber }}>Divise le prix.</span>
           </div>
           <div style={{ fontWeight: 600, fontSize: 40, color: c.mist, textAlign: "center" }}>
-            {p.fromCity} → {p.toCity} · {p.date}<br />Vol entier {p.total}<br />ou cofinancement dès {p.pricePerSeat}/pers.
+            {p.fromCity} → {p.toCity} · {p.date}<br />Vol entier {p.total}<br />ou cofinancement possible dès {p.pricePerSeat}/pers.<br />(max {p.seats} personnes)
           </div>
           <div style={{ marginTop: 20, background: c.amber, color: c.navy, fontWeight: 900, fontSize: 46, padding: "22px 48px", borderRadius: 999, transform: `scale(${1 + 0.04 * Math.sin((frame - outroStart) / 6)})` }}>
             Plus d’infos en DM

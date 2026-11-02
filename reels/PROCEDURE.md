@@ -12,9 +12,9 @@ Application SkyElite (catalogue des vols) : https://claude.ai/artifact/E3uurAWMh
 - Jamais deux fois le même vol (vérifier les reels déjà publiés dans la base `reels`).
 - Varier les destinations : éviter une ville d'arrivée déjà utilisée dans les 7 derniers jours, et mélanger les régions.
 - Prix : avion entier converti en euros (1 USD ≈ 0,86 €, 1 CAD ≈ 0,62 €, comme l'application) ; prix par personne = total ÷ nombre de places, arrondi à l'euro.
-- **Mise en avant du prix** : l'accent est mis sur le **prix du vol entier** (avion privatisé), avec en second la **possibilité de cofinancement à partir de** prix du vol ÷ nombre de places. La vidéo l'affiche ainsi automatiquement (« Vol entier 2 990 € » en grand, « Cofinancement dès 332 €/pers. » dessous). La légende Instagram suit le même ordre, par exemple :
+- **Mise en avant du prix** : l'accent est mis sur le **prix du vol entier** (avion privatisé), avec en second la **possibilité de cofinancement à partir de** prix du vol ÷ nombre de places. La vidéo l'affiche ainsi automatiquement (« Vol entier 2 990 € » en grand, puis « Cofinancement possible dès 332 €/pers. » et « selon le tarif du vol et 9 personnes max »). La légende Instagram suit le même ordre, par exemple :
   « 💶 Vol entier : 2 990 € (avion privatisé, 9 places)
-  🤝 Ou en cofinancement dès 332 €/pers. si les 9 places sont partagées »
+  🤝 Cofinancement possible dès 332 €/pers. (selon le tarif du vol et 9 personnes max) »
 - Ne jamais inventer un vol : chaque reel cite la page source de l'opérateur.
 
 ## Étapes
