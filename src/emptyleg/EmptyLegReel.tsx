@@ -32,12 +32,15 @@ export type EmptyLegReelProps = {
   total: string;
   aircraft: string;
   flightTime: string;
-  disclaimer: string;
+  // Ignoré : la mention en bas de la vidéo est toujours DISCLAIMER (gardé pour les anciens lots).
+  disclaimer?: string;
   // Opacité de la bande de prix : 1 (défaut) masque des sous-titres incrustés, ~0.6 laisse voir l'image.
   bandOpacity?: number;
 };
 
 const fontFamily = "Montserrat";
+// Seule mention affichée en bas de chaque vidéo.
+const DISCLAIMER = "Images d'illustration · prix estimé HT, sous réserve de disponibilité";
 const c = {
   navy: "#10233a",
   amber: "#f0a93a",
@@ -130,7 +133,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
         </div>
         <div style={{ opacity: pop(38), fontWeight: 800, fontSize: 42, color: c.amber, whiteSpace: "nowrap" }}>Cofinancement possible dès {p.pricePerSeat}/pers.</div>
         <div style={{ display: "flex", alignItems: "center", gap: 14, opacity: pop(44), fontWeight: 600, fontSize: 28, color: c.mist, whiteSpace: "nowrap" }}>
-          <span>selon le tarif du vol et {p.seats} personnes max</span>
+          <span>{p.seats} personnes max</span>
           <div style={{ display: "flex", gap: 5 }}>
             {Array.from({ length: p.seats }, (_, i) => (
               <div key={i} style={{ width: 14, height: 17, borderRadius: "5px 5px 2px 2px", background: i < seatsFilled ? c.amber : "rgba(255,255,255,.25)" }} />
@@ -152,7 +155,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
         <span style={{ fontWeight: 800, fontSize: 40, textShadow }}>Réserve ta place : DM @SkyElite</span>
       </div>
       <div style={{ position: "absolute", top: BAND_TOP + BAND_HEIGHT + 256, left: 80, right: 80, textAlign: "center", fontWeight: 600, fontSize: 24, color: c.mist, textShadow }}>
-        {p.disclaimer}
+        {DISCLAIMER}
       </div>
 
       {/* Fin : appel à l'action */}
