@@ -15,9 +15,13 @@ shopt -s nullglob nocaseglob
 for f in "$RAW"/*.{mp4,mov,m4v}; do
   name=$(basename "${f%.*}")
   out="$DEST/$name.mp4"
-  if [ ! -s "$out" ]; then
-    ffmpeg -v error -y -i "$f" -an -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30" \
+  # Filtre d'effacement de filigrane noté dans drive-manifest.json pour cette vidéo, s'il y en a un.
+  delogo=$(python3 -c "import json,sys; m=json.load(open('public/footage/drive-manifest.json')); print(next((e.get('delogo','') for e in m if e['file']=='footage/drive/'+sys.argv[1]+'.mp4'),''))" "$name")
+  stamp="$DEST/.$name.filter"
+  if [ ! -s "$out" ] || [ "$(cat "$stamp" 2>/dev/null)" != "$delogo" ]; then
+    ffmpeg -v error -y -i "$f" -an -vf "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30${delogo:+,$delogo}" \
       -c:v libx264 -preset fast -crf 23 -pix_fmt yuv420p "$out"
+    printf '%s' "$delogo" > "$stamp"
   fi
   dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$out")
   ffmpeg -v error -y -i "$out" -vf "fps=1,scale=160:-1,drawtext=text='%{pts\:hms}':fontcolor=yellow:fontsize=14:x=4:y=4,tile=10x$(( (${dur%.*} + 10) / 10 ))" \

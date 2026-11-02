@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "file": "footage/drive/2494a02094b1417ab794a706a2e7af69.mp4",
+    "duration": 12.3,
+    "tags": [
+      "jet",
+      "tarmac",
+      "soleil"
+    ],
+    "watermark": "@scott_etajets effacé par le filtre delogo. Tapis « flyETAjets » de 5 à 7 s et carte Instagram après 8 s : à éviter. Tapis visible en bas à gauche avant 2 s : commencer à 2 s.",
+    "segments": [
+      {
+        "from": 2.0,
+        "to": 4.5,
+        "tags": [
+          "jet",
+          "tarmac"
+        ],
+        "label": "Jet blanc au soleil, escalier déplié, travelling le long de l'aile"
+      }
+    ],
+    "delogo": "delogo=x=760:y=470:w=260:h=165"
+  },
+  {
+    "file": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+    "duration": 22.4,
+    "tags": [
+      "cabine",
+      "hublot",
+      "coucher de soleil"
+    ],
+    "watermark": "@alansemsar effacé par le filtre delogo. Carte Instagram après 18 s : à éviter.",
+    "segments": [
+      {
+        "from": 0.3,
+        "to": 2.8,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Fauteuils cuir et écran de cabine"
+      },
+      {
+        "from": 3.0,
+        "to": 8.8,
+        "tags": [
+          "cabine",
+          "hublot"
+        ],
+        "label": "Hublot, piste au coucher du soleil"
+      },
+      {
+        "from": 15.1,
+        "to": 17.9,
+        "tags": [
+          "hublot",
+          "tarmac"
+        ],
+        "label": "Vue par le hublot sur hangar au soleil couchant"
+      }
+    ],
+    "delogo": "delogo=x=680:y=430:w=390:h=250:enable='lt(t,9)',delogo=x=60:y=1040:w=230:h=165:enable='between(t,9,18)'"
+  },
+  {
+    "file": "footage/drive/253cb17c57214daa9dd7498a2b39b251.mp4",
+    "duration": 26.7,
+    "tags": [
+      "inutilisable"
+    ],
+    "watermark": "Sous-titres incrustés en haut et au milieu sur toute la durée, filigrane @thipdronepro : ne pas utiliser."
+  },
+  {
+    "file": "footage/drive/db098393b23040fcb74383f40d1876bc.mp4",
+    "duration": 34.9,
+    "tags": [
+      "inutilisable"
+    ],
+    "watermark": "Affiche d'un autre vol (Stansted → Dublin, 6180 €) incrustée sur toute la durée : ne pas utiliser."
+  }
+]

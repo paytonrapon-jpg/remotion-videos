@@ -1,0 +1,206 @@
+{
+  "date": "2026-11-01",
+  "reels": [
+    {
+      "id": "prg-ams",
+      "flight": {
+        "route": "PRG → AMS",
+        "departure": "2026-11-12",
+        "source": "Callajet Europe",
+        "sourceUrl": "https://www.callajet.de/en/private-jet-empty-leg-flights/",
+        "price": "2 990 EUR"
+      },
+      "caption": "🇨🇿 Prague → Amsterdam 🇳🇱 · 12 nov. 2026\n✈️ Citation XLS+ · 9 places · ≈ 1 h 15 de vol\n💶 332 €/pers. si les 9 places sont prises · Total 2 990 €\n\nDe la ville aux cent clochers aux canaux d'Amsterdam, en jet privé, au prix d'un vol retour à vide.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #prague #amsterdam #europe #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/drive/2494a02094b1417ab794a706a2e7af69.mp4",
+            "from": 2.0,
+            "seconds": 2.5,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 7.2,
+            "seconds": 2.7
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 0.5,
+            "seconds": 2.3,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 19.2,
+            "seconds": 3.4,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          }
+        ],
+        "fromCity": "Prague",
+        "toCity": "Amsterdam",
+        "fromFlag": "CZ",
+        "toFlag": "NL",
+        "date": "12 nov. 2026",
+        "pricePerSeat": "332 €",
+        "seats": 9,
+        "total": "2 990 €",
+        "aircraft": "Citation XLS+",
+        "flightTime": "≈ 1 h 15 de vol",
+        "disclaimer": "Images d'illustration · prix estimé HT, sous réserve de disponibilité",
+        "bandOpacity": 0.62
+      }
+    },
+    {
+      "id": "lbg-ltn",
+      "flight": {
+        "route": "LBG → LTN",
+        "departure": "2026-12-01",
+        "source": "EmptyJet",
+        "sourceUrl": "https://emptyjet.com/empty-legs/paris-london",
+        "price": "8 969 USD"
+      },
+      "caption": "🇫🇷 Paris → Londres 🇬🇧 · 1er déc. 2026, 18 h 55\n✈️ Praetor 600 · jusqu'à 8 places · ≈ 50 min de vol\n💶 964 €/pers. si les 8 places sont prises · Total ≈ 7 710 €\n\nDu Bourget à Luton en super midsize : Londres en moins d'une heure, pour vos shoppings de Noël.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #paris #londres #noel #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 0.3,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 3.2,
+            "seconds": 4.3,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 10.2,
+            "seconds": 2.7
+          },
+          {
+            "src": "footage/drive/2494a02094b1417ab794a706a2e7af69.mp4",
+            "from": 2.0,
+            "seconds": 2.5,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          }
+        ],
+        "fromCity": "Paris",
+        "toCity": "Londres",
+        "fromFlag": "FR",
+        "toFlag": "GB",
+        "date": "1er déc. 2026",
+        "pricePerSeat": "964 €",
+        "seats": 8,
+        "total": "7 710 €",
+        "aircraft": "Praetor 600",
+        "flightTime": "≈ 50 min de vol",
+        "disclaimer": "Images d'illustration · prix estimé HT converti depuis 8 969 USD · places selon configuration type",
+        "bandOpacity": 0.62
+      }
+    },
+    {
+      "id": "lbg-nce",
+      "flight": {
+        "route": "LBG → NCE",
+        "departure": "2027-01-09",
+        "source": "EmptyJet",
+        "sourceUrl": "https://emptyjet.com/empty-legs/paris-nice",
+        "price": "5 152 USD"
+      },
+      "caption": "🇫🇷 Paris → Nice 🇫🇷 · 9 janv. 2027, 7 h\n✈️ Citation CJ4 Gen2 · jusqu'à 7 places · ≈ 1 h 20 de vol\n💶 633 €/pers. si les 7 places sont prises · Total ≈ 4 430 €\n\nLe soleil de la Côte d'Azur en plein mois de janvier, en jet privé depuis Le Bourget.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #paris #nice #cotedazur #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/drive/2494a02094b1417ab794a706a2e7af69.mp4",
+            "from": 2.0,
+            "seconds": 2.5,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 5.1,
+            "seconds": 1.8,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 15.2,
+            "seconds": 2.6,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "100% 50%"
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 13.3,
+            "seconds": 4.0,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 0.4,
+            "seconds": 2.2,
+            "zoom": [
+              1.2,
+              1.24
+            ],
+            "origin": "0% 50%"
+          }
+        ],
+        "fromCity": "Paris",
+        "toCity": "Nice",
+        "fromFlag": "FR",
+        "toFlag": "FR",
+        "date": "9 janv. 2027",
+        "pricePerSeat": "633 €",
+        "seats": 7,
+        "total": "4 430 €",
+        "aircraft": "Citation CJ4 Gen2",
+        "flightTime": "≈ 1 h 20 de vol",
+        "disclaimer": "Images d'illustration · prix estimé HT converti depuis 5 152 USD · places selon configuration type",
+        "bandOpacity": 0.62
+      }
+    }
+  ]
+}
