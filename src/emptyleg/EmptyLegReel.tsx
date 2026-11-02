@@ -122,25 +122,23 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
         <div style={{ opacity: pop(22), fontWeight: 800, fontSize: 70, textShadow }}>{p.date}</div>
       </div>
 
-      {/* Bande de prix (toujours opaque : elle masque les sous-titres d'origine) */}
-      <div style={{ position: "absolute", top: BAND_TOP, left: 0, right: 0, height: BAND_HEIGHT, background: `rgba(16,35,58,${p.bandOpacity ?? 1})`, borderTop: `4px solid ${c.amber}`, borderBottom: `4px solid ${c.amber}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: c.white }}>
-        <div style={{ transform: `scale(${pop(30)})`, fontWeight: 900, fontSize: 86, letterSpacing: -1 }}>
-          {p.pricePerSeat}<span style={{ fontSize: 50, fontWeight: 800 }}>/pers.</span>
-          <span style={{ fontSize: 50, fontWeight: 800, color: c.mist }}>  ·  Max {p.seats} pers.</span>
+      {/* Bande de prix : le prix du vol entier en vedette, le cofinancement par siège en second. */}
+      <div style={{ position: "absolute", top: BAND_TOP, left: 0, right: 0, height: BAND_HEIGHT, background: `rgba(16,35,58,${p.bandOpacity ?? 1})`, borderTop: `4px solid ${c.amber}`, borderBottom: `4px solid ${c.amber}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: c.white }}>
+        <div style={{ transform: `scale(${pop(30)})`, display: "flex", alignItems: "baseline", gap: 18 }}>
+          <span style={{ fontWeight: 800, fontSize: 44, color: c.mist, textTransform: "uppercase", letterSpacing: 2 }}>Vol entier</span>
+          <span style={{ fontWeight: 900, fontSize: 104, letterSpacing: -2 }}>{p.total}</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 22, opacity: pop(38) }}>
-          <span style={{ fontWeight: 800, fontSize: 58, color: c.amber }}>Total : {p.total}</span>
-          <div style={{ display: "flex", gap: 8 }}>
-            {Array.from({ length: p.seats }, (_, i) => (
-              <div key={i} style={{ width: 30, height: 36, borderRadius: "9px 9px 4px 4px", background: i < seatsFilled ? c.amber : "rgba(255,255,255,.25)" }} />
-            ))}
-          </div>
+        <div style={{ opacity: pop(38), fontWeight: 800, fontSize: 46, color: c.amber, whiteSpace: "nowrap" }}>Cofinancement dès {p.pricePerSeat}/pers.</div>
+        <div style={{ display: "flex", gap: 7, opacity: pop(38) }}>
+          {Array.from({ length: p.seats }, (_, i) => (
+            <div key={i} style={{ width: 22, height: 26, borderRadius: "7px 7px 3px 3px", background: i < seatsFilled ? c.amber : "rgba(255,255,255,.25)" }} />
+          ))}
         </div>
       </div>
 
       {/* Détails du vol */}
       <div style={{ position: "absolute", top: BAND_TOP + BAND_HEIGHT + 28, left: 60, right: 60, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 16 }}>
-        {[p.aircraft, p.flightTime, "Co-financement ouvert"].map((t, i) => (
+        {[p.aircraft, p.flightTime, `${p.seats} places`].map((t, i) => (
           <div key={t} style={{ opacity: pop(46 + i * 5), transform: `translateY(${(1 - pop(46 + i * 5)) * 30}px)`, background: "rgba(255,255,255,.92)", color: c.navy, fontWeight: 800, fontSize: 36, padding: "12px 24px", borderRadius: 999 }}>
             {t}
           </div>
@@ -163,7 +161,7 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
             Partage le jet.<br /><span style={{ color: c.amber }}>Divise le prix.</span>
           </div>
           <div style={{ fontWeight: 600, fontSize: 40, color: c.mist, textAlign: "center" }}>
-            {p.fromCity} → {p.toCity} · {p.date}<br />{p.pricePerSeat}/pers. · {p.seats} places
+            {p.fromCity} → {p.toCity} · {p.date}<br />Vol entier {p.total}<br />ou cofinancement dès {p.pricePerSeat}/pers.
           </div>
           <div style={{ marginTop: 20, background: c.amber, color: c.navy, fontWeight: 900, fontSize: 46, padding: "22px 48px", borderRadius: 999, transform: `scale(${1 + 0.04 * Math.sin((frame - outroStart) / 6)})` }}>
             Plus d’infos en DM
