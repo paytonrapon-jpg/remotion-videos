@@ -107,15 +107,9 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(8,20,36,.78) 0%, rgba(8,20,36,.35) 30%, rgba(8,20,36,0) 45%, rgba(8,20,36,0) 75%, rgba(8,20,36,.55) 100%)" }} />
 
       {/* Itinéraire */}
-      {/* Marque @SkyElite visible dès la première image et pendant toute la vidéo. */}
-      <div style={{ position: "absolute", top: 62, left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", gap: 14, color: c.white, zIndex: 5 }}>
-        <Logo size={52} />
-        <span style={{ fontWeight: 900, fontSize: 42, letterSpacing: 0.5, textShadow }}>@SkyElite</span>
-      </div>
-
-      <div style={{ position: "absolute", top: 172, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18, color: c.white }}>
+      <div style={{ position: "absolute", top: 150, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18, color: c.white }}>
         <div style={{ transform: `scale(${pop(0)})`, background: c.amber, color: c.navy, fontWeight: 800, fontSize: 34, letterSpacing: 4, padding: "10px 26px", borderRadius: 999 }}>
-          EMPTY LEG · OFFRE RÉELLE
+          EMPTY LEG
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 26, transform: `translateY(${(1 - pop(4)) * -60}px)`, opacity: pop(4) }}>
           <Flag code={p.fromFlag} size={80} />
@@ -162,6 +156,12 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       </div>
       <div style={{ position: "absolute", top: BAND_TOP + BAND_HEIGHT + 256, left: 80, right: 80, textAlign: "center", fontWeight: 600, fontSize: 24, color: c.mist, textShadow }}>
         {DISCLAIMER}
+      </div>
+
+      {/* Marque @SkyElite au milieu à droite, dès la première image ; elle s'efface sur l'écran de fin, qui l'affiche en grand. */}
+      <div style={{ position: "absolute", top: 905, right: 36, display: "flex", alignItems: "center", gap: 12, padding: "10px 20px 10px 12px", borderRadius: 999, background: "rgba(16,35,58,.55)", color: c.white, zIndex: 5, opacity: 1 - outro }}>
+        <Logo size={46} />
+        <span style={{ fontWeight: 900, fontSize: 36, letterSpacing: 0.5 }}>@SkyElite</span>
       </div>
 
       {/* Fin : appel à l'action */}
