@@ -38,3 +38,8 @@ npm run dev
 ```
 
 Ouvre Remotion Studio dans le navigateur.
+
+## Application « Emploi Social »
+
+Le dossier [`emploi-social/`](emploi-social/README.md) contient une application indépendante
+d'offres d'emploi du secteur social avec envoi de candidatures sous autorisation.

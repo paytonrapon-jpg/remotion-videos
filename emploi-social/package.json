@@ -1,0 +1,32 @@
+{
+  "name": "emploi-social",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offres d'emploi du secteur social et envoi de candidatures uniquement après autorisation explicite.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "start": "vite build && node --env-file-if-exists=.env server/index.js",
+    "serve": "node --env-file-if-exists=.env server/index.js",
+    "test": "node --test --test-force-exit server/*.test.js",
+    "typecheck": "tsc --noEmit -p web"
+  },
+  "engines": {
+    "node": ">=22.9"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "multer": "^2.5.0",
+    "nodemailer": "^10.3.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  }
+}
