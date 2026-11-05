@@ -19,7 +19,9 @@
         "label": "Jet blanc au soleil, escalier déplié, travelling le long de l'aile"
       }
     ],
-    "delogo": "delogo=x=760:y=470:w=260:h=165"
+    "delogo": "delogo=x=760:y=470:w=260:h=165",
+    "usable_seconds": 2.5,
+    "note": "Trop courte pour servir seule de vidéo-source (2,5 s utilisables) : ne pas l'utiliser comme source d'un reel."
   },
   {
     "file": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
@@ -58,7 +60,8 @@
         "label": "Vue par le hublot sur hangar au soleil couchant"
       }
     ],
-    "delogo": "delogo=x=680:y=430:w=390:h=250:enable='lt(t,9)',delogo=x=60:y=1040:w=230:h=165:enable='between(t,9,18)'"
+    "delogo": "delogo=x=680:y=430:w=390:h=250:enable='lt(t,9)',delogo=x=60:y=1040:w=230:h=165:enable='between(t,9,18)'",
+    "usable_seconds": 11.3
   },
   {
     "file": "footage/drive/253cb17c57214daa9dd7498a2b39b251.mp4",
