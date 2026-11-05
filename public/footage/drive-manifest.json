@@ -78,5 +78,49 @@
       "inutilisable"
     ],
     "watermark": "Affiche d'un autre vol (Stansted → Dublin, 6180 €) incrustée sur toute la durée : ne pas utiliser."
+  },
+  {
+    "file": "footage/drive/15cafc2bc9ea4054bc2d456c9f6d2a06.mp4",
+    "duration": 17.9,
+    "usable_seconds": 17.5,
+    "tags": [
+      "jet",
+      "tarmac",
+      "nuit"
+    ],
+    "delogo": "delogo=x=820:y=450:w=255:h=130:enable='lt(t,9.5)',delogo=x=95:y=1065:w=280:h=200:enable='gte(t,8.5)'",
+    "watermark": "@jetsetgrpinc et crédit musique effacés par le filtre delogo.",
+    "segments": [
+      {
+        "from": 0.2,
+        "to": 4.8,
+        "tags": [
+          "jet",
+          "tarmac",
+          "nuit"
+        ],
+        "label": "Global de face sur le tarmac de nuit, placeur au premier plan"
+      },
+      {
+        "from": 5.0,
+        "to": 9.8,
+        "tags": [
+          "jet",
+          "tarmac",
+          "nuit"
+        ],
+        "label": "Le jet tourne, vue trois-quarts"
+      },
+      {
+        "from": 10.0,
+        "to": 17.7,
+        "tags": [
+          "jet",
+          "tarmac",
+          "nuit"
+        ],
+        "label": "Profil du jet qui roule, hublots éclairés"
+      }
+    ]
   }
 ]

@@ -1,0 +1,151 @@
+{
+  "date": "2026-11-05",
+  "reels": [
+    {
+      "id": "lbg-nce-0108",
+      "footage": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+      "flight": {
+        "route": "LBG → NCE",
+        "departure": "2027-01-08",
+        "source": "EmptyJet",
+        "sourceUrl": "https://emptyjet.com/empty-legs/paris-nice",
+        "price": "6 584 USD"
+      },
+      "caption": "🇫🇷 Paris → Nice 🇫🇷 · 8 janv. 2027\n✈️ Citation XLS Gen2 · 8 places · ≈ 1 h 25 de vol\n💶 Vol entier : ≈ 5 660 € (avion privatisé, 8 places)\n🤝 Cofinancement possible dès 708 €/pers. (8 personnes max)\n\nFuir la grisaille de janvier pour la Côte d'Azur, en jet privé depuis Le Bourget.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #paris #nice #cotedazur #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 0.3,
+            "seconds": 2.5
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 3.0,
+            "seconds": 5.8
+          },
+          {
+            "src": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
+            "from": 15.1,
+            "seconds": 2.8
+          }
+        ],
+        "fromCity": "Paris",
+        "toCity": "Nice",
+        "fromFlag": "FR",
+        "toFlag": "FR",
+        "date": "8 janv. 2027",
+        "pricePerSeat": "708 €",
+        "seats": 8,
+        "total": "5 660 €",
+        "aircraft": "Citation XLS Gen2",
+        "flightTime": "≈ 1 h 25 de vol",
+        "bandOpacity": 0.62
+      }
+    },
+    {
+      "id": "lbg-ltn-1130",
+      "footage": "footage/drive/15cafc2bc9ea4054bc2d456c9f6d2a06.mp4",
+      "flight": {
+        "route": "LBG → LTN",
+        "departure": "2026-11-30",
+        "source": "EmptyJet",
+        "sourceUrl": "https://emptyjet.com/empty-legs/paris-london",
+        "price": "11 291 USD"
+      },
+      "caption": "🇫🇷 Paris → Londres 🇬🇧 · 30 nov. 2026\n✈️ Praetor 600 · 8 places · ≈ 50 min de vol\n💶 Vol entier : ≈ 9 710 € (avion privatisé, 8 places)\n🤝 Cofinancement possible dès 1 214 €/pers. (8 personnes max)\n\nLe Bourget – Luton en super midsize, pour lancer décembre à Londres.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #paris #londres #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/drive/15cafc2bc9ea4054bc2d456c9f6d2a06.mp4",
+            "from": 0.2,
+            "seconds": 4.6
+          },
+          {
+            "src": "footage/drive/15cafc2bc9ea4054bc2d456c9f6d2a06.mp4",
+            "from": 5.0,
+            "seconds": 4.8
+          },
+          {
+            "src": "footage/drive/15cafc2bc9ea4054bc2d456c9f6d2a06.mp4",
+            "from": 10.0,
+            "seconds": 4.0
+          }
+        ],
+        "fromCity": "Paris",
+        "toCity": "Londres",
+        "fromFlag": "FR",
+        "toFlag": "GB",
+        "date": "30 nov. 2026",
+        "pricePerSeat": "1 214 €",
+        "seats": 8,
+        "total": "9 710 €",
+        "aircraft": "Praetor 600",
+        "flightTime": "≈ 50 min de vol",
+        "bandOpacity": 0.62
+      }
+    },
+    {
+      "id": "lbg-ltn-0307",
+      "footage": "footage/jets-1.mp4",
+      "flight": {
+        "route": "LBG → LTN",
+        "departure": "2027-03-07",
+        "source": "EmptyJet",
+        "sourceUrl": "https://emptyjet.com/empty-legs/paris-london",
+        "price": "8 969 USD"
+      },
+      "caption": "🇫🇷 Paris → Londres 🇬🇧 · 7 mars 2027, 19 h\n✈️ Praetor 600 · 8 places · ≈ 50 min de vol\n💶 Vol entier : ≈ 7 710 € (avion privatisé, 8 places)\n🤝 Cofinancement possible dès 964 €/pers. (8 personnes max)\n\nUn week-end londonien au printemps, au départ du Bourget en soirée.\n📩 Plus d'infos en DM @SkyElite\n\n#emptyleg #jetprive #privatejet #paris #londres #weekend #luxurytravel #skyelite",
+      "props": {
+        "clips": [
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 0.3,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 7.2,
+            "seconds": 2.7
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 13.3,
+            "seconds": 3.5,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          },
+          {
+            "src": "footage/jets-1.mp4",
+            "from": 19.2,
+            "seconds": 3.4,
+            "y": -240,
+            "zoom": [
+              1.28,
+              1.33
+            ]
+          }
+        ],
+        "fromCity": "Paris",
+        "toCity": "Londres",
+        "fromFlag": "FR",
+        "toFlag": "GB",
+        "date": "7 mars 2027",
+        "pricePerSeat": "964 €",
+        "seats": 8,
+        "total": "7 710 €",
+        "aircraft": "Praetor 600",
+        "flightTime": "≈ 50 min de vol",
+        "bandOpacity": 0.62
+      }
+    }
+  ]
+}
