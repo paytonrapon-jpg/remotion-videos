@@ -15,6 +15,7 @@ Application SkyElite (catalogue des vols) : https://claude.ai/artifact/E3uurAWMh
 - **Mise en avant du prix** : l'accent est mis sur le **prix du vol entier** (avion privatisé), avec en second la **possibilité de cofinancement à partir de** prix du vol ÷ nombre de places. La vidéo l'affiche ainsi automatiquement (« Vol entier 2 990 € » en grand, puis « Cofinancement possible dès 332 €/pers. » et « 9 personnes max »). La légende Instagram suit le même ordre, par exemple :
   « 💶 Vol entier : 2 990 € (avion privatisé, 9 places)
   🤝 Cofinancement possible dès 332 €/pers. (9 personnes max) »
+- **Marque** : « @SkyElite » avec le logo est affiché en haut de la vidéo dès la première image et jusqu'à la fin (fixé dans le modèle, ne pas le retirer).
 - Ne jamais inventer un vol : chaque reel cite la page source de l'opérateur.
 
 ## Étapes

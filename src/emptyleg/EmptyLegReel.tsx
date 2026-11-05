@@ -107,7 +107,13 @@ export const EmptyLegReel: React.FC<EmptyLegReelProps> = (p) => {
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(8,20,36,.78) 0%, rgba(8,20,36,.35) 30%, rgba(8,20,36,0) 45%, rgba(8,20,36,0) 75%, rgba(8,20,36,.55) 100%)" }} />
 
       {/* Itinéraire */}
-      <div style={{ position: "absolute", top: 150, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18, color: c.white }}>
+      {/* Marque @SkyElite visible dès la première image et pendant toute la vidéo. */}
+      <div style={{ position: "absolute", top: 62, left: 0, right: 0, display: "flex", justifyContent: "center", alignItems: "center", gap: 14, color: c.white, zIndex: 5 }}>
+        <Logo size={52} />
+        <span style={{ fontWeight: 900, fontSize: 42, letterSpacing: 0.5, textShadow }}>@SkyElite</span>
+      </div>
+
+      <div style={{ position: "absolute", top: 172, left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 18, color: c.white }}>
         <div style={{ transform: `scale(${pop(0)})`, background: c.amber, color: c.navy, fontWeight: 800, fontSize: 34, letterSpacing: 4, padding: "10px 26px", borderRadius: 999 }}>
           EMPTY LEG · OFFRE RÉELLE
         </div>
