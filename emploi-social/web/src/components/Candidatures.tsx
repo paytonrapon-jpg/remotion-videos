@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { api, ApiError, type Candidature, dateCourte, depuis, STATUTS, type Statut } from "../api";
+import { api, ApiError, type Candidature, dateCourte, depuis, ko, type Profil, STATUTS, type Statut } from "../api";
 import { useApp } from "../App";
 import { AutorisationModal } from "./Autoriser";
 import { BadgeStatut, Erreurs, Modal } from "./ui";
@@ -84,16 +84,16 @@ export function CandidaturesPage() {
 
 function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidature; onClose: () => void }) {
   const { majCandidature, notifier, profil, rafraichir } = useApp();
-  const [f, setF] = useState({ canal: c.canal, destinataire: c.destinataire, objet: c.objet, message: c.message, joindreCV: c.joindreCV, notes: c.notes });
+  const [f, setF] = useState({ canal: c.canal, destinataire: c.destinataire, objet: c.objet, message: c.message, joindreCV: c.joindreCV, joindreAnnexes: c.joindreAnnexes, notes: c.notes });
   const [autoriser, setAutoriser] = useState(false);
   const [relance, setRelance] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const modifiable = ["brouillon", "a_autoriser", "autorisee"].includes(c.statut);
-  const modifie = f.canal !== c.canal || f.destinataire !== c.destinataire || f.objet !== c.objet || f.message !== c.message || f.joindreCV !== c.joindreCV || f.notes !== c.notes;
+  const modifie = f.canal !== c.canal || f.destinataire !== c.destinataire || f.objet !== c.objet || f.message !== c.message || f.joindreCV !== c.joindreCV || f.joindreAnnexes !== c.joindreAnnexes || f.notes !== c.notes;
 
   useEffect(() => {
-    setF({ canal: c.canal, destinataire: c.destinataire, objet: c.objet, message: c.message, joindreCV: c.joindreCV, notes: c.notes });
-  }, [c.canal, c.destinataire, c.objet, c.message, c.joindreCV, c.notes]);
+    setF({ canal: c.canal, destinataire: c.destinataire, objet: c.objet, message: c.message, joindreCV: c.joindreCV, joindreAnnexes: c.joindreAnnexes, notes: c.notes });
+  }, [c.canal, c.destinataire, c.objet, c.message, c.joindreCV, c.joindreAnnexes, c.notes]);
 
   const appel = async (fn: () => Promise<Candidature>, ok?: string) => {
     try {
@@ -129,7 +129,7 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
 
       {c.statut === "autorisee" && (
         <p className="alerte info">
-          Autorisée le {new Date(c.autorisation!.at).toLocaleString("fr-FR")}. Modifier le contenu annulera l'autorisation.
+          Autorisée le {new Date(c.autorisation!.at).toLocaleString("fr-CH")}. Modifier le contenu annulera l'autorisation.
         </p>
       )}
       <Erreurs erreurs={erreurs} />
@@ -163,12 +163,19 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
             <input type="checkbox" checked={f.joindreCV} onChange={(e) => setF({ ...f, joindreCV: e.target.checked })} />
             <span>Joindre mon CV {profil.cv ? <span className="muted">({profil.cv.nom})</span> : <span className="ko">— aucun CV dans le profil</span>}</span>
           </label>
+          <label className="case large">
+            <input type="checkbox" checked={f.joindreAnnexes} disabled={!profil.annexes.length} onChange={(e) => setF({ ...f, joindreAnnexes: e.target.checked })} />
+            <span>
+              Joindre mes certificats de travail et diplômes{" "}
+              <span className="muted">({profil.annexes.length ? `${profil.annexes.length} document${profil.annexes.length > 1 ? "s" : ""}, ${ko(profil.annexes.reduce((t, d) => t + d.taille, 0))}` : "aucun dans le profil"})</span>
+            </span>
+          </label>
         </div>
       ) : (
         <div className="apercu-mail">
           <dl>
             <div><dt>{c.canal === "email" ? "Envoyée à" : "Déposée sur"}</dt><dd>{c.canal === "email" ? c.destinataire : c.offre.urlCandidature}</dd></div>
-            <div><dt>Le</dt><dd>{c.envoi && new Date(c.envoi.at).toLocaleString("fr-FR")} {c.envoi?.mode === "simulation" && <span className="badge neutre">simulation</span>}</dd></div>
+            <div><dt>Le</dt><dd>{c.envoi && new Date(c.envoi.at).toLocaleString("fr-CH")} {c.envoi?.mode === "simulation" && <span className="badge neutre">simulation</span>}</dd></div>
             <div><dt>Objet</dt><dd>{c.objet}</dd></div>
           </dl>
           <pre className="corps-mail">{c.message}</pre>
@@ -183,8 +190,8 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
       <details className="historique">
         <summary>Historique</summary>
         <ul>
-          {c.historique.map((h, i) => <li key={i}>{new Date(h.at).toLocaleString("fr-FR")} — {STATUTS[h.statut].libelle}</li>)}
-          {c.relances.map((r, i) => <li key={`r${i}`}>{new Date(r.at).toLocaleString("fr-FR")} — Relance envoyée{r.mode === "simulation" ? " (simulation)" : ""}</li>)}
+          {c.historique.map((h, i) => <li key={i}>{new Date(h.at).toLocaleString("fr-CH")} — {STATUTS[h.statut].libelle}</li>)}
+          {c.relances.map((r, i) => <li key={`r${i}`}>{new Date(r.at).toLocaleString("fr-CH")} — Relance envoyée{r.mode === "simulation" ? " (simulation)" : ""}</li>)}
         </ul>
       </details>
 
@@ -211,6 +218,7 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
         {c.statut === "autorisee" && !modifie && c.canal === "site" && (
           <>
             <button className="btn" onClick={copier}>Copier la lettre</button>
+            <button className="btn" onClick={() => imprimerLettre(c, profil)}>Lettre en PDF</button>
             <a className="btn" href={c.offre.urlCandidature} target="_blank" rel="noreferrer">Ouvrir le site ↗</a>
             <button className="btn primaire" onClick={() => appel(() => api("POST", `/candidatures/${c.id}/depot-confirme`), "Dépôt enregistré.")}>J'ai déposé ma candidature</button>
           </>
@@ -235,6 +243,24 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
       {relance && <RelanceModal candidature={c} onClose={() => setRelance(false)} />}
     </Modal>
   );
+}
+
+/** Ouvre la lettre mise en page (format suisse) pour l'enregistrer en PDF via l'impression. */
+function imprimerLettre(c: Candidature, profil: Profil) {
+  const w = window.open("", "_blank");
+  if (!w) return;
+  const esc = (t: string) => t.replace(/[&<>]/g, (x) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[x]!);
+  const exp = [`${profil.prenom} ${profil.nom}`, profil.adresse, [profil.npa, profil.ville].filter(Boolean).join(" "), profil.telephone, profil.email].filter(Boolean);
+  const dest = [c.offre.employeur.replace(/\s*\(exemple\)/, ""), c.offre.contactNom, c.offre.lieu].filter(Boolean);
+  const date = `${profil.ville || c.offre.lieu.replace(/^\d{4}\s*/, "")}, le ${new Date().toLocaleDateString("fr-CH", { day: "numeric", month: "long", year: "numeric" })}`;
+  w.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Lettre de motivation – ${esc(c.offre.employeur)}</title>
+<style>@page{size:A4;margin:22mm 22mm 20mm 25mm}body{font:11pt/1.5 Arial,Helvetica,sans-serif;color:#111;max-width:170mm;margin:2rem auto}
+.exp{margin-bottom:12mm}.dest{margin-left:95mm;margin-bottom:10mm}.date{margin-bottom:8mm}.objet{font-weight:bold;margin-bottom:8mm}
+.corps{white-space:pre-wrap}@media print{body{margin:0}}</style></head><body>
+<div class="exp">${exp.map(esc).join("<br>")}</div><div class="dest">${dest.map(esc).join("<br>")}</div>
+<div class="date">${esc(date)}</div><div class="objet">${esc(c.objet)}</div><div class="corps">${esc(c.message)}</div>
+<script>window.onload=()=>window.print()</script></body></html>`);
+  w.document.close();
 }
 
 function RelanceModal({ candidature: c, onClose }: { candidature: Candidature; onClose: () => void }) {

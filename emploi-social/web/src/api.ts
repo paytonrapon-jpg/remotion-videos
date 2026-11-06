@@ -4,23 +4,28 @@ export type Offre = {
   id?: string;
   offreId?: string | null;
   dejaPostule?: boolean;
-  source: "france-travail" | "demo" | "manuel";
+  source: "job-room" | "demo" | "manuel";
   externalId: string;
+  reference: string;
   intitule: string;
   employeur: string;
   lieu: string;
-  departement: string;
+  canton: string;
   contrat: string;
   contratLibelle: string;
-  dureeTravail: string;
-  salaire: string;
-  experience: string;
+  taux: string;
+  tauxMin: number | null;
+  tauxMax: number | null;
+  entree: string;
+  langue: string;
   description: string;
-  rome: string;
+  metier: string;
   diplomesCites: string[];
   contactNom: string;
   contactEmail: string;
+  contactTelephone: string;
   urlCandidature: string;
+  urlAnnonce: string;
   datePublication: string | null;
   compat?: Compat;
 };
@@ -36,6 +41,7 @@ export type Candidature = {
   objet: string;
   message: string;
   joindreCV: boolean;
+  joindreAnnexes: boolean;
   notes: string;
   autorisation: { at: string; empreinte: string } | null;
   autorisationValide: boolean;
@@ -47,36 +53,43 @@ export type Candidature = {
   historique: { at: string; statut: Statut }[];
 };
 
+export type Document = { nom: string; fichier: string; taille: number; ajouteLe: string };
+
 export type Profil = {
   prenom: string;
   nom: string;
   email: string;
   telephone: string;
   adresse: string;
-  codePostal: string;
+  npa: string;
   ville: string;
-  departement: string;
-  rayonKm: number;
+  canton: string;
+  tauxMin: number;
+  tauxMax: number;
   diplomes: string[];
   metiers: string[];
-  contrats: string[];
+  langues: string[];
+  permisTravail: string;
+  permisConduire: boolean;
+  vehicule: boolean;
   experiences: string;
   competences: string;
   motivations: string;
-  permis: boolean;
-  vehicule: boolean;
-  cv: { nom: string; taille: number; ajouteLe: string } | null;
+  cv: Document | null;
+  annexes: Document[];
 };
 
 export type Config = {
-  apiFranceTravail: boolean;
+  sourceOffres: "job-room" | "demo";
   smtp: boolean;
   envoisDuJour: number;
   reglages: { limiteJournaliere: number; delaiRelanceJours: number };
   referentiel: {
-    metiers: { rome: string; libelle: string; famille: string }[];
+    metiers: { id: string; libelle: string; famille: string }[];
     diplomes: { code: string; libelle: string }[];
     contrats: { code: string; libelle: string }[];
+    cantons: { code: string; nom: string; langue: string }[];
+    permisTravail: { code: string; libelle: string }[];
   };
 };
 
@@ -88,7 +101,7 @@ export type Apercu = {
     url: string;
     objet: string;
     message: string;
-    pieceJointe: { nom: string; taille: number } | null;
+    piecesJointes: { nom: string; taille: number }[];
   };
   empreinte: string;
   erreurs: string[];
@@ -130,7 +143,9 @@ export const STATUTS: Record<Statut, { libelle: string; ton: string }> = {
 };
 
 export const dateCourte = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
+  iso ? new Date(iso).toLocaleDateString("fr-CH", { day: "numeric", month: "short" }) : "";
+
+export const ko = (octets: number) => `${Math.max(1, Math.round(octets / 1024))} Ko`;
 
 export const depuis = (iso: string | null) => {
   if (!iso) return "";

@@ -3,11 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import express from "express";
 import multer from "multer";
-import { contenuEnvoi, empreinte, envoyerEmail, smtpConfigure, verifier } from "./envoi.js";
-import { apiConfiguree, rechercher } from "./franceTravail.js";
+import { contenuEnvoi, empreinte, envoyerEmail, piecesJointes, smtpConfigure, verifier } from "./envoi.js";
+import { modeDemo, rechercher } from "./jobRoom.js";
 import { rediger, redigerRelance } from "./lettres.js";
 import { scorer } from "./matching.js";
-import { CONTRATS, DIPLOMES, diplomesCites, METIERS } from "./referentiel.js";
+import { CANTONS, CONTRATS, DIPLOMES, diplomesCites, METIERS, metierDuTitre, PERMIS_TRAVAIL } from "./referentiel.js";
 import { db, logEvent, newId, UPLOAD_DIR } from "./store.js";
 
 const envoisEnCours = new Set();
@@ -56,9 +56,15 @@ export function createApp() {
   app.get("/api/config", (_req, res) => {
     const data = db.get();
     res.json({
-      apiFranceTravail: apiConfiguree(),
+      sourceOffres: modeDemo() ? "demo" : "job-room",
       smtp: smtpConfigure(),
-      referentiel: { metiers: METIERS, diplomes: DIPLOMES.map(({ code, libelle }) => ({ code, libelle })), contrats: CONTRATS },
+      referentiel: {
+        metiers: METIERS.map(({ id, libelle, famille }) => ({ id, libelle, famille })),
+        diplomes: DIPLOMES.map(({ code, libelle }) => ({ code, libelle })),
+        contrats: CONTRATS,
+        cantons: CANTONS,
+        permisTravail: PERMIS_TRAVAIL,
+      },
       envoisDuJour: envoisDuJour(data),
       reglages: data.reglages,
     });
@@ -79,15 +85,19 @@ export function createApp() {
   app.get("/api/profil", (_req, res) => res.json(db.get().profil));
 
   app.put("/api/profil", (req, res) => {
-    const champs = ["prenom", "nom", "email", "telephone", "adresse", "codePostal", "ville", "departement", "experiences", "competences", "motivations"];
+    const champs = ["prenom", "nom", "email", "telephone", "adresse", "npa", "ville", "canton", "permisTravail", "experiences", "competences", "motivations"];
     const profil = db.update((data) => {
       for (const k of champs) if (typeof req.body[k] === "string") data.profil[k] = req.body[k].slice(0, 5000);
-      for (const k of ["permis", "vehicule"]) if (typeof req.body[k] === "boolean") data.profil[k] = req.body[k];
-      if (Number.isFinite(req.body.rayonKm)) data.profil.rayonKm = req.body.rayonKm;
+      for (const k of ["permisConduire", "vehicule"]) if (typeof req.body[k] === "boolean") data.profil[k] = req.body[k];
+      for (const k of ["tauxMin", "tauxMax"]) {
+        const v = Number(req.body[k]);
+        if (Number.isInteger(v) && v >= 0 && v <= 100) data.profil[k] = v;
+      }
+      if (data.profil.tauxMin > data.profil.tauxMax) [data.profil.tauxMin, data.profil.tauxMax] = [data.profil.tauxMax, data.profil.tauxMin];
       if (Array.isArray(req.body.diplomes)) data.profil.diplomes = req.body.diplomes.filter((d) => DIPLOMES.some((x) => x.code === d));
-      if (Array.isArray(req.body.metiers)) data.profil.metiers = req.body.metiers.filter((m) => METIERS.some((x) => x.rome === m));
-      if (Array.isArray(req.body.contrats)) data.profil.contrats = req.body.contrats.filter((c) => CONTRATS.some((x) => x.code === c));
-      data.profil.departement = data.profil.departement.trim().toUpperCase();
+      if (Array.isArray(req.body.metiers)) data.profil.metiers = req.body.metiers.filter((m) => METIERS.some((x) => x.id === m));
+      if (Array.isArray(req.body.langues)) data.profil.langues = req.body.langues.filter((l) => ["fr", "de", "it", "en"].includes(l));
+      data.profil.canton = CANTONS.some((c) => c.code === data.profil.canton.trim().toUpperCase()) ? data.profil.canton.trim().toUpperCase() : "";
       return data.profil;
     });
     res.json(profil);
@@ -100,13 +110,46 @@ export function createApp() {
       cb(null, /\.(pdf|docx?|odt)$/i.test(file.originalname)),
   });
 
+  const document = (f) => ({
+    nom: Buffer.from(f.originalname, "latin1").toString("utf8"),
+    fichier: f.filename,
+    taille: f.size,
+    sha256: createHash("sha256").update(fs.readFileSync(f.path)).digest("hex"),
+    ajouteLe: new Date().toISOString(),
+  });
+
+  app.post("/api/profil/annexes", upload.array("documents", 10), (req, res) => {
+    if (!req.files?.length) throw new HttpError(400, "Fichiers refusés : PDF, Word ou ODT de 5 Mo maximum.");
+    const profil = db.update((data) => {
+      data.profil.annexes = [...(data.profil.annexes ?? []), ...req.files.map(document)].slice(0, 20);
+      logEvent(data, "cv", { message: `${req.files.length} certificat(s)/diplôme(s) ajouté(s)` });
+      return data.profil;
+    });
+    res.json(profil);
+  });
+
+  app.get("/api/profil/annexes/:fichier", (req, res) => {
+    const doc = db.get().profil.annexes.find((d) => d.fichier === req.params.fichier);
+    if (!doc) throw new HttpError(404, "Document introuvable.");
+    res.download(path.join(UPLOAD_DIR, doc.fichier), doc.nom);
+  });
+
+  app.delete("/api/profil/annexes/:fichier", (req, res) => {
+    const profil = db.update((data) => {
+      const doc = data.profil.annexes.find((d) => d.fichier === req.params.fichier);
+      if (doc) fs.rmSync(path.join(UPLOAD_DIR, doc.fichier), { force: true });
+      data.profil.annexes = data.profil.annexes.filter((d) => d !== doc);
+      return data.profil;
+    });
+    res.json(profil);
+  });
+
   app.post("/api/profil/cv", upload.single("cv"), (req, res) => {
     if (!req.file) throw new HttpError(400, "Fichier refusé : PDF, Word ou ODT de 5 Mo maximum.");
-    const sha256 = createHash("sha256").update(fs.readFileSync(req.file.path)).digest("hex");
     const profil = db.update((data) => {
       if (data.profil.cv) fs.rmSync(path.join(UPLOAD_DIR, data.profil.cv.fichier), { force: true });
-      data.profil.cv = { nom: req.file.originalname, fichier: req.file.filename, taille: req.file.size, sha256, ajouteLe: new Date().toISOString() };
-      logEvent(data, "cv", { message: `CV ajouté : ${req.file.originalname}` });
+      data.profil.cv = document(req.file);
+      logEvent(data, "cv", { message: `CV ajouté : ${data.profil.cv.nom}` });
       return data.profil;
     });
     res.json(profil);
@@ -134,12 +177,17 @@ export function createApp() {
     "/api/offres/recherche",
     asyncRoute(async (req, res) => {
       const data = db.get();
+      const borne = (v, def) => (Number.isInteger(Number(v)) && v !== "" && v != null ? Math.max(0, Math.min(100, Number(v))) : def);
       const r = await rechercher({
         metiers: liste(req.query.metiers),
-        departement: String(req.query.departement ?? "").trim().toUpperCase(),
+        cantons: liste(req.query.cantons),
         motsCles: String(req.query.motsCles ?? "").trim(),
-        contrats: liste(req.query.contrats),
+        contrat: ["indetermine", "determine"].includes(req.query.contrat) ? req.query.contrat : "",
+        tauxMin: borne(req.query.tauxMin, 0),
+        tauxMax: borne(req.query.tauxMax, 100),
+        depuisJours: [3, 7, 14, 30, 60].includes(Number(req.query.depuis)) ? Number(req.query.depuis) : 30,
         page: Number(req.query.page) || 0,
+        titreStrict: req.query.strict !== "0",
       });
       const sauvees = new Map(data.offres.map((o) => [o.externalId, o.id]));
       const postulees = new Set(data.candidatures.map((c) => c.offre.externalId));
@@ -155,7 +203,7 @@ export function createApp() {
     res.json(data.offres.map((o) => ({ ...o, compat: scorer(o, data.profil) })));
   });
 
-  const champsOffre = ["source", "externalId", "intitule", "employeur", "lieu", "departement", "contrat", "contratLibelle", "dureeTravail", "salaire", "experience", "description", "rome", "romeLibelle", "contactNom", "contactEmail", "urlCandidature", "datePublication"];
+  const champsOffre = ["source", "externalId", "reference", "intitule", "employeur", "lieu", "canton", "contrat", "contratLibelle", "taux", "entree", "langue", "description", "metier", "contactNom", "contactEmail", "contactTelephone", "urlCandidature", "urlAnnonce", "datePublication"];
 
   app.post("/api/offres", (req, res) => {
     const b = req.body ?? {};
@@ -167,7 +215,10 @@ export function createApp() {
       for (const k of champsOffre) o[k] = typeof b[k] === "string" ? b[k].trim() : "";
       o.source ||= "manuel";
       o.externalId ||= `manuel-${o.id}`;
-      o.contratLibelle ||= o.contrat;
+      o.contratLibelle ||= CONTRATS.find((c) => c.code === o.contrat)?.libelle ?? o.contrat;
+      for (const k of ["tauxMin", "tauxMax"]) o[k] = Number.isFinite(b[k]) ? b[k] : null;
+      if (!o.taux && o.tauxMax) o.taux = o.tauxMin && o.tauxMin !== o.tauxMax ? `${o.tauxMin}–${o.tauxMax} %` : `${o.tauxMax} %`;
+      o.metier ||= metierDuTitre(o.intitule);
       o.diplomesCites = diplomesCites(`${o.intitule} ${o.description}`);
       data.offres.unshift(o);
       return o;
@@ -215,6 +266,7 @@ export function createApp() {
         objet,
         message,
         joindreCV: true,
+        joindreAnnexes: true,
         notes: "",
         autorisation: null,
         envoi: null,
@@ -239,7 +291,7 @@ export function createApp() {
       }
       const avant = empreinte(contenuEnvoi(c, data.profil));
       for (const k of ["destinataire", "objet", "message", "notes"]) if (typeof req.body[k] === "string") c[k] = req.body[k].slice(0, 20000);
-      if (typeof req.body.joindreCV === "boolean") c.joindreCV = req.body.joindreCV;
+      for (const k of ["joindreCV", "joindreAnnexes"]) if (typeof req.body[k] === "boolean") c[k] = req.body[k];
       if (["email", "site"].includes(req.body.canal)) c.canal = req.body.canal;
       if (c.autorisation && empreinte(contenuEnvoi(c, data.profil)) !== avant) {
         // Toute modification du contenu annule l'autorisation.
@@ -338,7 +390,7 @@ export function createApp() {
       if (envoisEnCours.has(c.id)) throw new HttpError(409, "Envoi déjà en cours.");
       envoisEnCours.add(c.id);
       try {
-        const r = await envoyerEmail(contenu, data.profil);
+        const r = await envoyerEmail(contenu, data.profil, { documents: piecesJointes(c, data.profil) });
         db.update((d) => {
           const c2 = trouverCandidature(d, c.id);
           c2.envoi = { at: new Date().toISOString(), ...r, empreinte: c.autorisation.empreinte };
@@ -405,7 +457,7 @@ export function createApp() {
       const objet = String(req.body.objet ?? "").trim();
       const message = String(req.body.message ?? "").trim();
       if (!objet || message.length < 40) throw new HttpError(422, "Relance incomplète.");
-      const contenu = { canal: "email", de: data.profil.email, a: c.destinataire.trim(), url: "", objet, message, pieceJointe: null };
+      const contenu = { canal: "email", de: data.profil.email, a: c.destinataire.trim(), url: "", objet, message, piecesJointes: [] };
       const emp = empreinte(contenu);
       if (req.body.empreinte !== emp) throw new HttpError(409, "Le contenu ne correspond pas à l'aperçu autorisé.");
       verifierLimite(data);
@@ -424,7 +476,7 @@ export function createApp() {
     // Calcule l'empreinte d'un contenu de relance tel qu'affiché, pour l'autoriser.
     const data = db.get();
     const c = trouverCandidature(data, req.params.id);
-    const contenu = { canal: "email", de: data.profil.email, a: c.destinataire.trim(), url: "", objet: String(req.body.objet ?? "").trim(), message: String(req.body.message ?? "").trim(), pieceJointe: null };
+    const contenu = { canal: "email", de: data.profil.email, a: c.destinataire.trim(), url: "", objet: String(req.body.objet ?? "").trim(), message: String(req.body.message ?? "").trim(), piecesJointes: [] };
     res.json({ contenu, empreinte: empreinte(contenu) });
   });
 

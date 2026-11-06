@@ -17,8 +17,16 @@ export function contenuEnvoi(candidature, profil) {
     url: candidature.canal === "site" ? candidature.offre.urlCandidature : "",
     objet: candidature.objet,
     message: candidature.message,
-    pieceJointe: candidature.joindreCV && profil.cv ? { nom: profil.cv.nom, taille: profil.cv.taille, sha256: profil.cv.sha256 } : null,
+    piecesJointes: piecesJointes(candidature, profil).map(({ nom, taille, sha256 }) => ({ nom, taille, sha256 })),
   };
+}
+
+/** Documents joints : CV puis, si demandé, certificats de travail et diplômes. */
+export function piecesJointes(candidature, profil) {
+  return [
+    ...(candidature.joindreCV && profil.cv ? [profil.cv] : []),
+    ...(candidature.joindreAnnexes ? profil.annexes ?? [] : []),
+  ];
 }
 
 export const empreinte = (contenu) => createHash("sha256").update(JSON.stringify(contenu)).digest("hex");
@@ -40,6 +48,9 @@ export function verifier(candidature, profil) {
   if ((candidature.message?.trim().length ?? 0) < 80) erreurs.push("Le message est trop court.");
   if (/\[Prénom Nom\]/.test(candidature.message)) erreurs.push("Remplacez « [Prénom Nom] » dans le message.");
   if (candidature.joindreCV && !profil.cv) erreurs.push("Aucun CV : ajoutez-le dans le profil ou décochez la pièce jointe.");
+  const poids = piecesJointes(candidature, profil).reduce((t, d) => t + d.taille, 0);
+  if (candidature.canal === "email" && poids > 15 * 1024 * 1024)
+    erreurs.push("Pièces jointes trop lourdes (plus de 15 Mo) : retirez des annexes.");
   return erreurs;
 }
 
@@ -62,7 +73,7 @@ function getTransport() {
  * Envoie l'e-mail. Sans SMTP configuré, mode simulation : le message est écrit
  * dans data/outbox/*.eml (ouvrable avec n'importe quel logiciel de messagerie).
  */
-export async function envoyerEmail(contenu, profil, { relance = false } = {}) {
+export async function envoyerEmail(contenu, profil, { relance = false, documents = [] } = {}) {
   const nom = [profil.prenom, profil.nom].join(" ");
   const mail = {
     from: { name: nom, address: process.env.SMTP_FROM || profil.email },
@@ -72,8 +83,8 @@ export async function envoyerEmail(contenu, profil, { relance = false } = {}) {
     text: contenu.message,
     attachments: [],
   };
-  if (contenu.pieceJointe && !relance) {
-    mail.attachments.push({ filename: contenu.pieceJointe.nom, path: path.join(UPLOAD_DIR, profil.cv.fichier) });
+  if (!relance) {
+    for (const d of documents) mail.attachments.push({ filename: d.nom, path: path.join(UPLOAD_DIR, d.fichier) });
   }
   const info = await getTransport().sendMail(mail);
   if (smtpConfigure()) return { mode: "smtp", messageId: info.messageId };

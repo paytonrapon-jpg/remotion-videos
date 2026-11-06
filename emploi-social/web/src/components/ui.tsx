@@ -24,14 +24,16 @@ export function Puces<T extends string>({
   valeurs,
   onChange,
   label,
+  compact,
 }: {
   options: { valeur: T; libelle: string; titre?: string }[];
   valeurs: T[];
   onChange: (v: T[]) => void;
   label: string;
+  compact?: boolean;
 }) {
   return (
-    <div className="puces" role="group" aria-label={label}>
+    <div className={`puces ${compact ? "compact" : ""}`} role="group" aria-label={label}>
       {options.map((o) => {
         const actif = valeurs.includes(o.valeur);
         return (
@@ -41,6 +43,7 @@ export function Puces<T extends string>({
             className={`puce ${actif ? "active" : ""}`}
             aria-pressed={actif}
             title={o.titre}
+            aria-label={o.titre ?? o.libelle}
             onClick={() => onChange(actif ? valeurs.filter((v) => v !== o.valeur) : [...valeurs, o.valeur])}
           >
             {o.libelle}

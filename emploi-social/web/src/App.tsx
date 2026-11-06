@@ -114,7 +114,7 @@ export function App() {
   if (!ctx) return <div className="centre"><p className="muted">Chargement…</p></div>;
 
   const enAttente = candidatures.filter((c) => c.statut === "a_autoriser" || c.statut === "autorisee").length;
-  const profilIncomplet = !profil!.prenom || !profil!.email || !profil!.diplomes.length || !profil!.cv;
+  const profilIncomplet = !profil!.prenom || !profil!.email || !profil!.canton || !profil!.diplomes.length || !profil!.cv;
 
   return (
     <AppCtx.Provider value={ctx}>
@@ -125,8 +125,8 @@ export function App() {
             <span>Emploi <strong>Social</strong></span>
           </a>
           <div className="etats">
-            <span className={`pastille ${config!.apiFranceTravail ? "ok" : "demo"}`} title={config!.apiFranceTravail ? "Offres réelles via l'API France Travail" : "Offres d'exemple : configurez l'API France Travail dans .env"}>
-              {config!.apiFranceTravail ? "France Travail" : "Offres d'exemple"}
+            <span className={`pastille ${config!.sourceOffres === "job-room" ? "ok" : "demo"}`} title={config!.sourceOffres === "job-room" ? "Offres réelles de job-room.ch, la bourse de l'emploi publique suisse" : "Offres fictives (OFFRES_DEMO=1)"}>
+              {config!.sourceOffres === "job-room" ? "🇨🇭 job-room.ch" : "Offres d'exemple"}
             </span>
             <span className={`pastille ${config!.smtp ? "ok" : "demo"}`} title={config!.smtp ? "Les e-mails autorisés partent réellement" : "Envois simulés : configurez SMTP dans .env"}>
               {config!.smtp ? "Envoi réel" : "Envoi simulé"}

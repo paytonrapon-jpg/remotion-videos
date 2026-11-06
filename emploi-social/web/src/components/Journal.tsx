@@ -48,7 +48,7 @@ export function JournalPage() {
           {journal.map((e) => (
             <li key={e.id}>
               <span className="icone" aria-hidden>{ICONES[e.type] ?? "•"}</span>
-              <span className="quand">{new Date(e.at).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</span>
+              <span className="quand">{new Date(e.at).toLocaleString("fr-CH", { dateStyle: "short", timeStyle: "short" })}</span>
               <span>{e.message}</span>
               {e.empreinte && <code title={e.empreinte}>{e.empreinte.slice(0, 10)}</code>}
             </li>

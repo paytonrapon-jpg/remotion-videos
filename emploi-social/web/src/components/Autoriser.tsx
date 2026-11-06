@@ -1,7 +1,15 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { api, ApiError, type Apercu, type Candidature, dateCourte } from "../api";
+import { api, ApiError, type Apercu, type Candidature, dateCourte, ko } from "../api";
 import { useApp } from "../App";
 import { Erreurs, Modal } from "./ui";
+
+const hote = (u: string) => {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return u;
+  }
+};
 
 /**
  * Écran d'autorisation : affiche le contenu EXACT qui partira. L'autorisation
@@ -57,10 +65,14 @@ export function AutorisationModal({ candidature, onClose }: { candidature: Candi
           {contenu.canal === "email" ? (
             <div><dt>À</dt><dd><strong>{contenu.a || "?"}</strong></dd></div>
           ) : (
-            <div><dt>Dépôt sur</dt><dd><a href={contenu.url} target="_blank" rel="noreferrer">{contenu.url}</a></dd></div>
+            <div><dt>Dépôt sur</dt><dd><a href={contenu.url} target="_blank" rel="noreferrer" title={contenu.url}>{hote(contenu.url)} ↗</a></dd></div>
           )}
           <div><dt>Objet</dt><dd>{contenu.objet}</dd></div>
-          <div><dt>Pièce jointe</dt><dd>{contenu.pieceJointe ? `📎 ${contenu.pieceJointe.nom} (${Math.round(contenu.pieceJointe.taille / 1024)} Ko)` : "Aucune"}</dd></div>
+          <div><dt>{contenu.canal === "email" ? "Pièces jointes" : "À joindre"}</dt><dd>
+            {contenu.piecesJointes.length ? (
+              <ul className="pj">{contenu.piecesJointes.map((d) => <li key={d.nom + d.taille}>📎 {d.nom} <span className="muted">({ko(d.taille)})</span></li>)}</ul>
+            ) : "Aucune"}
+          </dd></div>
         </dl>
         <pre className="corps-mail">{contenu.message}</pre>
       </div>
