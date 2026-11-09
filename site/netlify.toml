@@ -1,0 +1,4 @@
+# Site statique : aucune compilation, Netlify publie ce dossier tel quel.
+[build]
+  publish = "."
+  command = "echo site statique"

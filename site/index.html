@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="SkyElite : réservez un empty leg en jet privé, pour l'avion entier ou en cofinancement.">
+<title>SkyElite Réservation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout : site de compagnie haut de gamme — bandeau photo plein cadre, sections alternées clair / nuit, cartes de vols avec vignette d'appareil, formulaire en panneau latéral */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --sunk:#eaeff4; --ink:#0d1a2a; --muted:#59687a; --line:#d6dee7;
+  --night:#0b1726; --night-2:#132439; --on-night:#eef2f7; --mist:#b7c3d1;
+  --brass:#c8913a; --brass-ink:#2c1a03; --ok:#1d7f55; --ok-bg:#ddf2e8; --warn:#9a5a06; --warn-bg:#fbedd4; --bad:#a3322a; --bad-bg:#f8e1de;
+  --display:"Instrument Serif","Iowan Old Style",Georgia,serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#09121d; --surface:#101c2c; --sunk:#0c1724; --ink:#e7edf5; --muted:#97a6b9; --line:#22334a;
+  --night:#060e18; --night-2:#0e1c2e; --on-night:#eef2f7; --mist:#a9b6c6;
+  --brass:#e0a64e; --brass-ink:#241500; --ok:#4cc492; --ok-bg:#12352a; --warn:#f0b45a; --warn-bg:#3a2a10; --bad:#f08a80; --bad-bg:#3b1a17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#09121d; --surface:#101c2c; --sunk:#0c1724; --ink:#e7edf5; --muted:#97a6b9; --line:#22334a;
+  --night:#060e18; --night-2:#0e1c2e; --on-night:#eef2f7; --mist:#a9b6c6;
+  --brass:#e0a64e; --brass-ink:#241500; --ok:#4cc492; --ok-bg:#12352a; --warn:#f0b45a; --warn-bg:#3a2a10; --bad:#f08a80; --bad-bg:#3b1a17; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.005em;line-height:1.05}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--brass)}
+.label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* Barre de navigation */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:15;background:var(--night)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:12;background:color-mix(in oklab,var(--night) 92%,transparent);backdrop-filter:blur(8px);color:var(--on-night);border-bottom:1px solid color-mix(in oklab,var(--on-night) 10%,transparent)}
+.nav .wrap{display:flex;align-items:center;gap:18px;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:26px;line-height:1;background:none;border:0;color:inherit;padding:0}
+.brand svg{width:30px;height:30px}
+.links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.links button{background:none;border:0;color:var(--mist);padding:7px 10px;border-radius:8px;font-size:14px}
+.links button:hover{color:var(--on-night)}
+.links button[aria-current="page"]{color:var(--on-night);background:color-mix(in oklab,var(--on-night) 12%,transparent)}
+.links .cta{background:var(--brass);color:var(--brass-ink);font-weight:600}
+@media (max-width:760px){.links{margin-left:0;width:100%}.links .sec{display:none}}
+
+/* Bandeau */
+.hero{position:relative;color:var(--on-night);background:var(--night);overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgb(6 14 24 / .92) 0%,rgb(6 14 24 / .65) 45%,rgb(6 14 24 / .15) 100%),linear-gradient(0deg,rgb(6 14 24 / .7),transparent 40%)}
+.hero .wrap{position:relative;z-index:1;padding-block:clamp(56px,10vw,120px) clamp(40px,7vw,80px);display:grid;gap:18px;max-width:1120px}
+.hero h1{font-size:clamp(40px,7vw,76px);max-width:13ch}
+.hero h1 em{color:var(--brass);font-style:italic}
+.hero p{margin:0;max-width:52ch;color:var(--mist);font-size:17px}
+.hero .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.facts{display:flex;gap:10px 28px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid color-mix(in oklab,var(--on-night) 18%,transparent);font-size:14px;color:var(--mist)}
+.facts b{display:block;color:var(--on-night);font-weight:600;font-size:15px}
+
+.btn{border:0;border-radius:999px;padding:12px 22px;font-weight:600;background:var(--brass);color:var(--brass-ink);font-size:15px}
+.btn.line{background:transparent;border:1px solid color-mix(in oklab,currentColor 40%,transparent);color:inherit}
+.btn.small{padding:9px 16px;font-size:14px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+section.block{padding-block:clamp(48px,8vw,88px)}
+section.block .head{display:grid;gap:10px;margin-bottom:28px;max-width:62ch}
+section.block h2{font-size:clamp(32px,4.6vw,48px)}
+section.block .head p{margin:0;color:var(--muted)}
+.dark{background:var(--night);color:var(--on-night)}
+.dark .head p{color:var(--mist)}
+
+/* Deux formules */
+.offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:760px){.offers{grid-template-columns:1fr}}
+.offer{position:relative;border-radius:18px;overflow:hidden;min-height:340px;display:grid;align-content:end;color:var(--on-night);background:var(--night)}
+.offer img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.offer::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgb(6 14 24 / .92) 10%,rgb(6 14 24 / .25) 70%)}
+.offer div{position:relative;z-index:1;padding:24px;display:grid;gap:8px}
+.offer h3{font-size:32px}
+.offer p{margin:0;color:var(--mist);max-width:42ch}
+
+/* Vols */
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{flex:1;min-width:0;max-width:300px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px}
+.note{font-size:13px;color:var(--muted);margin:0}
+.list{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-columns:200px minmax(0,1fr) 250px;overflow:hidden}
+.card .pic{position:relative;min-height:150px;background:var(--sunk)}
+.card .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card .main{padding:18px 20px;display:grid;gap:10px;align-content:center;min-width:0}
+.route{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.ap .code{font-family:var(--mono);font-weight:600;font-size:24px;line-height:1}
+.ap .city{font-size:13.5px;color:var(--muted)}
+.ap.r{text-align:right}
+.path{border-top:1px dashed var(--line);position:relative}
+.path svg{position:absolute;left:50%;top:-11px;transform:translateX(-50%);width:22px;height:22px;background:var(--surface);padding:0 3px;color:var(--brass)}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.stub{border-left:1px dashed var(--line);padding:18px 20px;display:grid;gap:10px;align-content:space-between}
+.price{font-family:var(--display);font-size:38px;line-height:1}
+.co{font-size:13.5px}
+.co b{color:var(--brass)}
+@media (max-width:900px){.card{grid-template-columns:150px minmax(0,1fr)}.stub{grid-column:1/-1;border-left:0;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap}}
+@media (max-width:560px){.card{grid-template-columns:1fr}.card .pic{min-height:150px}}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}
+
+/* Étapes */
+.steps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:center}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+.steps ol{list-style:none;margin:0;padding:0;display:grid;gap:22px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:44px 1fr;gap:14px;counter-increment:s}
+.steps li::before{content:counter(s);font-family:var(--display);font-size:30px;color:var(--brass);line-height:1}
+.steps li b{display:block;font-size:17px;margin-bottom:2px}
+.steps li span{color:var(--mist)}
+.photo{border-radius:18px;overflow:hidden;aspect-ratio:4/3;max-width:100%}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Questions */
+.faq{display:grid;gap:10px;max-width:780px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::after{content:"+";color:var(--brass);font-size:20px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--muted)}
+
+footer{background:var(--night);color:var(--mist);font-size:13.5px}
+footer .wrap{padding-block:34px;display:flex;gap:16px 40px;flex-wrap:wrap;justify-content:space-between}
+footer a{color:var(--on-night)}
+
+/* Vues secondaires */
+.page{padding-block:36px 72px;display:grid;gap:14px}
+.page h2{font-size:36px}
+
+/* Panneau de réservation */
+.sheet{position:fixed;inset:0;z-index:20;display:grid;grid-template-columns:1fr min(540px,100%);background:rgb(5 12 22 / .55)}
+.sheet .panel{background:var(--surface);overflow-y:auto;padding:22px max(20px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) 20px;display:grid;gap:14px;align-content:start;padding-top:calc(22px + env(safe-area-inset-top,0px))}
+@media (max-width:620px){.sheet{grid-template-columns:1fr}.sheet .shade{display:none}}
+.ph{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.ph h2{font-size:30px}
+.x{border:0;background:var(--sunk);border-radius:50%;width:36px;height:36px;font-size:18px;line-height:1;flex-shrink:0}
+.summary{background:var(--sunk);border-radius:14px;padding:12px 14px;display:grid;gap:4px}
+.summary .r1{font-family:var(--mono);font-weight:600;font-size:18px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opt{border:1.5px solid var(--line);border-radius:14px;padding:12px;text-align:left;background:none;display:grid;gap:3px}
+.opt[aria-pressed="true"]{border-color:var(--brass);background:color-mix(in oklab,var(--brass) 10%,transparent)}
+.opt .t{font-weight:600}
+.opt .p{font-family:var(--display);font-size:26px;line-height:1.1}
+.opt .d{font-size:12.5px;color:var(--muted)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.form .full{grid-column:1/-1}
+.field{display:grid;gap:4px;min-width:0}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;min-width:0}
+.field textarea{min-height:84px;resize:vertical}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px}
+.check input{margin-top:3px}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}
+.total b{font-family:var(--display);font-size:28px;font-weight:400}
+.err{color:var(--bad);font-size:13.5px;margin:0}
+.done{background:var(--ok-bg);color:var(--ok);border-radius:12px;padding:14px;font-weight:500}
+.fallback{background:var(--warn-bg);color:var(--ink);border-radius:12px;padding:14px;display:grid;gap:8px;font-size:14px}
+.fallback pre{white-space:pre-wrap;font-family:var(--mono);font-size:12.5px;background:var(--surface);border-radius:8px;padding:10px;margin:0;overflow-wrap:anywhere}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* Demandes */
+.req{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:6px}
+.req .h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.req .h b{font-family:var(--mono)}
+.req p{margin:0;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.pill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px}
+.s-nouvelle{background:var(--warn-bg);color:var(--warn)}
+.s-contact{background:var(--sunk);color:var(--ink)}
+.s-confirmee{background:var(--ok-bg);color:var(--ok)}
+.s-annulee{background:var(--bad-bg);color:var(--bad)}
+.req select{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:5px 8px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:30;max-width:calc(100vw - 32px)}
+</style>
+</head>
+<body>
+
+
+<nav class="nav" aria-label="Navigation principale">
+  <div class="wrap">
+    <button class="brand" data-go="vols" aria-label="SkyElite, accueil"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5 17.5 27 12l-3 3.5-8 2.2-3.2 5.3h-2.1l1.4-4.5L7 19.4z" fill="var(--brass)"/></svg>SkyElite</button>
+    <div class="links">
+      <button class="sec" data-scroll="vols-list">Vols</button>
+      <button class="sec" data-scroll="formules">Formules</button>
+      <button class="sec" data-scroll="comment">Comment ça marche</button>
+      <button class="sec" data-scroll="questions">Questions</button>
+      <button class="cta" id="custom">Demander un trajet</button>
+    </div>
+  </div>
+</nav>
+
+<div id="v-vols">
+  <header class="hero">
+    <img src="img/hero.jpg" alt="Jet privé sur le tarmac de nuit, accueilli par un placeur">
+    <div class="wrap">
+      <span class="eyebrow">Empty legs · Europe et monde</span>
+      <h1>Le jet privé, <em>au prix</em> du vol retour.</h1>
+      <p>Chaque jour, des jets repartent à vide après avoir déposé leurs passagers. SkyElite vous propose ces vols à prix réduit, pour l'avion entier ou en cofinancement, et s'occupe de tout avec l'opérateur.</p>
+      <div class="actions"><button class="btn" data-scroll="vols-list">Voir les vols disponibles</button><button class="btn line" data-open-custom>Demander un autre trajet</button></div>
+      <div class="facts"><span><b>Prix de l'avion entier</b>affiché sur chaque vol</span><span><b>Cofinancement</b>partagez l'avion, divisez le prix</span><span><b>Sans engagement</b>aucun paiement avant confirmation</span></div>
+    </div>
+  </header>
+
+  <section class="block" id="formules">
+    <div class="wrap">
+      <div class="head"><span class="eyebrow">Deux formules</span><h2>Voyagez seul, ou partagez l'avion</h2></div>
+      <div class="offers">
+        <article class="offer"><img src="img/longrange.jpg" alt="Jet long-courrier sur une piste de montagne" loading="lazy"><div><span class="eyebrow">Avion entier</span><h3>L'appareil rien que pour vous</h3><p>Vous privatisez le jet au prix du vol à vide, pour vous, votre famille ou votre équipe, jusqu'au nombre de places de l'avion.</p></div></article>
+        <article class="offer"><img src="img/cabin.jpg" alt="Cabine de jet privé avec fauteuils en cuir crème" loading="lazy"><div><span class="eyebrow">Cofinancement</span><h3>Une place, le même confort</h3><p>Le prix de l'avion est partagé entre les passagers. Vous réservez une ou plusieurs places, à partir du prix affiché par personne.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="vols-list" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><span class="eyebrow">Vols disponibles</span><h2>Les prochains départs</h2><p>Prix pour l'avion entier, estimés hors taxes, sous réserve de disponibilité. Un empty leg suit le planning de l'opérateur et peut être déplacé ou annulé.</p></div>
+      <div class="tools"><div class="bar" id="regions" role="group" aria-label="Destination"></div><input class="search" id="q" type="search" placeholder="Ville ou code aéroport" aria-label="Rechercher une ville"><span class="note" id="count"></span></div>
+      <div class="list" id="list"><div class="empty">Chargement des vols disponibles…</div></div>
+    </div>
+  </section>
+
+  <section class="block dark" id="comment">
+    <div class="wrap steps">
+      <div>
+        <div class="head"><span class="eyebrow">Comment ça marche</span><h2>Trois étapes, une seule équipe</h2></div>
+        <ol>
+          <li><div><b>Vous choisissez un vol</b><span>Avion entier ou places en cofinancement, ou un trajet sur mesure.</span></div></li>
+          <li><div><b>Vous envoyez votre demande</b><span>Gratuitement et sans engagement, en une minute.</span></div></li>
+          <li><div><b>Nous confirmons avec l'opérateur</b><span>SkyElite vérifie la disponibilité, vous rappelle et organise votre vol de bout en bout.</span></div></li>
+        </ol>
+      </div>
+      <div class="photo"><img src="img/salon.jpg" alt="Salon de cabine avec table et magazines" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section class="block" id="questions">
+    <div class="wrap">
+      <div class="head"><span class="eyebrow">Questions fréquentes</span><h2>Ce qu'il faut savoir</h2></div>
+      <div class="faq">
+        <details><summary>Qu'est-ce qu'un empty leg ?</summary><p>C'est un vol de repositionnement : un jet privé qui rejoint sa base ou son prochain client sans passagers. Comme le trajet est déjà prévu, il est proposé bien moins cher qu'un affrètement classique.</p></details>
+        <details><summary>Le vol peut-il être modifié ou annulé ?</summary><p>Oui. Un empty leg dépend du planning de l'opérateur : si l'avion est réaffrété, l'horaire peut changer ou le vol être annulé. Nous vous prévenons dès que possible et ne demandons aucun paiement avant confirmation.</p></details>
+        <details><summary>Comment fonctionne le cofinancement ?</summary><p>Le prix de l'avion entier est réparti entre les passagers. Le prix « dès … par personne » correspond à un avion complet. Nous vous confirmons votre part avant toute réservation.</p></details>
+        <details><summary>Quand dois-je payer ?</summary><p>Uniquement après notre confirmation, une fois la disponibilité vérifiée auprès de l'opérateur. L'envoi d'une demande est gratuit et ne vous engage pas.</p></details>
+        <details><summary>Je ne trouve pas mon trajet.</summary><p>Utilisez « Demander un trajet » : indiquez votre destination et vos dates, nous cherchons un empty leg ou un vol adapté.</p></details>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<footer><div class="wrap"><div><b style="font-family:var(--display);font-size:22px;color:var(--on-night);font-weight:400">SkyElite</b><br>Empty legs et vols partagés en jet privé.</div><div>Suivez-nous sur Instagram : <a href="https://www.instagram.com/skyelite/" target="_blank" rel="noopener">@SkyElite</a></div><div>Images d'illustration. Prix estimés hors taxes, sous réserve de disponibilité.</div></div></footer>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="shade" id="shade"></div>
+  <form class="panel" id="form" name="reservation" method="POST" data-netlify="true" netlify-honeypot="societe" autocomplete="on" novalidate>
+    <input type="hidden" name="form-name" value="reservation">
+    <p hidden><label>Ne pas remplir : <input name="societe"></label></p>
+    <input type="hidden" name="vol" id="hVol"><input type="hidden" name="formule" id="hFormule"><input type="hidden" name="nombre" id="hNombre"><input type="hidden" name="prix" id="hPrix">
+    <div class="ph"><div><div class="label">Demande de réservation</div><h2 id="fTitle" style="font-size:22px">Vol</h2></div><button type="button" class="x" id="close" aria-label="Fermer">×</button></div>
+    <div class="summary" id="fSummary"></div>
+    <div class="opts" id="fOpts" role="group" aria-label="Formule"></div>
+    <div class="form">
+      <div class="field" id="seatsField"><label class="label" for="fSeats">Places souhaitées</label><select id="fSeats"></select></div>
+      <div class="field" id="paxField"><label class="label" for="fPax">Passagers</label><select id="fPax"></select></div>
+      <div class="field full" id="routeField" hidden><label class="label" for="fRoute">Trajet et date souhaités</label><input id="fRoute" name="trajet_souhaite" placeholder="Ex. Genève → Ibiza, vers le 20 décembre"></div>
+      <div class="field"><label class="label" for="fName">Nom et prénom</label><input id="fName" name="nom" autocomplete="name" required></div>
+      <div class="field"><label class="label" for="fPhone">Téléphone</label><input id="fPhone" name="telephone" type="tel" autocomplete="tel" required></div>
+      <div class="field full"><label class="label" for="fEmail">E-mail</label><input id="fEmail" name="email" type="email" autocomplete="email" required></div>
+      <div class="field full"><label class="label" for="fMsg">Précisions (bagages, animaux, transfert…)</label><textarea id="fMsg" name="precisions"></textarea></div>
+      <label class="check full"><input type="checkbox" id="fOk" name="accord" value="oui" required> J'accepte que SkyElite utilise ces informations pour traiter ma demande et me recontacter.</label>
+    </div>
+    <div class="total" id="fTotal"></div>
+    <p class="err" id="fErr" hidden></p>
+    <button class="btn" type="submit" id="fSend">Envoyer ma demande</button>
+    <div id="fResult"></div>
+  </form>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

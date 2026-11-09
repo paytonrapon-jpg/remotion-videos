@@ -30,8 +30,9 @@ Application SkyElite (catalogue des vols) : https://claude.ai/artifact/E3uurAWMh
 8. Écrire `reels/batches/AAAA-MM-JJ.json` au même format que `reels/batches/2026-10-28.json` (props du modèle `EmptyLegReel` : villes, codes pays ISO, date en français, prix, places, total, appareil, durée de vol estimée, légende Instagram ; la mention du bas est fixe avec emojis, hashtags et « 📩 Plus d'infos en DM @SkyElite »).
 9. `node scripts/render-reels.mjs reels/batches/AAAA-MM-JJ.json`, puis vérifier une image de chaque vidéo (`npx remotion still EmptyLegReel … --props=…`) : textes lisibles, rien qui déborde.
 10. **Site de réservation** https://claude.ai/artifact/Txdkcnk49b7Ak181MakZZR : pour chaque vol utilisé (et tout nouveau vol trouvé avec prix), écrire un document dans sa collection `flights` (id `<départ>-<arrivée>-<AAAA-MM-JJ>` en minuscules) avec `from`, `fromCity`, `to`, `toCity`, `region`, `date`, `dateEnd`, `time`, `aircraft`, `seats`, `priceTotal` (prix client majoré, nombre) et `active: true`. Ne jamais y mettre l'opérateur ni sa source.
+10 bis. **Site public (Netlify)** : mettre aussi à jour `site/flights.json` (même format que les documents `flights` ci-dessus, avec `id`) : ajouter chaque nouveau vol avec son prix client majoré, retirer les vols dont la date (ou `dateEnd`) est passée. Le commit de l'étape 12 déclenche la mise en ligne automatique.
 11. Envoyer les 3 MP4 dans les assets de la page Reels (Artifact publish, `asset: true`, `file_paths`), puis écrire 3 documents dans la collection `reels` (id `AAAA-MM-JJ-<id>`) avec : `day`, `order`, `route`, `flightDate` (AAAA-MM-JJ), `title`, `caption`, `videoUrl` (url renvoyée par l'upload), `source`, `sourceUrl`, `price`, et `footage` (chemin de la vidéo-source utilisée, ou `animation`).
-12. Commiter le fichier du lot et `public/footage/drive-manifest.json` (pas les MP4) et pousser sur `emptyleg-reel`.
+12. Commiter le fichier du lot, `site/flights.json` et `public/footage/drive-manifest.json` (pas les MP4) et pousser sur `emptyleg-reel`.
 
 ## Bibliothèque d'extraits (`public/footage/`)
 `manifest.json` liste les extraits fournis par SkyElite :
