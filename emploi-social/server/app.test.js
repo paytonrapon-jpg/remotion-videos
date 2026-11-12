@@ -138,3 +138,14 @@ test("conversion d'une annonce job-room.ch", async () => {
   assert.match(o.description, /^Diplôme ES ou HES & permis/);
   assert.ok(o.diplomesCites.includes("HES-TS"));
 });
+
+test("métiers travailleur·euse social·e, famille, référent·e et conseiller·ère reconnus", async () => {
+  const { metierDuTitre } = await import("./referentiel.js");
+  assert.equal(metierDuTitre("Travailleuse sociale à 80%"), "ts");
+  assert.equal(metierDuTitre("Travailleur social famille 80%"), "ts-famille");
+  assert.equal(metierDuTitre("Travailleuse sociale auprès des familles"), "ts-famille");
+  assert.equal(metierDuTitre("Référent·e social·e à 60 %"), "referent");
+  assert.equal(metierDuTitre("Conseiller·ère social·e"), "conseil");
+  assert.equal(metierDuTitre("Conseiller en insertion professionnelle"), "insertion");
+  assert.equal(metierDuTitre("Assistante sociale HES"), "as");
+});

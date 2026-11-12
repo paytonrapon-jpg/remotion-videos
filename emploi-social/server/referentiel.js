@@ -21,7 +21,27 @@ export const METIERS = [
   {
     id: "as", libelle: "Assistant·e social·e (HES)", famille: "social",
     recherche: ["assistant social", "assistante sociale", "Sozialarbeiter", "Sozialarbeiterin"],
-    titre: /(assistant[·.\-/]?e?s?[·.\-/]?\s+soci|assistante?s? soci|travailleu(r|se)s? soci|sozialarbeit)/i,
+    titre: /(assistant[·.\-/]?e?s?[·.\-/]?\s+soci|assistante?s? soci|sozialarbeit)/i,
+  },
+  {
+    id: "ts", libelle: "Travailleur·euse social·e", famille: "social",
+    recherche: ["travailleur social", "travailleuse sociale", "travailleurs sociaux"],
+    titre: /travai?lleu(r|se|rs|ses)([·.\-/(]+[\wÀ-ÿ]{1,5}\)?)*\s+soci/i,
+  },
+  {
+    id: "ts-famille", libelle: "Travailleur·euse social·e famille", famille: "famille",
+    recherche: ["travailleur social famille", "travailleuse sociale famille", "travailleur social auprès des familles", "Familienbegleitung"],
+    titre: /(travai?lleu(r|se|rs|ses).{0,12}soci.{0,40}famil|famil.{0,30}travai?lleu(r|se).{0,12}soci|familienbegleit|sozialp[äa]dagogische familienbegleitung)/i,
+  },
+  {
+    id: "referent", libelle: "Référent·e social·e", famille: "social",
+    recherche: ["référent social", "référente sociale", "référent·e social·e"],
+    titre: /r[ée]f[ée]ren(t|te|ts|tes)([·.\-/(]+[\wÀ-ÿ]{1,5}\)?)*\s+soci/i,
+  },
+  {
+    id: "conseil", libelle: "Conseiller·ère social·e", famille: "social",
+    recherche: ["conseiller social", "conseillère sociale", "conseiller en action sociale", "Sozialberater", "Sozialberaterin"],
+    titre: /(conseill(er|[èe]re|ers|[èe]res)([·.\-/(]+[\wÀ-ÿ]{1,5}\)?)*\s+(soci|en action sociale)|sozialberat)/i,
   },
   {
     id: "curateur", libelle: "Curateur·rice / mandataire de protection", famille: "social",
@@ -119,7 +139,7 @@ export const familleDe = (metierId) => METIERS.find((m) => m.id === metierId)?.f
 
 /** Métier reconnu dans un intitulé d'annonce. */
 // Les métiers les plus spécifiques sont testés en premier (« éducateur de l'enfance » avant « éducateur »).
-const PRIORITE = ["ede", "ase", "curateur", "msp", "anim", "insertion", "asa", "encadrement", "as", "educ-social"];
+const PRIORITE = ["ede", "ase", "curateur", "msp", "anim", "ts-famille", "referent", "conseil", "insertion", "asa", "encadrement", "ts", "as", "educ-social"];
 export const metierDuTitre = (titre) =>
   PRIORITE.map((id) => METIERS.find((m) => m.id === id)).find((m) => m.titre.test(titre ?? ""))?.id ?? "";
 

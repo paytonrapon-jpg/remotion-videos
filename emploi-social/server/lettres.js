@@ -27,6 +27,10 @@ const ANGLES = {
     valeurs: "la conviction que chacun·e peut construire un parcours professionnel, et une attention aux compétences de chaque personne",
     apport: "accompagner individuellement les parcours, encadrer en situation de travail et développer les liens avec les employeurs",
   },
+  famille: {
+    valeurs: "le soutien à la parentalité, l'intérêt de l'enfant et le respect de la place de chaque membre de la famille",
+    apport: "accompagner les familles dans leur quotidien, évaluer les situations, soutenir les compétences parentales et travailler en réseau avec les services de protection de l'enfance",
+  },
   encadrement: {
     valeurs: "la qualité de l'accompagnement, le soutien aux équipes et l'éthique de l'intervention sociale",
     apport: "conduire une équipe pluridisciplinaire, garantir la qualité des prestations et entretenir le travail en réseau",

@@ -1,7 +1,8 @@
 # Emploi Social (Suisse)
 
 Application locale pour trouver des offres d'emploi du **secteur social en Suisse**
-(éducateur·rice social·e ES/HES, ASE, EDE, assistant·e social·e, curateur·rice, MSP,
+(éducateur·rice social·e ES/HES, ASE, EDE, assistant·e social·e, travailleur·euse social·e,
+travailleur·euse social·e famille, référent·e social·e, conseiller·ère social·e, curateur·rice, MSP,
 animateur·rice socioculturel·le, job coach, ASA, responsable d'unité…) et envoyer ses
 candidatures **uniquement après autorisation explicite**.
 
