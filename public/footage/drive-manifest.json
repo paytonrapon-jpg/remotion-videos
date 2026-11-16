@@ -206,5 +206,48 @@
       "inutilisable"
     ],
     "watermark": "Vidéo explicative avec présentateur en bas, titres et sous-titres incrustés sur toute la durée, @takairjet : ne pas utiliser."
+  },
+  {
+    "file": "footage/drive/0c62392e737d43c68029e01668d5286c.mp4",
+    "duration": 23.5,
+    "tags": [
+      "hélicoptère",
+      "villa",
+      "transfert VIP",
+      "palmiers",
+      "soleil"
+    ],
+    "watermark": "@marbella_vip_ride effacé par delogo (en haut à droite avant 9,5 s, en bas à gauche ensuite). Carte Instagram après 18,5 s : à éviter. Ce n'est pas un jet : à utiliser pour un vol vers une destination ensoleillée (Côte d'Azur, Espagne, Italie, îles) en parlant du transfert.",
+    "segments": [
+      {
+        "from": 0.2,
+        "to": 4.5,
+        "tags": [
+          "hélicoptère",
+          "villa"
+        ],
+        "label": "Hélicoptère qui se pose près d'une villa, van VIP"
+      },
+      {
+        "from": 4.5,
+        "to": 8.5,
+        "tags": [
+          "transfert VIP",
+          "villa"
+        ],
+        "label": "Van VIP qui avance, jardin et palmiers"
+      },
+      {
+        "from": 10.0,
+        "to": 14.0,
+        "tags": [
+          "voiture",
+          "villa"
+        ],
+        "label": "Voiture de sport devant la villa"
+      }
+    ],
+    "delogo": "delogo=x=725:y=480:w=290:h=140:enable='lt(t,9.5)',delogo=x=75:y=1045:w=290:h=145:enable='gte(t,9.5)'",
+    "usable_seconds": 12.3
   }
 ]
