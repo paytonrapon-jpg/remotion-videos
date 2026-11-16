@@ -21,7 +21,7 @@
     ],
     "delogo": "delogo=x=760:y=470:w=260:h=165",
     "usable_seconds": 2.5,
-    "note": "Trop courte pour servir seule de vidéo-source (2,5 s utilisables) : ne pas l'utiliser comme source d'un reel."
+    "note": "Courte (2,5 s utilisables) : seulement comme plan d'appoint dans un reel qui mélange plusieurs sources."
   },
   {
     "file": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
