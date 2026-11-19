@@ -9,6 +9,7 @@
     "build": "vite build",
     "start": "vite build && node --env-file-if-exists=.env server/index.js",
     "serve": "node --env-file-if-exists=.env server/index.js",
+    "telephone": "vite build && node --env-file-if-exists=.env server/index.js --telephone",
     "test": "node --test --test-force-exit server/*.test.js",
     "typecheck": "tsc --noEmit -p web"
   },

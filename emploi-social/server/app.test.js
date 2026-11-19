@@ -243,3 +243,17 @@ test("postuler depuis un texte d'annonce : CV et lettre adaptés, autorisation o
   assert.equal(maj.autorisation, null);
   assert.equal((await api("POST", `/candidatures/${c.id}/envoyer`)).status, 403);
 });
+
+test("accès téléphone : code obligatoire", async () => {
+  const { protegerPar } = await import("./acces.js");
+  const { createApp: creer } = await import("./app.js");
+  const srv = creer({ proteger: protegerPar("1234-5678") }).listen(0);
+  await new Promise((r) => srv.once("listening", r));
+  const url = `http://127.0.0.1:${srv.address().port}/api/config`;
+  assert.equal((await fetch(url)).status, 401);
+  const mauvais = Buffer.from("moi:0000-0000").toString("base64");
+  assert.equal((await fetch(url, { headers: { Authorization: `Basic ${mauvais}` } })).status, 401);
+  const bon = Buffer.from("moi:1234-5678").toString("base64");
+  assert.equal((await fetch(url, { headers: { Authorization: `Basic ${bon}` } })).status, 200);
+  srv.close();
+});

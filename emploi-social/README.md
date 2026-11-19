@@ -65,6 +65,19 @@ de travail, diplômes, CV, certificats de travail).
 Les offres sont réelles dès le départ. Les envois par e-mail sont **simulés** tant que l'e-mail
 n'est pas configuré : ils sont enregistrés dans `data/outbox/*.eml` (ouvrables avec Mail).
 
+## Utiliser l'application depuis votre téléphone
+
+Le téléphone doit être connecté au **même Wi-Fi** que le Mac. Sur le Mac, lancez :
+
+```
+npm run telephone
+```
+
+Le Terminal affiche l'adresse à ouvrir sur le téléphone (par ex. `http://192.168.1.23:5175`) et un
+**code d'accès**. Au premier accès, le téléphone demande un nom d'utilisateur (ce que vous voulez) et
+un mot de passe (le code). Le Mac doit rester allumé avec la fenêtre du Terminal ouverte. Si macOS
+demande d'autoriser les connexions entrantes pour « node », cliquez sur **Autoriser**.
+
 ## Envoyer réellement les e-mails
 
 Copiez `.env.example` en `.env`, puis renseignez votre compte e-mail :

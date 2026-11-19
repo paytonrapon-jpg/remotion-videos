@@ -60,8 +60,9 @@ function verifierLimite(data) {
   }
 }
 
-export function createApp() {
+export function createApp({ proteger = null } = {}) {
   const app = express();
+  if (proteger) app.use(proteger);
   app.use(express.json({ limit: "1mb" }));
 
   // ---- Configuration -------------------------------------------------------
