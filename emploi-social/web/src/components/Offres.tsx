@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { api, ApiError, type Candidature, type Offre, depuis } from "../api";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { api, ApiError, type Candidature, type Offre, depuis, RAYONS } from "../api";
+import { Carte, type Point } from "./Carte";
 import { useApp } from "../App";
 import { Modal, Puces, Score } from "./ui";
 
@@ -15,6 +16,8 @@ export function OffresPage() {
   const [metiers, setMetiers] = useState<string[]>(profil.metiers);
   const [cantons, setCantons] = useState<string[]>(profil.canton ? [profil.canton] : ROMANDIE);
   const [contrat, setContrat] = useState("");
+  const [rayon, setRayon] = useState(profil.lat ? profil.rayonKm || 30 : 0);
+  const [carte, setCarte] = useState(false);
   const [tauxMin, setTauxMin] = useState(profil.tauxMin);
   const [tauxMax, setTauxMax] = useState(profil.tauxMax);
   const [depuisJours, setDepuisJours] = useState(30);
@@ -35,7 +38,7 @@ export function OffresPage() {
       try {
         const q = new URLSearchParams({
           metiers: metiers.join(","), cantons: cantons.join(","), contrat, motsCles, tri,
-          tauxMin: String(tauxMin), tauxMax: String(tauxMax), depuis: String(depuisJours), page: String(p),
+          tauxMin: String(tauxMin), tauxMax: String(tauxMax), depuis: String(depuisJours), page: String(p), rayon: String(rayon),
         });
         const r = await api<Resultat>("GET", `/offres/recherche?${q}`);
         setPage(p);
@@ -46,7 +49,7 @@ export function OffresPage() {
         setChargement(false);
       }
     },
-    [metiers, cantons, contrat, motsCles, tri, tauxMin, tauxMax, depuisJours],
+    [metiers, cantons, contrat, motsCles, tri, tauxMin, tauxMax, depuisJours, rayon],
   );
 
   const chargerEnregistrees = useCallback(() => api<Offre[]>("GET", "/offres").then(setEnregistrees), []);
@@ -78,13 +81,32 @@ export function OffresPage() {
   };
 
   const liste = vue === "recherche" ? resultat?.resultats ?? [] : enregistrees;
+  const points: Point[] = useMemo(
+    () =>
+      liste
+        .filter((o) => o.lat && o.lon)
+        .map((o) => {
+          const sc = o.compat?.score ?? 0;
+          return { id: o.externalId, lat: o.lat!, lon: o.lon!, titre: o.intitule, sousTitre: `${o.employeur} · ${o.taux}`, ton: sc >= 75 ? "haut" : sc >= 50 ? "moyen" : "bas" };
+        }),
+    [liste],
+  );
   const cantonsOptions = config.referentiel.cantons.map((c) => ({ valeur: c.code, libelle: c.code, titre: c.nom }));
 
   return (
     <div className="page-offres">
       <aside className="filtres carte">
         <form onSubmit={(e) => { e.preventDefault(); setVue("recherche"); rechercher(0); }}>
-          <fieldset className="champ">
+          {profil.lat && (
+            <label className="champ">
+              <span>Autour de {profil.lieuReconnu.replace(/^\d{4} - /, "")}</span>
+              <select value={rayon} onChange={(e) => setRayon(Number(e.target.value))}>
+                {RAYONS.map((r) => <option key={r} value={r}>{r} km</option>)}
+                <option value={0}>Choisir des cantons</option>
+              </select>
+            </label>
+          )}
+          {!rayon && <fieldset className="champ">
             <legend>Cantons</legend>
             <div className="raccourcis">
               <button type="button" className="lien" onClick={() => setCantons(ROMANDIE)}>Suisse romande</button>
@@ -92,7 +114,7 @@ export function OffresPage() {
             </div>
             <Puces label="Cantons" options={cantonsOptions} valeurs={cantons} onChange={setCantons} compact />
             {cantons.length === 0 && <p className="aide">Aucun sélectionné = toute la Suisse.</p>}
-          </fieldset>
+          </fieldset>}
           <fieldset className="champ">
             <legend>Taux d'activité : {tauxMin} – {tauxMax} %</legend>
             <div className="curseurs">
@@ -152,7 +174,10 @@ export function OffresPage() {
               Enregistrées <span className="muted">({enregistrees.length})</span>
             </button>
           </div>
-          <button className="btn" onClick={() => setAjout(true)}>+ Ajouter une offre</button>
+          <div className="actions sans-marge">
+            <button className="btn" onClick={() => setCarte(!carte)} aria-pressed={carte}>{carte ? "Liste" : "Carte"}</button>
+            <button className="btn" onClick={() => setAjout(true)}>+ Ajouter une offre</button>
+          </div>
         </div>
 
         {resultat?.mode === "demo" && vue === "recherche" && (
@@ -176,6 +201,14 @@ export function OffresPage() {
           </div>
         )}
 
+        {carte && (
+          <Carte
+            points={points}
+            domicile={profil.lat ? { lat: profil.lat, lon: profil.lon! } : null}
+            rayonKm={rayon || undefined}
+            onSelect={(id) => { const o = liste.find((x) => x.externalId === id); if (o) setDetail(o); }}
+          />
+        )}
         <ul className="liste-offres">
           {liste.map((o) => (
             <li key={o.externalId}>
@@ -185,6 +218,7 @@ export function OffresPage() {
                   <h3>{o.intitule}</h3>
                   <p className="meta">
                     {o.employeur} · {o.lieu} {o.canton && <span className="canton">{o.canton}</span>}
+                    {o.distanceKm != null && <> · à {o.distanceKm} km</>}
                     {o.taux && <> · <strong>{o.taux}</strong></>}
                     {o.datePublication && <> · {depuis(o.datePublication)}</>}
                   </p>

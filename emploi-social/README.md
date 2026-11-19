@@ -15,6 +15,16 @@ candidatures **uniquement après autorisation explicite**.
     date de publication, recherche libre.
   - Mots-clés en français **et en allemand** (Sozialpädagoge, Fachperson Betreuung…).
   - Les annonces hors métiers sociaux (soins, administration…) sont masquées, les doublons fusionnés.
+- **Questionnaire de départ** (situation, métiers, lieu, taux, permis, diplômes, coordonnées) :
+  la recherche est prête en une minute. Il peut être refait depuis le Profil.
+- **Recherche autour de chez vous** : votre NPA est localisé (service public geo.admin.ch) et les
+  offres sont filtrées par distance (10 à 120 km), avec la distance affichée et une **carte**.
+- **Candidatures spontanées** : l'application repère les structures du social qui recrutent près de
+  chez vous (annonces des 60 derniers jours, agences de placement exclues). Vous les ajoutez à votre
+  liste, complétez le contact (direction, RH), ou importez votre propre liste (copier-coller depuis
+  Excel). Une lettre spontanée personnalisée est préparée pour chacune ; vous les relisez **à la
+  suite** et autorisez chaque envoi (l'e-mail manquant peut être saisi pendant la relecture).
+- **Objectif hebdomadaire** de candidatures, avec barre de progression.
 - **Ajout manuel** des offres vues ailleurs (sozialinfo.ch, sites de fondations…).
 - **Score de compatibilité** : métier, diplôme demandé (ES, HES, CFC ASE, EDE, MSP… et diplômes
   français), canton ou canton voisin, taux d'activité, langue de l'annonce, permis de conduire.

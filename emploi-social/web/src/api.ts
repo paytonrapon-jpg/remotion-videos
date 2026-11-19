@@ -11,6 +11,9 @@ export type Offre = {
   employeur: string;
   lieu: string;
   canton: string;
+  lat?: number | null;
+  lon?: number | null;
+  distanceKm?: number | null;
   contrat: string;
   contratLibelle: string;
   taux: string;
@@ -34,6 +37,8 @@ export type Statut = "brouillon" | "a_autoriser" | "autorisee" | "envoyee" | "en
 
 export type Candidature = {
   id: string;
+  type?: "offre" | "spontanee";
+  employeurId?: string;
   offre: Offre;
   statut: Statut;
   canal: "email" | "site";
@@ -64,6 +69,12 @@ export type Profil = {
   npa: string;
   ville: string;
   canton: string;
+  lat: number | null;
+  lon: number | null;
+  lieuReconnu: string;
+  rayonKm: number;
+  situation: string;
+  onboardingFait: boolean;
   tauxMin: number;
   tauxMax: number;
   diplomes: string[];
@@ -83,7 +94,7 @@ export type Config = {
   sourceOffres: "job-room" | "demo";
   smtp: boolean;
   envoisDuJour: number;
-  reglages: { limiteJournaliere: number; delaiRelanceJours: number };
+  reglages: { limiteJournaliere: number; delaiRelanceJours: number; objectifHebdo: number };
   referentiel: {
     metiers: { id: string; libelle: string; famille: string }[];
     diplomes: { code: string; libelle: string }[];
@@ -152,3 +163,32 @@ export const depuis = (iso: string | null) => {
   const j = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
   return j <= 0 ? "aujourd'hui" : j === 1 ? "hier" : `il y a ${j} j`;
 };
+
+export type Employeur = {
+  id?: string;
+  cle?: string;
+  nom: string;
+  contactNom: string;
+  contactFonction?: string;
+  email: string;
+  telephone: string;
+  site: string;
+  lieu: string;
+  canton: string;
+  lat: number | null;
+  lon: number | null;
+  notes?: string;
+  annonces: { intitule: string; date: string | null; url: string; metier: string }[];
+  distanceKm?: number | null;
+  dejaAjoute?: boolean;
+  candidatures?: { id: string; statut: Statut; type: string }[];
+};
+
+export const SITUATIONS = [
+  { code: "demandeur", libelle: "En recherche d'emploi" },
+  { code: "salarie", libelle: "En poste, à l'écoute du marché" },
+  { code: "etudiant", libelle: "En formation / jeune diplômé·e" },
+  { code: "reconversion", libelle: "En reconversion" },
+];
+
+export const RAYONS = [10, 20, 30, 50, 80, 120];

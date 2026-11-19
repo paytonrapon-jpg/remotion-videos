@@ -20,6 +20,12 @@ const defaults = () => ({
     npa: "",
     ville: "",
     canton: "",
+    lat: null,
+    lon: null,
+    lieuReconnu: "",
+    rayonKm: 30,
+    situation: "",
+    onboardingFait: false,
     tauxMin: 80,
     tauxMax: 100,
     diplomes: [],
@@ -37,9 +43,11 @@ const defaults = () => ({
   reglages: {
     limiteJournaliere: 10,
     delaiRelanceJours: 10,
+    objectifHebdo: 15,
   },
   offres: [],
   candidatures: [],
+  employeurs: [],
   journal: [],
 });
 
@@ -55,7 +63,8 @@ function load() {
     cache = {
       ...base,
       ...raw,
-      profil: { ...base.profil, ...raw.profil },
+      // Profils créés avant le questionnaire de départ : on ne le réimpose pas.
+      profil: { ...base.profil, onboardingFait: Boolean(raw.profil?.prenom), ...raw.profil },
       reglages: { ...base.reglages, ...raw.reglages },
     };
   } else {

@@ -73,6 +73,8 @@ export function depuisJobRoom(item) {
     employeur: sansBalises(c.company?.name) || "Employeur non communiqué",
     lieu: [loc.postalCode, loc.city].filter(Boolean).join(" "),
     canton: loc.cantonCode ?? "",
+    lat: Number(loc.coordinates?.lat) || null,
+    lon: Number(loc.coordinates?.lon) || null,
     contrat: emp.permanent ? "indetermine" : "determine",
     contratLibelle: emp.permanent ? "Durée indéterminée" : emp.shortEmployment ? "Mission de courte durée" : "Durée déterminée",
     tauxMin: Number(emp.workloadPercentageMin) || null,
@@ -163,4 +165,30 @@ export async function rechercher({ metiers = [], cantons = [], motsCles = "", co
     pageSuivante: (page + 1) * PAR_PAGE < total ? page + 1 : null,
     resultats,
   };
+}
+
+// Agences de placement et plateformes : ce ne sont pas les employeurs finaux.
+const INTERMEDIAIRES = /(personnel|interim|intérim|placement|adecco|manpower|randstad|ok job|medicalis|jobup|jobs\.ch|jobscout|work human|new work|staffing|recrutement|careerplus|kelly|gi group|hays|michael page|unique|temp|myjob)/i;
+
+/**
+ * Employeurs du social qui recrutent en ce moment (annonces des 60 derniers jours),
+ * regroupés par structure. Sert de base aux candidatures spontanées.
+ */
+export async function employeursQuiRecrutent({ metiers = [], cantons = [] }) {
+  const pages = await Promise.all((modeDemo() ? [0] : [0, 1]).map((page) => rechercher({ metiers, cantons, depuisJours: 60, page })));
+  const parNom = new Map();
+  for (const o of pages.flatMap((p) => p.resultats)) {
+    if (INTERMEDIAIRES.test(o.employeur) || o.employeur === "Employeur non communiqué") continue;
+    const cle = o.employeur.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+    const e = parNom.get(cle) ?? {
+      cle, nom: o.employeur, lieu: o.lieu, canton: o.canton, lat: o.lat, lon: o.lon,
+      contactNom: "", email: "", telephone: "", site: "", annonces: [],
+    };
+    e.annonces.push({ intitule: o.intitule, date: o.datePublication, url: o.urlCandidature, metier: o.metier });
+    e.contactNom ||= o.contactNom;
+    e.email ||= o.contactEmail;
+    e.telephone ||= o.contactTelephone;
+    parNom.set(cle, e);
+  }
+  return [...parNom.values()].sort((a, b) => b.annonces.length - a.annonces.length);
 }

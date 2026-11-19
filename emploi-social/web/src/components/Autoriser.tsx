@@ -15,12 +15,34 @@ const hote = (u: string) => {
  * Écran d'autorisation : affiche le contenu EXACT qui partira. L'autorisation
  * porte sur l'empreinte de ce contenu ; le serveur refuse tout envoi différent.
  */
-export function AutorisationModal({ candidature, onClose }: { candidature: Candidature; onClose: () => void }) {
+export function AutorisationModal({
+  candidature,
+  onClose,
+  progression,
+  onArreter,
+}: {
+  candidature: Candidature;
+  onClose: () => void;
+  /** Relecture en série : « 2/7 », bouton « Passer » et « Arrêter ». */
+  progression?: string;
+  onArreter?: () => void;
+}) {
   const { majCandidature, notifier, profil } = useApp();
   const [apercu, setApercu] = useState<Apercu | null>(null);
   const [coche, setCoche] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
+  const [adresse, setAdresse] = useState("");
+  const recharger = () => api<Apercu>("GET", `/candidatures/${candidature.id}/apercu`).then(setApercu, (e) => notifier(e.message, "erreur"));
+
+  /** Complète l'adresse manquante sans quitter la relecture (et la mémorise pour la structure). */
+  const enregistrerAdresse = async () => {
+    const c = await api<Candidature>("PUT", `/candidatures/${candidature.id}`, { destinataire: adresse.trim() });
+    majCandidature(c);
+    if (candidature.employeurId) await api("PUT", `/employeurs/${candidature.employeurId}`, { email: adresse.trim() }).catch(() => {});
+    setAdresse("");
+    await recharger();
+  };
 
   useEffect(() => {
     api<Apercu>("GET", `/candidatures/${candidature.id}/apercu`).then(setApercu, (e) => notifier(e.message, "erreur"));
@@ -53,9 +75,16 @@ export function AutorisationModal({ candidature, onClose }: { candidature: Candi
   const nom = `${profil.prenom} ${profil.nom}`.trim();
 
   return (
-    <Modal titre="Relire et autoriser" onClose={onClose} large>
+    <Modal titre={progression ? `Relire et autoriser · ${progression}` : "Relire et autoriser"} onClose={onArreter ?? onClose} large>
+      {progression && <p className="meta"><strong>{candidature.offre.employeur}</strong> · {candidature.offre.intitule}</p>}
       <p className="aide">Voici exactement ce qui sera {contenu.canal === "email" ? "envoyé" : "déposé"} en votre nom. Toute modification ultérieure annulera cette autorisation.</p>
       <Erreurs erreurs={[...apercu.erreurs, ...erreurs]} />
+      {contenu.canal === "email" && apercu.erreurs.some((e) => /e-mail du recruteur/.test(e)) && (
+        <form className="ligne-adresse" onSubmit={(e) => { e.preventDefault(); enregistrerAdresse(); }}>
+          <input type="email" required value={adresse} onChange={(e) => setAdresse(e.target.value)} placeholder="Adresse e-mail du recruteur" aria-label="Adresse e-mail du recruteur" />
+          <button className="btn">Enregistrer l'adresse</button>
+        </form>
+      )}
       {!apercu.smtp && contenu.canal === "email" && (
         <p className="alerte attention">Mode simulation : rien ne sera réellement envoyé (le message sera enregistré dans <code>data/outbox</code>).</p>
       )}
@@ -79,11 +108,12 @@ export function AutorisationModal({ candidature, onClose }: { candidature: Candi
       <label className="consentement">
         <input type="checkbox" checked={coche} disabled={bloque} onChange={(e) => setCoche(e.target.checked)} />
         <span>
-          J'ai relu cette candidature et j'autorise {contenu.canal === "email" ? <>son envoi en mon nom à <strong>{contenu.a}</strong></> : <>son dépôt sur le site de l'employeur</>}.
+          J'ai relu cette candidature et j'autorise {contenu.canal === "email" ? <>son envoi en mon nom à <strong>{contenu.a || "(adresse manquante)"}</strong></> : <>son dépôt sur le site de l'employeur</>}.
         </span>
       </label>
       <div className="actions">
-        <button className="btn discret" onClick={onClose}>Annuler</button>
+        {onArreter && <button className="btn discret" onClick={onArreter}>Arrêter</button>}
+        <button className="btn discret" onClick={onClose}>{progression ? "Passer" : "Annuler"}</button>
         {contenu.canal === "email" ? (
           <>
             <button className="btn" disabled={!coche || bloque || envoi} onClick={() => autoriser(false)}>Autoriser, envoyer plus tard</button>
@@ -104,6 +134,13 @@ export function AutoriserPage() {
   const [lot, setLot] = useState(false);
 
   const enAttente = candidatures.filter((c) => c.statut === "a_autoriser");
+  const [file, setFileBrut] = useState<string[] | null>(null);
+  const [totalFile, setTotalFile] = useState(0);
+  const setFile = (f: string[] | null) => {
+    if (f && !file) setTotalFile(f.length);
+    setFileBrut(f);
+  };
+  const enCours = file ? candidatures.find((c) => c.id === file[0]) : undefined;
   const brouillons = candidatures.filter((c) => c.statut === "brouillon");
   const autorisees = candidatures.filter((c) => c.statut === "autorisee");
   const autoriseesEmail = autorisees.filter((c) => c.canal === "email" && c.autorisationValide);
@@ -151,7 +188,10 @@ export function AutoriserPage() {
       </section>
 
       <section>
-        <h2>En attente de votre autorisation <span className="muted">({enAttente.length})</span></h2>
+        <div className="barre">
+          <h2>En attente de votre autorisation <span className="muted">({enAttente.length})</span></h2>
+          {enAttente.length > 1 && <button className="btn primaire" onClick={() => setFile(enAttente.map((c) => c.id))}>Relire les {enAttente.length} à la suite</button>}
+        </div>
         {enAttente.length === 0 && <p className="muted">Aucune candidature en attente.</p>}
         <ul className="liste">
           {enAttente.map((c) => (
@@ -205,6 +245,15 @@ export function AutoriserPage() {
       )}
 
       {aRelire && <AutorisationModal candidature={aRelire} onClose={() => setARelire(null)} />}
+      {file && enCours && (
+        <AutorisationModal
+          key={enCours.id}
+          candidature={enCours}
+          progression={`${totalFile - file.length + 1}/${totalFile}`}
+          onClose={() => setFile(file.length > 1 ? file.slice(1) : null)}
+          onArreter={() => setFile(null)}
+        />
+      )}
     </div>
   );
 }

@@ -4,13 +4,22 @@ import path from "node:path";
 import express from "express";
 import multer from "multer";
 import { contenuEnvoi, empreinte, envoyerEmail, piecesJointes, smtpConfigure, verifier } from "./envoi.js";
-import { modeDemo, rechercher } from "./jobRoom.js";
-import { rediger, redigerRelance } from "./lettres.js";
+import { employeursQuiRecrutent, modeDemo, rechercher } from "./jobRoom.js";
+import { rediger, redigerRelance, redigerSpontanee } from "./lettres.js";
+import { distanceKm, geocoder } from "./geo.js";
 import { scorer } from "./matching.js";
-import { CANTONS, CONTRATS, DIPLOMES, diplomesCites, METIERS, metierDuTitre, PERMIS_TRAVAIL } from "./referentiel.js";
+import { CANTONS, CANTONS_VOISINS, CONTRATS, DIPLOMES, diplomesCites, METIERS, metierDuTitre, PERMIS_TRAVAIL } from "./referentiel.js";
 import { db, logEvent, newId, UPLOAD_DIR } from "./store.js";
 
 const envoisEnCours = new Set();
+
+const cleEmployeur = (nom) => String(nom).toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g, "");
+
+/** Cantons à interroger pour une recherche dans un rayon autour du domicile. */
+function cantonsAutour(profil, rayon) {
+  if (rayon >= 120 || !profil.canton) return [];
+  return [profil.canton, ...(rayon > 15 ? CANTONS_VOISINS[profil.canton] ?? [] : [])];
+}
 const STATUTS_SUIVI = ["entretien", "refusee", "acceptee", "abandonnee", "envoyee"];
 
 class HttpError extends Error {
@@ -76,6 +85,8 @@ export function createApp() {
       const delai = Number(req.body.delaiRelanceJours);
       if (Number.isInteger(limite) && limite >= 0 && limite <= 100) data.reglages.limiteJournaliere = limite;
       if (Number.isInteger(delai) && delai >= 1 && delai <= 60) data.reglages.delaiRelanceJours = delai;
+      const objectif = Number(req.body.objectifHebdo);
+      if (Number.isInteger(objectif) && objectif >= 1 && objectif <= 200) data.reglages.objectifHebdo = objectif;
       return data.reglages;
     });
     res.json(r);
@@ -84,9 +95,21 @@ export function createApp() {
   // ---- Profil ---------------------------------------------------------------
   app.get("/api/profil", (_req, res) => res.json(db.get().profil));
 
-  app.put("/api/profil", (req, res) => {
-    const champs = ["prenom", "nom", "email", "telephone", "adresse", "npa", "ville", "canton", "permisTravail", "experiences", "competences", "motivations"];
+  app.put("/api/profil", asyncRoute(async (req, res) => {
+    const champs = ["prenom", "nom", "email", "telephone", "adresse", "npa", "ville", "canton", "permisTravail", "situation", "experiences", "competences", "motivations"];
+    const avant = db.get().profil;
+    const lieuChange = (req.body.npa ?? avant.npa) !== avant.npa || (req.body.ville ?? avant.ville) !== avant.ville || !avant.lat;
+    const coords = lieuChange ? await geocoder(req.body.npa ?? avant.npa, req.body.ville ?? avant.ville) : undefined;
     const profil = db.update((data) => {
+      if (coords !== undefined) {
+        data.profil.lat = coords?.lat ?? null;
+        data.profil.lon = coords?.lon ?? null;
+        data.profil.lieuReconnu = coords?.libelle ?? "";
+        if (coords?.canton && (!req.body.canton || lieuChange)) req.body.canton = coords.canton;
+      }
+      if (typeof req.body.onboardingFait === "boolean") data.profil.onboardingFait = req.body.onboardingFait;
+      const rayon = Number(req.body.rayonKm);
+      if (Number.isInteger(rayon) && rayon >= 0 && rayon <= 300) data.profil.rayonKm = rayon;
       for (const k of champs) if (typeof req.body[k] === "string") data.profil[k] = req.body[k].slice(0, 5000);
       for (const k of ["permisConduire", "vehicule"]) if (typeof req.body[k] === "boolean") data.profil[k] = req.body[k];
       for (const k of ["tauxMin", "tauxMax"]) {
@@ -101,7 +124,7 @@ export function createApp() {
       return data.profil;
     });
     res.json(profil);
-  });
+  }));
 
   const upload = multer({
     dest: UPLOAD_DIR,
@@ -178,9 +201,11 @@ export function createApp() {
     asyncRoute(async (req, res) => {
       const data = db.get();
       const borne = (v, def) => (Number.isInteger(Number(v)) && v !== "" && v != null ? Math.max(0, Math.min(100, Number(v))) : def);
+      const rayon = Number(req.query.rayon) || 0;
+      const autour = rayon > 0 && data.profil.lat;
       const r = await rechercher({
         metiers: liste(req.query.metiers),
-        cantons: liste(req.query.cantons),
+        cantons: autour ? cantonsAutour(data.profil, rayon) : liste(req.query.cantons),
         motsCles: String(req.query.motsCles ?? "").trim(),
         contrat: ["indetermine", "determine"].includes(req.query.contrat) ? req.query.contrat : "",
         tauxMin: borne(req.query.tauxMin, 0),
@@ -192,7 +217,8 @@ export function createApp() {
       const sauvees = new Map(data.offres.map((o) => [o.externalId, o.id]));
       const postulees = new Set(data.candidatures.map((c) => c.offre.externalId));
       const resultats = r.resultats
-        .map((o) => ({ ...o, compat: scorer(o, data.profil), offreId: sauvees.get(o.externalId) ?? null, dejaPostule: postulees.has(o.externalId) }))
+        .map((o) => ({ ...o, distanceKm: distanceKm(data.profil, o), compat: scorer(o, data.profil), offreId: sauvees.get(o.externalId) ?? null, dejaPostule: postulees.has(o.externalId) }))
+        .filter((o) => !autour || (o.distanceKm == null ? cantonsAutour(data.profil, rayon).includes(o.canton) : o.distanceKm <= rayon))
         .sort((a, b) => (req.query.tri === "date" ? 0 : b.compat.score - a.compat.score));
       res.json({ ...r, resultats });
     }),
@@ -200,7 +226,7 @@ export function createApp() {
 
   app.get("/api/offres", (_req, res) => {
     const data = db.get();
-    res.json(data.offres.map((o) => ({ ...o, compat: scorer(o, data.profil) })));
+    res.json(data.offres.map((o) => ({ ...o, distanceKm: distanceKm(data.profil, o), compat: scorer(o, data.profil) })));
   });
 
   const champsOffre = ["source", "externalId", "reference", "intitule", "employeur", "lieu", "canton", "contrat", "contratLibelle", "taux", "entree", "langue", "description", "metier", "contactNom", "contactEmail", "contactTelephone", "urlCandidature", "urlAnnonce", "datePublication"];
@@ -216,7 +242,7 @@ export function createApp() {
       o.source ||= "manuel";
       o.externalId ||= `manuel-${o.id}`;
       o.contratLibelle ||= CONTRATS.find((c) => c.code === o.contrat)?.libelle ?? o.contrat;
-      for (const k of ["tauxMin", "tauxMax"]) o[k] = Number.isFinite(b[k]) ? b[k] : null;
+      for (const k of ["tauxMin", "tauxMax", "lat", "lon"]) o[k] = Number.isFinite(b[k]) ? b[k] : null;
       if (!o.taux && o.tauxMax) o.taux = o.tauxMin && o.tauxMin !== o.tauxMax ? `${o.tauxMin}–${o.tauxMax} %` : `${o.tauxMax} %`;
       o.metier ||= metierDuTitre(o.intitule);
       o.diplomesCites = diplomesCites(`${o.intitule} ${o.description}`);
@@ -309,7 +335,8 @@ export function createApp() {
     const c = db.update((data) => {
       const c = trouverCandidature(data, req.params.id);
       if (c.envoi) throw new HttpError(409, "Candidature déjà envoyée.");
-      Object.assign(c, rediger(c.offre, data.profil), { autorisation: null });
+      const emp = data.employeurs.find((e) => e.id === c.employeurId) ?? { nom: c.offre.employeur, contactNom: c.offre.contactNom };
+      Object.assign(c, c.type === "spontanee" ? redigerSpontanee(emp, c.offre.metier, data.profil) : rediger(c.offre, data.profil), { autorisation: null });
       if (c.statut === "autorisee") changerStatut(c, "a_autoriser");
       return c;
     });
@@ -487,6 +514,145 @@ export function createApp() {
       logEvent(data, "suppression", { message: `Candidature supprimée : ${c.offre.intitule}` });
     });
     res.status(204).end();
+  });
+
+  // ---- Employeurs et candidatures spontanées ---------------------------------
+  const vueEmployeur = (e, data) => ({
+    ...e,
+    distanceKm: distanceKm(data.profil, e),
+    candidatures: data.candidatures.filter((c) => c.employeurId === e.id || c.offre.employeur === e.nom).map((c) => ({ id: c.id, statut: c.statut, type: c.type ?? "offre" })),
+  });
+
+  app.get("/api/employeurs", (_req, res) => {
+    const data = db.get();
+    res.json(data.employeurs.map((e) => vueEmployeur(e, data)).sort((a, b) => (a.distanceKm ?? 999) - (b.distanceKm ?? 999)));
+  });
+
+  app.get(
+    "/api/employeurs/decouvrir",
+    asyncRoute(async (req, res) => {
+      const data = db.get();
+      const rayon = Number(req.query.rayon) || 0;
+      const autour = rayon > 0 && data.profil.lat;
+      const trouves = await employeursQuiRecrutent({
+        metiers: liste(req.query.metiers),
+        cantons: autour ? cantonsAutour(data.profil, rayon) : liste(req.query.cantons),
+      });
+      const connus = new Set(data.employeurs.map((e) => cleEmployeur(e.nom)));
+      res.json(
+        trouves
+          .map((e) => ({ ...e, distanceKm: distanceKm(data.profil, e), dejaAjoute: connus.has(e.cle) }))
+          .filter((e) => !autour || (e.distanceKm == null ? cantonsAutour(data.profil, rayon).includes(e.canton) : e.distanceKm <= rayon))
+          .sort((a, b) => b.annonces.length - a.annonces.length || (a.distanceKm ?? 999) - (b.distanceKm ?? 999)),
+      );
+    }),
+  );
+
+  const champsEmployeur = ["nom", "contactNom", "contactFonction", "email", "telephone", "site", "lieu", "canton", "notes"];
+  const ajouterEmployeur = (data, b, source) => {
+    const nom = String(b.nom ?? "").trim();
+    if (!nom) throw new HttpError(400, "Le nom de la structure est obligatoire.");
+    const existant = data.employeurs.find((e) => cleEmployeur(e.nom) === cleEmployeur(nom));
+    if (existant) {
+      // Complète sans écraser ce que l'utilisateur a déjà saisi.
+      for (const k of champsEmployeur) if (!existant[k] && typeof b[k] === "string") existant[k] = b[k].trim();
+      return existant;
+    }
+    const e = { id: newId(), source, ajouteLe: new Date().toISOString(), lat: Number.isFinite(b.lat) ? b.lat : null, lon: Number.isFinite(b.lon) ? b.lon : null };
+    for (const k of champsEmployeur) e[k] = typeof b[k] === "string" ? b[k].trim().slice(0, 2000) : "";
+    e.nom = nom;
+    e.annonces = Array.isArray(b.annonces) ? b.annonces.slice(0, 10) : [];
+    data.employeurs.unshift(e);
+    return e;
+  };
+
+  app.post("/api/employeurs", (req, res) => {
+    const list = Array.isArray(req.body) ? req.body : [req.body];
+    const ajoutes = db.update((data) => list.map((b) => ajouterEmployeur(data, b, b.annonces?.length ? "job-room" : "manuel")));
+    const data = db.get();
+    res.status(201).json(ajoutes.map((e) => vueEmployeur(e, data)));
+  });
+
+  /** Import d'une liste collée (une structure par ligne : nom ; e-mail ; contact ; lieu). */
+  app.post("/api/employeurs/import", (req, res) => {
+    const lignes = String(req.body.texte ?? "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    const ajoutes = db.update((data) =>
+      lignes
+        .map((l) => l.split(/\s*[;\t]\s*/))
+        .filter(([nom]) => nom && !/^nom$/i.test(nom))
+        .map(([nom, email = "", contactNom = "", lieu = ""]) => ajouterEmployeur(data, { nom, email, contactNom, lieu }, "import")),
+    );
+    res.status(201).json({ ajoutes: ajoutes.length });
+  });
+
+  app.put("/api/employeurs/:id", (req, res) => {
+    const e = db.update((data) => {
+      const e = data.employeurs.find((x) => x.id === req.params.id);
+      if (!e) throw new HttpError(404, "Structure introuvable.");
+      for (const k of champsEmployeur) if (typeof req.body[k] === "string") e[k] = req.body[k].trim().slice(0, 2000);
+      // Reporte l'e-mail et le contact dans les brouillons pas encore autorisés.
+      for (const c of data.candidatures.filter((c) => c.employeurId === e.id && ["brouillon", "a_autoriser"].includes(c.statut))) {
+        if (!c.destinataire && e.email) c.destinataire = e.email;
+        c.offre.contactEmail = e.email;
+      }
+      return e;
+    });
+    res.json(vueEmployeur(e, db.get()));
+  });
+
+  app.delete("/api/employeurs/:id", (req, res) => {
+    db.update((data) => {
+      data.employeurs = data.employeurs.filter((e) => e.id !== req.params.id);
+    });
+    res.status(204).end();
+  });
+
+  /** Prépare des candidatures spontanées (brouillons à relire et autoriser une par une). */
+  app.post("/api/candidatures/spontanees", (req, res) => {
+    const metier = METIERS.find((m) => m.id === req.body.metier);
+    if (!metier) throw new HttpError(400, "Choisissez le métier visé.");
+    const ids = Array.isArray(req.body.employeurIds) ? req.body.employeurIds : [];
+    const creees = db.update((data) => {
+      const out = [];
+      for (const id of ids) {
+        const e = data.employeurs.find((x) => x.id === id);
+        if (!e) continue;
+        const externalId = `spont-${e.id}-${metier.id}`;
+        if (data.candidatures.some((c) => c.offre.externalId === externalId)) continue;
+        const { objet, message } = redigerSpontanee(e, metier.id, data.profil);
+        const now = new Date().toISOString();
+        const c = {
+          id: newId(),
+          type: "spontanee",
+          employeurId: e.id,
+          offre: {
+            source: "spontanee", externalId, reference: "", intitule: `Candidature spontanée – ${metier.libelle.replace(/\s*\(.*\)$/, "")}`,
+            employeur: e.nom, lieu: e.lieu, canton: e.canton, lat: e.lat, lon: e.lon, metier: metier.id, contrat: "", contratLibelle: "",
+            taux: "", entree: "", langue: "fr", description: "", diplomesCites: [], contactNom: e.contactNom, contactEmail: e.email,
+            contactTelephone: e.telephone, urlCandidature: e.site, urlAnnonce: "", datePublication: null,
+          },
+          statut: "a_autoriser",
+          canal: "email",
+          destinataire: e.email,
+          objet,
+          message,
+          joindreCV: true,
+          joindreAnnexes: true,
+          notes: "",
+          autorisation: null,
+          envoi: null,
+          relances: [],
+          creeLe: now,
+          majLe: now,
+          historique: [{ at: now, statut: "a_autoriser" }],
+        };
+        data.candidatures.unshift(c);
+        out.push(c);
+      }
+      if (out.length) logEvent(data, "creation", { message: `${out.length} candidature(s) spontanée(s) préparée(s) – en attente de votre autorisation` });
+      return out;
+    });
+    res.status(201).json({ creees: creees.length });
   });
 
   app.get("/api/journal", (_req, res) => res.json(db.get().journal.slice(0, 500)));

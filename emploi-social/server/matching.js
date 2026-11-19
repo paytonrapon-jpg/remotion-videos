@@ -1,4 +1,5 @@
 // Score de compatibilité profil ↔ offre, avec les raisons affichées à l'utilisateur.
+import { distanceKm } from "./geo.js";
 import { CANTONS, CANTONS_VOISINS } from "./referentiel.js";
 
 const LANGUES = { fr: "français", de: "allemand", it: "italien", en: "anglais" };
@@ -30,7 +31,19 @@ export function scorer(offre, profil) {
     }
   }
 
-  if (!profil.canton || !offre.canton) {
+  const km = distanceKm(profil, offre);
+  const rayon = profil.rayonKm || 30;
+  if (km != null) {
+    if (km <= rayon) {
+      score += 20;
+      raisons.push(km <= 2 ? "Tout près de chez vous" : `À ${km} km`);
+    } else if (km <= rayon * 2) {
+      score += 10;
+      raisons.push(`À ${km} km`);
+    } else {
+      alertes.push(`À ${km} km`);
+    }
+  } else if (!profil.canton || !offre.canton) {
     score += 10;
   } else if (offre.canton === profil.canton) {
     score += 20;

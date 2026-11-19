@@ -1,6 +1,6 @@
 // Rédaction d'un brouillon de candidature (objet + lettre) adapté au métier, au format suisse.
 // Le texte est toujours modifiable par l'utilisateur avant autorisation.
-import { DIPLOMES, familleDe } from "./referentiel.js";
+import { DIPLOMES, familleDe, METIERS } from "./referentiel.js";
 
 const ANGLES = {
   educatif: {
@@ -71,6 +71,9 @@ const nettoyerIntitule = (s) =>
     .replace(/\s{2,}/g, " ")
     .trim();
 
+// « à le » → « au », « à les » → « aux ».
+const contracter = (t) => t.replace(/\bà le\b/g, "au").replace(/\bà les\b/g, "aux");
+
 // « de » → « d' » devant une voyelle ou un h muet.
 const de = (mot) => (/^[aeiouyhéèêàâîôûAEIOUYHÉÈÊÀÂÎÔÛ]/.test(mot) ? `d'${mot}` : `de ${mot}`);
 
@@ -131,7 +134,7 @@ ${nomComplet}${profil.telephone ? `\n${profil.telephone}` : ""}${profil.email ? 
 
   return {
     objet: `Candidature – ${poste}${taux}${reference} – ${nomComplet}`,
-    message: lettre,
+    message: contracter(lettre),
   };
 }
 
@@ -156,4 +159,42 @@ Je vous prie d'agréer, ${civilite(candidature.offre)}, mes salutations distingu
 
 ${nomComplet}${profil.telephone ? `\n${profil.telephone}` : ""}`,
   };
+}
+
+/**
+ * Candidature spontanée adressée directement à une structure (sans annonce).
+ * @param {{ nom: string, contactNom?: string, lieu?: string, annonces?: { intitule: string }[] }} employeur
+ */
+export function redigerSpontanee(employeur, metierId, profil) {
+  const angle = ANGLES[familleDe(metierId)] ?? ANGLES.social;
+  const metier = (METIERS.find((m) => m.id === metierId)?.libelle ?? "professionnel·le du social").replace(/\s*\(.*\)$/, "");
+  const nomComplet = [profil.prenom, profil.nom].filter(Boolean).join(" ") || "[Prénom Nom]";
+  const diplomes = profil.diplomes.slice(0, 2).map((c) => EN_PHRASE[c] ?? `d'un titre « ${DIPLOMES.find((d) => d.code === c)?.libelle ?? c} »`);
+  const offre = { contactNom: employeur.contactNom ?? "" };
+  const structure = employeur.nom.replace(/\s*\(exemple\)/, "");
+  const recrute = employeur.annonces?.length
+    ? ` J'ai vu que votre institution recrute actuellement, ce qui m'encourage à vous proposer ma candidature, y compris pour un poste qui ne serait pas encore publié.`
+    : "";
+  const taux = profil.tauxMin === profil.tauxMax ? `à ${profil.tauxMax} %` : `entre ${profil.tauxMin} et ${profil.tauxMax} %`;
+  const pratique = [AUTORISATION[profil.permisTravail] ?? "", profil.permisConduire ? `Je dispose du permis de conduire${profil.vehicule ? " et d'un véhicule" : ""}.` : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  const message = `${formuleAppel(offre.contactNom)}
+
+Je me permets de vous adresser ma candidature spontanée en tant que ${metier.toLowerCase()} auprès de votre institution, ${structure}.${recrute}
+
+${diplomes.length ? `Au bénéfice ${diplomes.join(" et ")}` : "Professionnel·le de l'accompagnement"}${profil.experiences.trim() ? `, je m'appuie sur les expériences suivantes : ${profil.experiences.trim().replace(/\.$/, "")}.` : ", je souhaite mettre mes compétences au service de vos missions."}${profil.competences.trim() ? `\n\nParmi mes atouts : ${profil.competences.trim().replace(/\.$/, "")}.` : ""}
+
+${profil.motivations.trim() || `Je suis particulièrement attaché·e à ${angle.valeurs}.`} Au sein de votre équipe, je souhaite ${angle.apport}.
+
+Je suis disponible pour un poste ${taux}${pratique ? `. ${pratique}` : "."}
+
+Je serais heureux·se de vous rencontrer pour un entretien, même informel. Vous trouverez en annexe mon CV${profil.annexes?.length ? " ainsi que mes certificats de travail et diplômes" : ""}.
+
+Je vous prie d'agréer, ${civilite(offre)}, mes salutations distinguées.
+
+${nomComplet}${profil.telephone ? `\n${profil.telephone}` : ""}${profil.email ? `\n${profil.email}` : ""}`;
+
+  return { objet: `Candidature spontanée – ${metier} – ${nomComplet}`, message: contracter(message) };
 }

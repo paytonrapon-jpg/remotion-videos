@@ -13,7 +13,7 @@ const GROUPES: { id: string; libelle: string; statuts: Statut[] }[] = [
 ];
 
 export function CandidaturesPage() {
-  const { candidatures, candidatureOuverte, ouvrirCandidature, fermerCandidature, aller } = useApp();
+  const { candidatures, candidatureOuverte, ouvrirCandidature, fermerCandidature, aller, config } = useApp();
   const [groupe, setGroupe] = useState("toutes");
 
   const stats = useMemo(() => {
@@ -24,6 +24,8 @@ export function CandidaturesPage() {
       entretiens: candidatures.filter((c) => c.statut === "entretien" || c.statut === "acceptee").length,
       taux: envoyees ? Math.round((reponses / envoyees) * 100) : 0,
       relances: candidatures.filter((c) => c.relanceDue).length,
+      semaine: candidatures.filter((c) => c.envoi && Date.now() - new Date(c.envoi.at).getTime() < 7 * 86_400_000).length,
+      spontanees: candidatures.filter((c) => c.type === "spontanee" && c.envoi).length,
     };
   }, [candidatures]);
 
@@ -33,6 +35,21 @@ export function CandidaturesPage() {
 
   return (
     <div className="colonne">
+      <section className="carte objectif">
+        <div className="barre">
+          <h2>Objectif des 7 derniers jours</h2>
+          <strong>{stats.semaine} / {config.reglages.objectifHebdo}</strong>
+        </div>
+        <div className="jauge" role="progressbar" aria-valuenow={stats.semaine} aria-valuemin={0} aria-valuemax={config.reglages.objectifHebdo}>
+          <span style={{ width: `${Math.min(100, (stats.semaine / config.reglages.objectifHebdo) * 100)}%` }} />
+        </div>
+        <p className="aide">
+          {stats.semaine >= config.reglages.objectifHebdo
+            ? "Objectif atteint, bravo !"
+            : <>Encore {config.reglages.objectifHebdo - stats.semaine} candidature{config.reglages.objectifHebdo - stats.semaine > 1 ? "s" : ""}. Pensez aux <a href="#entreprises" onClick={() => aller("entreprises")}>candidatures spontanées</a> : {stats.spontanees} envoyée{stats.spontanees > 1 ? "s" : ""}.</>}
+        </p>
+      </section>
+
       <div className="stats">
         <div className="stat"><strong>{stats.envoyees}</strong><span>envoyées</span></div>
         <div className="stat"><strong>{stats.entretiens}</strong><span>entretiens</span></div>

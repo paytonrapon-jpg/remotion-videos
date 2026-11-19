@@ -5,8 +5,10 @@ import { JournalPage } from "./components/Journal";
 import { OffresPage } from "./components/Offres";
 import { ProfilPage } from "./components/Profil";
 import { AutoriserPage } from "./components/Autoriser";
+import { EntreprisesPage } from "./components/Entreprises";
+import { Onboarding } from "./components/Onboarding";
 
-type Onglet = "offres" | "autoriser" | "candidatures" | "profil" | "journal";
+type Onglet = "offres" | "entreprises" | "autoriser" | "candidatures" | "profil" | "journal";
 
 type Ctx = {
   config: Config;
@@ -18,6 +20,7 @@ type Ctx = {
   notifier: (texte: string, ton?: "succes" | "erreur") => void;
   ouvrirCandidature: (id: string) => void;
   aller: (o: Onglet) => void;
+  relancerOnboarding: () => void;
   candidatureOuverte: string | null;
   fermerCandidature: () => void;
 };
@@ -27,6 +30,7 @@ export const useApp = () => useContext(AppCtx)!;
 
 const ONGLETS: { id: Onglet; libelle: string }[] = [
   { id: "offres", libelle: "Offres" },
+  { id: "entreprises", libelle: "Candidatures spontanées" },
   { id: "autoriser", libelle: "À autoriser" },
   { id: "candidatures", libelle: "Mes candidatures" },
   { id: "profil", libelle: "Profil" },
@@ -46,6 +50,7 @@ export function App() {
   const [toast, setToast] = useState<{ texte: string; ton: string; id: number } | null>(null);
   const [candidatureOuverte, setCandidatureOuverte] = useState<string | null>(null);
   const [erreurChargement, setErreurChargement] = useState("");
+  const [relancerOnboarding, setRelancerOnboarding] = useState(false);
 
   const rafraichir = useCallback(async () => {
     const [cfg, p, c] = await Promise.all([
@@ -99,6 +104,7 @@ export function App() {
             majCandidature,
             notifier,
             aller,
+            relancerOnboarding: () => setRelancerOnboarding(true),
             candidatureOuverte,
             ouvrirCandidature: (id) => {
               setCandidatureOuverte(id);
@@ -147,11 +153,18 @@ export function App() {
         </nav>
       </header>
       <main className="contenu">
-        {onglet === "offres" && <OffresPage />}
+        {!profil!.onboardingFait || relancerOnboarding ? (
+          <Onboarding onFini={() => { setRelancerOnboarding(false); aller("offres"); }} />
+        ) : (
+          <>
+        {onglet === "offres" && <OffresPage key={profil!.lieuReconnu + profil!.rayonKm} />}
+        {onglet === "entreprises" && <EntreprisesPage />}
         {onglet === "autoriser" && <AutoriserPage />}
         {onglet === "candidatures" && <CandidaturesPage />}
         {onglet === "profil" && <ProfilPage />}
         {onglet === "journal" && <JournalPage />}
+          </>
+        )}
       </main>
       {toast && (
         <div className={`toast ${toast.ton}`} role="status">

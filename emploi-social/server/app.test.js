@@ -149,3 +149,36 @@ test("métiers travailleur·euse social·e, famille, référent·e et conseiller
   assert.equal(metierDuTitre("Conseiller en insertion professionnelle"), "insertion");
   assert.equal(metierDuTitre("Assistante sociale HES"), "as");
 });
+
+test("recherche autour du domicile (rayon en km)", async () => {
+  const { json: p } = await api("PUT", "/profil", { npa: "1004", ville: "Lausanne", rayonKm: 30 });
+  assert.ok(p.lat && p.lon, "NPA géocodé");
+  const { json } = await api("GET", "/offres/recherche?rayon=30");
+  assert.ok(json.resultats.length >= 1);
+  assert.ok(json.resultats.every((o) => o.distanceKm <= 30), JSON.stringify(json.resultats.map((o) => [o.lieu, o.distanceKm])));
+  const { json: large } = await api("GET", "/offres/recherche?rayon=150");
+  assert.ok(large.resultats.length > json.resultats.length);
+});
+
+test("candidatures spontanées : préparées puis bloquées tant qu'il manque l'e-mail", async () => {
+  await api("PUT", "/reglages", { limiteJournaliere: 10 });
+  const { json: trouves } = await api("GET", "/employeurs/decouvrir");
+  assert.ok(trouves.length >= 5);
+  const { json: ajoutes } = await api("POST", "/employeurs", [trouves[0], { nom: "Foyer Sans E-mail (exemple)", lieu: "1003 Lausanne" }]);
+  assert.equal(ajoutes.length, 2);
+  const { json: r } = await api("POST", "/candidatures/spontanees", { employeurIds: ajoutes.map((e) => e.id), metier: "ts" });
+  assert.equal(r.creees, 2);
+  const { json: liste } = await api("GET", "/candidatures");
+  const sansMail = liste.find((c) => c.offre.employeur === "Foyer Sans E-mail (exemple)");
+  assert.equal(sansMail.statut, "a_autoriser");
+  assert.match(sansMail.message, /candidature spontanée/);
+  const { json: ap } = await api("GET", `/candidatures/${sansMail.id}/apercu`);
+  assert.ok(ap.erreurs.some((e) => /e-mail du recruteur/.test(e)));
+  // Renseigner l'e-mail de la structure complète le brouillon.
+  await api("PUT", `/employeurs/${ajoutes[1].id}`, { email: "direction@foyer.example.org" });
+  const { json: ap2 } = await api("GET", `/candidatures/${sansMail.id}/apercu`);
+  assert.equal(ap2.contenu.a, "direction@foyer.example.org");
+  assert.equal((await api("POST", `/candidatures/${sansMail.id}/envoyer`)).status, 403, "jamais d'envoi sans autorisation");
+  const { json: imp } = await api("POST", "/employeurs/import", { texte: "nom;email;contact;lieu\nCrèche Arc-en-ciel;info@arc.example.org;Mme Favre;1205 Genève" });
+  assert.equal(imp.ajoutes, 1);
+});

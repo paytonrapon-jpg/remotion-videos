@@ -33,6 +33,10 @@ export function JournalPage() {
             <span className="aide">0 = sans limite. Évite les envois en rafale.</span>
           </label>
           <label className="champ">
+            <span>Objectif de candidatures par semaine</span>
+            <input type="number" min={1} max={200} value={r.objectifHebdo} onChange={(e) => setR({ ...r, objectifHebdo: Number(e.target.value) })} />
+          </label>
+          <label className="champ">
             <span>Proposer une relance après (jours)</span>
             <input type="number" min={1} max={60} value={r.delaiRelanceJours} onChange={(e) => setR({ ...r, delaiRelanceJours: Number(e.target.value) })} />
           </label>

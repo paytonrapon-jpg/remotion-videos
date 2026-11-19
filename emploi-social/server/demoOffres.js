@@ -1,5 +1,6 @@
 // Offres FICTIVES (mode démo OFFRES_DEMO=1 et tests). Employeurs inventés,
 // adresses en example.org (domaine réservé, aucun message ne peut y être livré).
+import { DEMO_COORDS } from "./geo.js";
 import { diplomesCites, metierDuTitre } from "./referentiel.js";
 
 const jours = (n) => new Date(Date.now() - n * 86_400_000).toISOString();
@@ -57,6 +58,8 @@ const brut = [
 
 export const DEMO_OFFRES = brut.map(({ id, publie, ...o }) => ({
   ...o,
+  lat: DEMO_COORDS[o.lieu.slice(0, 4)]?.lat ?? null,
+  lon: DEMO_COORDS[o.lieu.slice(0, 4)]?.lon ?? null,
   source: "demo",
   externalId: id,
   reference: "",

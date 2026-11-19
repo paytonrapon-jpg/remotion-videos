@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { api, ko, type Profil } from "../api";
+import { api, ko, RAYONS, type Profil } from "../api";
 import { useApp } from "../App";
 import { Puces } from "./ui";
 
@@ -11,7 +11,7 @@ const LANGUES = [
 ];
 
 export function ProfilPage() {
-  const { profil, setProfil, config, notifier } = useApp();
+  const { profil, setProfil, config, notifier, relancerOnboarding } = useApp();
   const [f, setF] = useState<Profil>(profil);
   const [envoi, setEnvoi] = useState(false);
   const champsEdites = { ...f, cv: profil.cv, annexes: profil.annexes };
@@ -75,7 +75,10 @@ export function ProfilPage() {
         <ul className="etapes">
           {etapes.map((e) => <li key={e.libelle} className={e.ok ? "ok" : ""}>{e.ok ? "✓" : "○"} {e.libelle}</li>)}
         </ul>
-        <p className="aide">Ces informations servent à classer les offres et à rédiger vos lettres. Elles restent sur votre ordinateur.</p>
+        <p className="aide">
+          Ces informations servent à classer les offres et à rédiger vos lettres. Elles restent sur votre ordinateur.{" "}
+          <button type="button" className="lien" onClick={relancerOnboarding}>Refaire le questionnaire de départ</button>
+        </p>
       </section>
 
       <section className="carte">
@@ -87,7 +90,16 @@ export function ProfilPage() {
           <label className="champ"><span>Téléphone</span><input type="tel" {...txt("telephone")} autoComplete="tel" placeholder="+41 79 123 45 67" /></label>
           <label className="champ large"><span>Adresse</span><input {...txt("adresse")} autoComplete="street-address" /></label>
           <label className="champ"><span>NPA</span><input {...txt("npa")} autoComplete="postal-code" inputMode="numeric" maxLength={5} /></label>
-          <label className="champ"><span>Localité</span><input {...txt("ville")} autoComplete="address-level2" /></label>
+          <label className="champ">
+            <span>Localité</span>
+            <input {...txt("ville")} autoComplete="address-level2" />
+            <span className="aide">{profil.lieuReconnu ? `📍 Recherche autour de : ${profil.lieuReconnu}` : "Renseignez NPA ou localité pour chercher par distance."}</span>
+          </label>
+          <label className="champ"><span>Distance maximale</span>
+            <select value={f.rayonKm} onChange={(e) => setF({ ...f, rayonKm: Number(e.target.value) })}>
+              {RAYONS.map((r) => <option key={r} value={r}>{r} km</option>)}
+            </select>
+          </label>
           <label className="champ"><span>Canton de travail souhaité</span>
             <select {...txt("canton")}>
               <option value="">—</option>
