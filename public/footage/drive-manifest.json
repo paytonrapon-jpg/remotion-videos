@@ -249,5 +249,53 @@
     ],
     "delogo": "delogo=x=725:y=480:w=290:h=140:enable='lt(t,9.5)',delogo=x=75:y=1045:w=290:h=145:enable='gte(t,9.5)'",
     "usable_seconds": 12.3
+  },
+  {
+    "file": "footage/drive/45b88fe9d7d440c082c4464c4db515d9.mp4",
+    "duration": 6.6,
+    "tags": [
+      "jet",
+      "cabine",
+      "mer",
+      "yacht",
+      "dauphins",
+      "coucher de soleil",
+      "Méditerranée",
+      "été"
+    ],
+    "watermark": "Aucun filigrane ni texte. Montage rapide (plans de 0,5 s). Source carrée 720x858 recadrée en vertical.",
+    "segments": [
+      {
+        "from": 0.0,
+        "to": 2.0,
+        "tags": [
+          "jet",
+          "cabine"
+        ],
+        "label": "Jet sur le tarmac, aile, cabine, champagne"
+      },
+      {
+        "from": 2.0,
+        "to": 5.0,
+        "tags": [
+          "mer",
+          "yacht",
+          "dauphins"
+        ],
+        "label": "Yacht, jet-ski, dauphins, wakeboard"
+      },
+      {
+        "from": 5.0,
+        "to": 6.6,
+        "tags": [
+          "mer",
+          "coucher de soleil",
+          "port"
+        ],
+        "label": "Coucher de soleil sur la mer, yacht devant une vieille ville"
+      }
+    ],
+    "usable_seconds": 6.6,
+    "note": "Idéale pour les destinations de bord de mer (Baléares, Côte d'Azur, Italie, Grèce, Malte). La vieille ville visible est La Valette (Malte)."
   }
 ]
