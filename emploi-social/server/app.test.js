@@ -182,3 +182,64 @@ test("candidatures spontanées : préparées puis bloquées tant qu'il manque l'
   const { json: imp } = await api("POST", "/employeurs/import", { texte: "nom;email;contact;lieu\nCrèche Arc-en-ciel;info@arc.example.org;Mme Favre;1205 Genève" });
   assert.equal(imp.ajoutes, 1);
 });
+
+const CV_TEST = {
+  titre: "Travailleuse sociale HES",
+  accroche: "",
+  dateNaissance: "12.03.1990",
+  nationalite: "Française",
+  experiences: [
+    { poste: "Éducatrice sociale", employeur: "Fondation Les Cerisiers", lieu: "Lausanne", debut: "03.2021", fin: "aujourd'hui", taux: "80 %", missions: "Animation d'ateliers collectifs\nAccompagnement de familles en situation de précarité\nRédaction de rapports pour la DGEJ" },
+    { poste: "Assistante sociale stagiaire", employeur: "CSR de Morges", lieu: "Morges", debut: "09.2019", fin: "02.2021", taux: "100 %", missions: "Évaluation des demandes d'aide sociale\nOrientation vers le réseau" },
+  ],
+  formations: [{ titre: "Bachelor HES en travail social", ecole: "HETSL", lieu: "Lausanne", debut: "2016", fin: "2019" }],
+  competences: ["Gestion de conflits", "Soutien à la parentalité", "Travail en réseau"],
+  langues: [{ langue: "Français", niveau: "Langue maternelle" }, { langue: "Allemand", niveau: "B1" }],
+  informatique: "Suite Office, Progrès PS",
+  interets: "Randonnée, théâtre",
+  referencesSurDemande: true,
+};
+
+test("CV suisse : enregistrement, PDF, puis réimport du PDF", async () => {
+  const { json: cv } = await api("PUT", "/cv", CV_TEST);
+  assert.equal(cv.experiences.length, 2);
+  const res = await fetch(`${base}/cv/pdf`);
+  assert.equal(res.headers.get("content-type"), "application/pdf");
+  const pdf = Buffer.from(await res.arrayBuffer());
+  assert.ok(pdf.length > 1500 && pdf.subarray(0, 5).toString() === "%PDF-");
+  const fd = new FormData();
+  fd.append("fichier", new Blob([pdf], { type: "application/pdf" }), "cv.pdf");
+  const imp = await (await fetch(`${base}/cv/import`, { method: "POST", body: fd })).json();
+  assert.equal(imp.mode, "regles");
+  assert.equal(imp.cv.experiences.length, 2, JSON.stringify(imp.cv.experiences));
+  assert.equal(imp.cv.experiences[0].debut, "03.2021");
+  assert.match(imp.cv.experiences[0].poste, /Éducatrice sociale/);
+  assert.ok(imp.cv.formations.some((f) => /Bachelor HES/.test(f.titre)));
+  assert.ok(imp.cv.langues.some((l) => l.langue === "Allemand" && /B1/.test(l.niveau)));
+  const { json: p } = await api("POST", "/cv/utiliser");
+  assert.match(p.cv.nom, /^CV Camille Martin\.pdf$/);
+});
+
+test("postuler depuis un texte d'annonce : CV et lettre adaptés, autorisation obligatoire", async () => {
+  const texte = "Travailleur social famille à 80% (H/F)\nFondation Horizon recherche un·e travailleur·euse social·e pour le soutien à la parentalité et le travail en réseau.\nContact : rh@horizon.example.org";
+  const { status, json: offre } = await api("POST", "/postuler/analyser", { texte });
+  assert.equal(status, 200);
+  assert.equal(offre.metier, "ts-famille");
+  assert.equal(offre.taux, "80 %");
+  assert.equal(offre.contactEmail, "rh@horizon.example.org");
+  const { status: s2, json: c } = await api("POST", "/postuler/preparer", { ...offre, employeur: "Fondation Horizon" });
+  assert.equal(s2, 201);
+  assert.equal(c.statut, "a_autoriser");
+  assert.equal(c.adaptation.mode, "regles");
+  assert.equal(c.cvAdapte.competences[0], "Soutien à la parentalité");
+  assert.match(c.cvAdapte.titre, /Travailleur social famille/);
+  assert.ok(c.cvFichier && c.cvFichier.taille > 1000);
+  const { json: ap } = await api("GET", `/candidatures/${c.id}/apercu`);
+  assert.equal(ap.contenu.piecesJointes[0].sha256, c.cvFichier.sha256, "le CV adapté est la pièce jointe");
+  await api("POST", `/candidatures/${c.id}/autoriser`, { empreinte: ap.empreinte, confirmation: true });
+  // Modifier le CV adapté annule l'autorisation.
+  const { json: maj } = await api("PUT", `/candidatures/${c.id}/cv`, { titre: "Travailleuse sociale famille" });
+  assert.equal(maj.statut, "a_autoriser");
+  assert.equal(maj.autorisation, null);
+  assert.equal((await api("POST", `/candidatures/${c.id}/envoyer`)).status, 403);
+});

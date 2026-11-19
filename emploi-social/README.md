@@ -15,8 +15,14 @@ candidatures **uniquement après autorisation explicite**.
     date de publication, recherche libre.
   - Mots-clés en français **et en allemand** (Sozialpädagoge, Fachperson Betreuung…).
   - Les annonces hors métiers sociaux (soins, administration…) sont masquées, les doublons fusionnés.
-- **Questionnaire de départ** (situation, métiers, lieu, taux, permis, diplômes, coordonnées) :
-  la recherche est prête en une minute. Il peut être refait depuis le Profil.
+- **CV au format suisse** (onglet « Mon CV ») : données personnelles, photo facultative, expériences
+  antichronologiques avec taux, formations, langues (CECR), informatique, références. **Import** d'un CV
+  existant (PDF, Word .docx ou sauvegarde .json), **téléchargement en PDF** avec aperçu, et option
+  « Joindre ce CV aux candidatures ».
+- **Postuler par lien** : collez le lien d'une annonce (jobup.ch, jobs.ch, job-room.ch, site
+  d'institution) ou son texte. L'offre est lue, puis le CV et la lettre sont **adaptés à l'employeur** :
+  titre du CV, profil, compétences et missions mises en avant, lettre ciblée. Le CV adapté (PDF) est
+  joint à cette candidature uniquement ; tout reste modifiable et soumis à votre autorisation.
 - **Recherche autour de chez vous** : votre NPA est localisé (service public geo.admin.ch) et les
   offres sont filtrées par distance (10 à 120 km), avec la distance affichée et une **carte**.
 - **Candidatures spontanées** : l'application repère les structures du social qui recrutent près de
@@ -69,6 +75,17 @@ Copiez `.env.example` en `.env`, puis renseignez votre compte e-mail :
 - **Infomaniak, Bluewin…** : changez aussi `SMTP_HOST` (voir `.env.example`).
 
 Relancez `npm start` : la pastille en haut passe de « Envoi simulé » à « Envoi réel ».
+
+## Adaptation par Claude (facultatif)
+
+Sans configuration, l'adaptation du CV et de la lettre suit des règles simples (titre ciblé, compétences
+et missions réordonnées selon les mots de l'annonce). Avec une clé API Anthropic, Claude réécrit le profil,
+reformule les compétences au plus près de l'annonce, rédige une vraie lettre ciblée, signale les écarts
+avec l'offre (diplôme, langue…) et lit aussi les CV importés bien plus fidèlement. Consigne donnée à
+Claude : ne jamais inventer d'expérience, de diplôme ou de compétence.
+
+Ajoutez dans `.env` : `ANTHROPIC_API_KEY=…` (clé à créer sur https://platform.claude.com). Chaque
+adaptation coûte quelques centimes.
 
 ## Bon à savoir
 

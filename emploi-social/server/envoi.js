@@ -24,7 +24,8 @@ export function contenuEnvoi(candidature, profil) {
 /** Documents joints : CV puis, si demandé, certificats de travail et diplômes. */
 export function piecesJointes(candidature, profil) {
   return [
-    ...(candidature.joindreCV && profil.cv ? [profil.cv] : []),
+    // CV adapté à l'offre s'il existe, sinon le CV du profil.
+    ...(candidature.joindreCV && (candidature.cvFichier ?? profil.cv) ? [candidature.cvFichier ?? profil.cv] : []),
     ...(candidature.joindreAnnexes ? profil.annexes ?? [] : []),
   ];
 }
@@ -47,7 +48,7 @@ export function verifier(candidature, profil) {
   if (!candidature.objet?.trim()) erreurs.push("L'objet est vide.");
   if ((candidature.message?.trim().length ?? 0) < 80) erreurs.push("Le message est trop court.");
   if (/\[Prénom Nom\]/.test(candidature.message)) erreurs.push("Remplacez « [Prénom Nom] » dans le message.");
-  if (candidature.joindreCV && !profil.cv) erreurs.push("Aucun CV : ajoutez-le dans le profil ou décochez la pièce jointe.");
+  if (candidature.joindreCV && !profil.cv && !candidature.cvFichier) erreurs.push("Aucun CV : ajoutez-le dans le profil ou décochez la pièce jointe.");
   const poids = piecesJointes(candidature, profil).reduce((t, d) => t + d.taille, 0);
   if (candidature.canal === "email" && poids > 15 * 1024 * 1024)
     erreurs.push("Pièces jointes trop lourdes (plus de 15 Mo) : retirez des annexes.");

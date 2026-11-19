@@ -11,7 +11,7 @@ const LANGUES = [
 ];
 
 export function ProfilPage() {
-  const { profil, setProfil, config, notifier, relancerOnboarding } = useApp();
+  const { profil, setProfil, config, notifier, aller } = useApp();
   const [f, setF] = useState<Profil>(profil);
   const [envoi, setEnvoi] = useState(false);
   const champsEdites = { ...f, cv: profil.cv, annexes: profil.annexes };
@@ -77,7 +77,7 @@ export function ProfilPage() {
         </ul>
         <p className="aide">
           Ces informations servent à classer les offres et à rédiger vos lettres. Elles restent sur votre ordinateur.{" "}
-          <button type="button" className="lien" onClick={relancerOnboarding}>Refaire le questionnaire de départ</button>
+          <button type="button" className="lien" onClick={() => aller("cv")}>Rédiger mon CV au format suisse</button>
         </p>
       </section>
 

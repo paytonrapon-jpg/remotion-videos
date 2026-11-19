@@ -48,6 +48,7 @@ const defaults = () => ({
   offres: [],
   candidatures: [],
   employeurs: [],
+  cvSuisse: null,
   journal: [],
 });
 

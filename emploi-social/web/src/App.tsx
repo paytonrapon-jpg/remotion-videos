@@ -6,9 +6,10 @@ import { OffresPage } from "./components/Offres";
 import { ProfilPage } from "./components/Profil";
 import { AutoriserPage } from "./components/Autoriser";
 import { EntreprisesPage } from "./components/Entreprises";
-import { Onboarding } from "./components/Onboarding";
+import { CvPage } from "./components/Cv";
+import { PostulerPage } from "./components/Postuler";
 
-type Onglet = "offres" | "entreprises" | "autoriser" | "candidatures" | "profil" | "journal";
+export type Onglet = "offres" | "postuler" | "entreprises" | "autoriser" | "candidatures" | "cv" | "profil" | "journal";
 
 type Ctx = {
   config: Config;
@@ -20,7 +21,6 @@ type Ctx = {
   notifier: (texte: string, ton?: "succes" | "erreur") => void;
   ouvrirCandidature: (id: string) => void;
   aller: (o: Onglet) => void;
-  relancerOnboarding: () => void;
   candidatureOuverte: string | null;
   fermerCandidature: () => void;
 };
@@ -30,9 +30,11 @@ export const useApp = () => useContext(AppCtx)!;
 
 const ONGLETS: { id: Onglet; libelle: string }[] = [
   { id: "offres", libelle: "Offres" },
-  { id: "entreprises", libelle: "Candidatures spontanées" },
+  { id: "postuler", libelle: "Postuler par lien" },
+  { id: "entreprises", libelle: "Spontanées" },
   { id: "autoriser", libelle: "À autoriser" },
   { id: "candidatures", libelle: "Mes candidatures" },
+  { id: "cv", libelle: "Mon CV" },
   { id: "profil", libelle: "Profil" },
   { id: "journal", libelle: "Journal" },
 ];
@@ -50,7 +52,6 @@ export function App() {
   const [toast, setToast] = useState<{ texte: string; ton: string; id: number } | null>(null);
   const [candidatureOuverte, setCandidatureOuverte] = useState<string | null>(null);
   const [erreurChargement, setErreurChargement] = useState("");
-  const [relancerOnboarding, setRelancerOnboarding] = useState(false);
 
   const rafraichir = useCallback(async () => {
     const [cfg, p, c] = await Promise.all([
@@ -104,7 +105,6 @@ export function App() {
             majCandidature,
             notifier,
             aller,
-            relancerOnboarding: () => setRelancerOnboarding(true),
             candidatureOuverte,
             ouvrirCandidature: (id) => {
               setCandidatureOuverte(id);
@@ -153,18 +153,14 @@ export function App() {
         </nav>
       </header>
       <main className="contenu">
-        {!profil!.onboardingFait || relancerOnboarding ? (
-          <Onboarding onFini={() => { setRelancerOnboarding(false); aller("offres"); }} />
-        ) : (
-          <>
         {onglet === "offres" && <OffresPage key={profil!.lieuReconnu + profil!.rayonKm} />}
         {onglet === "entreprises" && <EntreprisesPage />}
         {onglet === "autoriser" && <AutoriserPage />}
         {onglet === "candidatures" && <CandidaturesPage />}
         {onglet === "profil" && <ProfilPage />}
         {onglet === "journal" && <JournalPage />}
-          </>
-        )}
+        {onglet === "postuler" && <PostulerPage />}
+        {onglet === "cv" && <CvPage />}
       </main>
       {toast && (
         <div className={`toast ${toast.ton}`} role="status">

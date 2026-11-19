@@ -199,6 +199,8 @@ function EditeurCandidature({ candidature: c, onClose }: { candidature: Candidat
         </div>
       )}
 
+      {c.cvAdapte && <CvAdapte candidature={c} modifiable={modifiable} />}
+
       <label className="champ">
         <span>Notes personnelles (jamais envoyées)</span>
         <textarea rows={3} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} placeholder="Contact téléphonique, date d'entretien…" />
@@ -321,5 +323,35 @@ function RelanceModal({ candidature: c, onClose }: { candidature: Candidature; o
         </>
       )}
     </Modal>
+  );
+}
+
+/** CV adapté à cette offre : aperçu et retouches (titre, profil, compétences). */
+function CvAdapte({ candidature: c, modifiable }: { candidature: Candidature; modifiable: boolean }) {
+  const { majCandidature, notifier } = useApp();
+  const [f, setF] = useState({ titre: c.cvAdapte!.titre, accroche: c.cvAdapte!.accroche, competences: c.cvAdapte!.competences.join("\n") });
+  const [version, setVersion] = useState(0);
+  const modifie = f.titre !== c.cvAdapte!.titre || f.accroche !== c.cvAdapte!.accroche || f.competences !== c.cvAdapte!.competences.join("\n");
+  const enregistrer = async () => {
+    const r = await api<Candidature>("PUT", `/candidatures/${c.id}/cv`, { titre: f.titre, accroche: f.accroche, competences: f.competences.split("\n").filter(Boolean) });
+    majCandidature(r);
+    setVersion(Date.now());
+    notifier(c.statut === "autorisee" ? "CV mis à jour : l'autorisation a été annulée." : "CV adapté mis à jour.");
+  };
+  return (
+    <details className="cv-adapte" open>
+      <summary><strong>CV adapté à cette offre</strong> · <a href={`/api/candidatures/${c.id}/cv.pdf?v=${version}`} target="_blank" rel="noreferrer">ouvrir le PDF ↗</a></summary>
+      {c.adaptation?.pointsAttention?.length ? (
+        <div className="alerte attention"><strong>À vérifier</strong><ul>{c.adaptation.pointsAttention.map((p) => <li key={p}>{p}</li>)}</ul></div>
+      ) : null}
+      {modifiable && (
+        <div className="grille-form">
+          <label className="champ large"><span>Titre du CV</span><input value={f.titre} onChange={(e) => setF({ ...f, titre: e.target.value })} /></label>
+          <label className="champ large"><span>Profil</span><textarea rows={3} value={f.accroche} onChange={(e) => setF({ ...f, accroche: e.target.value })} /></label>
+          <label className="champ large"><span>Compétences (une par ligne, les premières sont mises en avant)</span><textarea rows={4} value={f.competences} onChange={(e) => setF({ ...f, competences: e.target.value })} /></label>
+          {modifie && <div className="actions large sans-marge"><button className="btn" onClick={enregistrer}>Mettre à jour le CV adapté</button></div>}
+        </div>
+      )}
+    </details>
   );
 }

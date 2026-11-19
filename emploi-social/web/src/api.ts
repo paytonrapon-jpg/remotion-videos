@@ -37,7 +37,10 @@ export type Statut = "brouillon" | "a_autoriser" | "autorisee" | "envoyee" | "en
 
 export type Candidature = {
   id: string;
-  type?: "offre" | "spontanee";
+  type?: "offre" | "spontanee" | "lien";
+  cvAdapte?: CvSuisse;
+  cvFichier?: Document | null;
+  adaptation?: { mode: "ia" | "regles"; changements: string[]; pointsAttention: string[] };
   employeurId?: string;
   offre: Offre;
   statut: Statut;
@@ -92,6 +95,7 @@ export type Profil = {
 
 export type Config = {
   sourceOffres: "job-room" | "demo";
+  ia: boolean;
   smtp: boolean;
   envoisDuJour: number;
   reglages: { limiteJournaliere: number; delaiRelanceJours: number; objectifHebdo: number };
@@ -192,3 +196,24 @@ export const SITUATIONS = [
 ];
 
 export const RAYONS = [10, 20, 30, 50, 80, 120];
+
+export type Experience = { poste: string; employeur: string; lieu: string; debut: string; fin: string; taux: string; missions: string };
+export type Formation = { titre: string; ecole: string; lieu: string; debut: string; fin: string };
+export type CvSuisse = {
+  titre: string;
+  accroche: string;
+  dateNaissance: string;
+  nationalite: string;
+  etatCivil: string;
+  photo: { fichier: string; mime: string } | null;
+  experiences: Experience[];
+  formations: Formation[];
+  competences: string[];
+  langues: { langue: string; niveau: string }[];
+  informatique: string;
+  interets: string;
+  referencesSurDemande: boolean;
+  references: { nom: string; fonction: string; structure: string; telephone: string; email: string }[];
+};
+
+export const NIVEAUX_LANGUE = ["Langue maternelle", "C2", "C1", "B2", "B1", "A2", "A1"];

@@ -7,6 +7,9 @@ import { contenuEnvoi, empreinte, envoyerEmail, piecesJointes, smtpConfigure, ve
 import { employeursQuiRecrutent, modeDemo, rechercher } from "./jobRoom.js";
 import { rediger, redigerRelance, redigerSpontanee } from "./lettres.js";
 import { distanceKm, geocoder } from "./geo.js";
+import { adapter, iaDisponible, structurerCvIa } from "./adaptation.js";
+import { annonceDepuisTexte, lireAnnonce } from "./annonce.js";
+import { analyserTexte, cvVide, ecrirePdf, extraireTexte, genererPdf, normaliserCv } from "./cv.js";
 import { scorer } from "./matching.js";
 import { CANTONS, CANTONS_VOISINS, CONTRATS, DIPLOMES, diplomesCites, METIERS, metierDuTitre, PERMIS_TRAVAIL } from "./referentiel.js";
 import { db, logEvent, newId, UPLOAD_DIR } from "./store.js";
@@ -66,6 +69,7 @@ export function createApp() {
     const data = db.get();
     res.json({
       sourceOffres: modeDemo() ? "demo" : "job-room",
+      ia: iaDisponible(),
       smtp: smtpConfigure(),
       referentiel: {
         metiers: METIERS.map(({ id, libelle, famille }) => ({ id, libelle, famille })),
@@ -654,6 +658,213 @@ export function createApp() {
     });
     res.status(201).json({ creees: creees.length });
   });
+
+  // ---- CV au format suisse -----------------------------------------------------------
+  const lireCv = (data) => data.cvSuisse ?? cvVide();
+  const nomCv = (profil) => `CV ${profil.prenom} ${profil.nom}.pdf`.replace(/\s+/g, " ").trim();
+
+  app.get("/api/cv", (_req, res) => res.json(lireCv(db.get())));
+
+  app.put("/api/cv", (req, res) => {
+    const cv = db.update((data) => (data.cvSuisse = normaliserCv(req.body, lireCv(data).photo)));
+    res.json(cv);
+  });
+
+  const televersement = multer({ dest: UPLOAD_DIR, limits: { fileSize: 8 * 1024 * 1024 } });
+
+  /** Import : renvoie un CV à vérifier (rien n'est enregistré avant validation). */
+  app.post(
+    "/api/cv/import",
+    televersement.single("fichier"),
+    asyncRoute(async (req, res) => {
+      if (!req.file) throw new HttpError(400, "Aucun fichier reçu.");
+      const nom = Buffer.from(req.file.originalname, "latin1").toString("utf8");
+      try {
+        if (/\.json$/i.test(nom)) {
+          const brut = JSON.parse(fs.readFileSync(req.file.path, "utf8"));
+          return res.json({ cv: normaliserCv(brut.cv ?? brut), identite: {}, mode: "json" });
+        }
+        const texte = await extraireTexte(req.file.path, nom);
+        if (texte.replace(/\s/g, "").length < 80) throw new HttpError(422, "Ce fichier ne contient pas de texte lisible (CV scanné ?). Saisissez le CV dans le formulaire.");
+        if (iaDisponible()) {
+          try {
+            return res.json({ ...(await structurerCvIa(texte)), mode: "ia" });
+          } catch (e) {
+            return res.json({ ...analyserTexte(texte), mode: "regles", avertissement: `Lecture par Claude indisponible (${e.message}).` });
+          }
+        }
+        res.json({ ...analyserTexte(texte), mode: "regles" });
+      } finally {
+        fs.rmSync(req.file.path, { force: true });
+      }
+    }),
+  );
+
+  app.post("/api/cv/photo", televersement.single("photo"), (req, res) => {
+    if (!req.file || !/^image\/(jpeg|png)$/.test(req.file.mimetype)) {
+      if (req.file) fs.rmSync(req.file.path, { force: true });
+      throw new HttpError(400, "Photo refusée : JPG ou PNG uniquement.");
+    }
+    const cv = db.update((data) => {
+      const cv = lireCv(data);
+      if (cv.photo) fs.rmSync(path.join(UPLOAD_DIR, cv.photo.fichier), { force: true });
+      cv.photo = { fichier: req.file.filename, mime: req.file.mimetype };
+      return (data.cvSuisse = cv);
+    });
+    res.json(cv);
+  });
+
+  app.get("/api/cv/photo", (_req, res) => {
+    const photo = lireCv(db.get()).photo;
+    if (!photo) throw new HttpError(404, "Aucune photo.");
+    res.type(photo.mime).sendFile(path.join(UPLOAD_DIR, photo.fichier));
+  });
+
+  app.delete("/api/cv/photo", (_req, res) => {
+    const cv = db.update((data) => {
+      const cv = lireCv(data);
+      if (cv.photo) fs.rmSync(path.join(UPLOAD_DIR, cv.photo.fichier), { force: true });
+      cv.photo = null;
+      return (data.cvSuisse = cv);
+    });
+    res.json(cv);
+  });
+
+  app.get(
+    "/api/cv/pdf",
+    asyncRoute(async (req, res) => {
+      const data = db.get();
+      const pdf = await genererPdf(lireCv(data), data.profil);
+      res.type("application/pdf");
+      res.setHeader("Content-Disposition", `${req.query.apercu ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(nomCv(data.profil))}`);
+      res.send(pdf);
+    }),
+  );
+
+  app.get("/api/cv/json", (_req, res) => {
+    const data = db.get();
+    res.setHeader("Content-Disposition", `attachment; filename="cv-suisse.json"`);
+    res.json({ format: "emploi-social-cv", version: 1, cv: { ...lireCv(data), photo: null } });
+  });
+
+  /** Utilise le CV suisse (PDF généré) comme CV joint par défaut. */
+  app.post(
+    "/api/cv/utiliser",
+    asyncRoute(async (_req, res) => {
+      const data = db.get();
+      const doc = await ecrirePdf(lireCv(data), data.profil, nomCv(data.profil));
+      const profil = db.update((d) => {
+        if (d.profil.cv) fs.rmSync(path.join(UPLOAD_DIR, d.profil.cv.fichier), { force: true });
+        d.profil.cv = doc;
+        logEvent(d, "cv", { message: "CV suisse généré et défini comme CV joint" });
+        return d.profil;
+      });
+      res.json(profil);
+    }),
+  );
+
+  // ---- Postuler à partir d'un lien ----------------------------------------------------
+  app.post(
+    "/api/postuler/analyser",
+    asyncRoute(async (req, res) => {
+      const { url = "", texte = "" } = req.body ?? {};
+      let offre;
+      try {
+        offre = texte.trim() ? await annonceDepuisTexte(texte, { url }) : await lireAnnonce(url);
+      } catch (e) {
+        throw new HttpError(422, e.message);
+      }
+      const data = db.get();
+      res.json({ ...offre, distanceKm: distanceKm(data.profil, offre), compat: scorer(offre, data.profil), dejaPostule: data.candidatures.some((c) => c.offre.externalId === offre.externalId) });
+    }),
+  );
+
+  /** Crée la candidature avec lettre et CV adaptés à l'offre (brouillon à autoriser). */
+  app.post(
+    "/api/postuler/preparer",
+    asyncRoute(async (req, res) => {
+      const b = req.body ?? {};
+      if (!b.intitule?.trim()) throw new HttpError(400, "Offre incomplète.");
+      const data = db.get();
+      const offre = { ...b, intitule: b.intitule.trim(), employeur: (b.employeur ?? "").trim() || "Employeur à préciser", description: String(b.description ?? "").slice(0, 15000) };
+      delete offre.compat;
+      delete offre.dejaPostule;
+      const cv = lireCv(data);
+      const adaptation = await adapter(offre, data.profil, cv);
+      const cvFichier = cv.experiences.length || cv.formations.length ? await ecrirePdf(adaptation.cv, data.profil, nomCv(data.profil)) : null;
+      const c = db.update((d) => {
+        let o = d.offres.find((x) => x.externalId === offre.externalId);
+        if (!o) {
+          o = { ...offre, id: newId(), sauveeLe: new Date().toISOString() };
+          d.offres.unshift(o);
+        }
+        const now = new Date().toISOString();
+        const nouvelle = {
+          id: newId(),
+          type: "lien",
+          offre: { ...o },
+          statut: "a_autoriser",
+          canal: o.contactEmail ? "email" : o.urlCandidature ? "site" : "email",
+          destinataire: o.contactEmail ?? "",
+          objet: adaptation.objet,
+          message: adaptation.message,
+          joindreCV: true,
+          joindreAnnexes: true,
+          notes: "",
+          cvAdapte: adaptation.cv,
+          cvFichier,
+          adaptation: { mode: adaptation.mode, changements: adaptation.changements, pointsAttention: adaptation.pointsAttention },
+          autorisation: null,
+          envoi: null,
+          relances: [],
+          creeLe: now,
+          majLe: now,
+          historique: [{ at: now, statut: "a_autoriser" }],
+        };
+        d.candidatures.unshift(nouvelle);
+        logEvent(d, "creation", { candidatureId: nouvelle.id, message: `Candidature adaptée préparée (${adaptation.mode === "ia" ? "Claude" : "règles"}) : ${o.intitule} – ${o.employeur}` });
+        return nouvelle;
+      });
+      res.status(201).json(vue(c, db.get()));
+    }),
+  );
+
+  app.get(
+    "/api/candidatures/:id/cv.pdf",
+    asyncRoute(async (req, res) => {
+      const c = trouverCandidature(db.get(), req.params.id);
+      const doc = c.cvFichier ?? db.get().profil.cv;
+      if (!doc) throw new HttpError(404, "Aucun CV pour cette candidature.");
+      res.type("application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename*=UTF-8''${encodeURIComponent(doc.nom)}`);
+      res.sendFile(path.join(UPLOAD_DIR, doc.fichier));
+    }),
+  );
+
+  /** Modifie le CV adapté : le PDF est régénéré et toute autorisation annulée. */
+  app.put(
+    "/api/candidatures/:id/cv",
+    asyncRoute(async (req, res) => {
+      const data = db.get();
+      const c = trouverCandidature(data, req.params.id);
+      if (!["brouillon", "a_autoriser", "autorisee"].includes(c.statut)) throw new HttpError(409, "Candidature déjà envoyée.");
+      const cv = normaliserCv({ ...(c.cvAdapte ?? lireCv(data)), ...req.body }, lireCv(data).photo);
+      const doc = await ecrirePdf(cv, data.profil, nomCv(data.profil));
+      const maj = db.update((d) => {
+        const c2 = trouverCandidature(d, c.id);
+        if (c2.cvFichier) fs.rmSync(path.join(UPLOAD_DIR, c2.cvFichier.fichier), { force: true });
+        c2.cvAdapte = cv;
+        c2.cvFichier = doc;
+        if (c2.autorisation) {
+          c2.autorisation = null;
+          changerStatut(c2, "a_autoriser");
+          logEvent(d, "autorisation-annulee", { candidatureId: c2.id, message: "CV modifié après autorisation : nouvelle autorisation requise." });
+        }
+        return c2;
+      });
+      res.json(vue(maj, db.get()));
+    }),
+  );
 
   app.get("/api/journal", (_req, res) => res.json(db.get().journal.slice(0, 500)));
 
