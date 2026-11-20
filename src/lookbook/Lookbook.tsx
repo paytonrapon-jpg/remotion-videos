@@ -40,6 +40,8 @@ export type LookbookProps = {
   hook: Line & { text: string };
   looks: Look[];
   outro: Line & { text: string };
+  /** "grid" : grandes cartes puis vignettes sous la mannequin ; "side" : colonne à gauche, les pièces restent affichées */
+  layout?: "grid" | "side";
 };
 
 const sec = (id: string) => (durees as Record<string, number>)[id] ?? 1.5;
@@ -62,6 +64,14 @@ const outroLen = (p: LookbookProps) => sec(p.outro.id) + 1;
 
 export const lookbookDuration = (p: LookbookProps) =>
   f(hookLen(p)) + p.looks.reduce((a, l) => a + f(lookTiming(l).end), 0) + f(outroLen(p));
+
+// Colonne de gauche : les pièces s'empilent de haut en bas et restent à l'écran.
+const sidePos = (i: number, n: number) => {
+  const gap = 18;
+  const size = Math.min(310, (1600 - (n - 1) * gap) / n);
+  const total = n * size + (n - 1) * gap;
+  return { x: 40, y: 160 + (1640 - total) / 2 + i * (size + gap), size, rot: 0 };
+};
 
 const Voice: React.FC<{ id: string; at?: number }> = ({ id, at = 0 }) => (
   <Sequence from={f(at)} layout="none">
@@ -107,22 +117,23 @@ const thumbPos = (i: number, n: number) => {
   return { x: (1080 - w) / 2 + i * (size + gap), y: 1610, size, rot: 0 };
 };
 
-const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; reveal: number }> = ({
+const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; reveal: number; side: boolean }> = ({
   piece,
   i,
   n,
   start,
   reveal,
+  side,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const pop = spring({ frame: frame - f(start), fps, config: { damping: 11, mass: 0.8 } });
-  const move = spring({ frame: frame - f(reveal) - i * 3, fps, config: { damping: 15 } });
-  const a = gridPos(i, n);
-  const b = thumbPos(i, n);
+  const move = side ? 0 : spring({ frame: frame - f(reveal) - i * 3, fps, config: { damping: 15 } });
+  const a = side ? sidePos(i, n) : gridPos(i, n);
+  const b = side ? a : thumbPos(i, n);
   const lerp = (k: "x" | "y" | "size" | "rot") => a[k] + (b[k] - a[k]) * move;
   const size = lerp("size");
-  const zoom = interpolate(frame, [f(start), f(reveal)], [0.92, 1.02], clamp);
+  const zoom = side ? 1 : interpolate(frame, [f(start), f(reveal)], [0.92, 1.02], clamp);
   const Art = pieceArt[piece.art];
   return (
     <div
@@ -132,7 +143,10 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
         top: lerp("y"),
         width: size,
         height: size,
-        transform: `scale(${pop}) rotate(${lerp("rot")}deg)`,
+        transform: side
+          ? `translateX(${(1 - pop) * -420}px)`
+          : `scale(${pop}) rotate(${lerp("rot")}deg)`,
+        opacity: side ? Math.min(1, pop * 1.5) : 1,
         borderRadius: 24 + move * 6,
         border: `${12 - move * 5}px solid ${c.white}`,
         overflow: "hidden",
@@ -160,7 +174,13 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
   );
 };
 
-const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => {
+const LookScene: React.FC<{
+  look: Look;
+  index: number;
+  side?: boolean;
+  showTitle?: boolean;
+  cta?: Line & { text: string };
+}> = ({ look, index, side = false, showTitle = true, cta }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const t = lookTiming(look);
@@ -169,9 +189,12 @@ const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => 
   const enter = spring({ frame: frame - f(t.reveal), fps, config: { damping: 15 } });
   const zoom = interpolate(frame, [f(t.reveal), durationInFrames], [1, 1.05], clamp);
   const isCutout = look.mode === "cutout";
-  const box: React.CSSProperties = isCutout
-    ? { left: 80, right: 80, top: 300, bottom: 360 }
-    : { left: 170, right: 170, top: 290, bottom: 400 };
+  const box: React.CSSProperties = side
+    ? { left: 380, right: 20, top: 300, bottom: 60 }
+    : isCutout
+      ? { left: 80, right: 80, top: 300, bottom: 360 }
+      : { left: 170, right: 170, top: 290, bottom: 400 };
+  const ctaP = cta ? spring({ frame: frame - f(t.end), fps, config: { damping: 14 } }) : 0;
 
   return (
     <AbsoluteFill style={{ opacity: exit }}>
@@ -180,7 +203,9 @@ const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => 
         <Voice key={p.id} id={p.id} at={t.pieces[i]} />
       ))}
       <Voice id={look.reveal.id} at={t.reveal} />
+      {cta ? <Voice id={cta.id} at={t.end} /> : null}
 
+      {showTitle ? (
       <div
         style={{
           position: "absolute",
@@ -198,6 +223,7 @@ const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => 
       >
         LOOK {index + 1}
       </div>
+      ) : null}
 
       {frame >= f(t.reveal) ? (
         <div
@@ -235,8 +261,33 @@ const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => 
       ) : null}
 
       {look.pieces.map((p, i) => (
-        <PieceCard key={p.id} piece={p} i={i} n={look.pieces.length} start={t.pieces[i]} reveal={t.reveal} />
+        <PieceCard key={p.id} piece={p} i={i} n={look.pieces.length} start={t.pieces[i]} reveal={t.reveal} side={side} />
       ))}
+
+      {cta && frame >= f(t.end) ? (
+        <div
+          style={{
+            position: "absolute",
+            top: 90,
+            left: 400,
+            right: 20,
+            textAlign: "center",
+            fontFamily,
+            fontWeight: 900,
+            fontSize: 56,
+            lineHeight: 1.15,
+            color: c.white,
+            background: c.ink,
+            borderRadius: 28,
+            padding: "18px 24px",
+            opacity: ctaP,
+            transform: `scale(${0.7 + ctaP * 0.3})`,
+            zIndex: 3,
+          }}
+        >
+          {cta.text}
+        </div>
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -344,13 +395,15 @@ const Outro: React.FC<{ looks: Look[]; text: string; id: string }> = ({ looks, t
 };
 
 export const Lookbook: React.FC<LookbookProps> = (props) => {
-  const { hook, looks, outro } = props;
+  const { hook, looks, outro, layout } = props;
+  const side = layout === "side";
+  const solo = looks.length === 1;
   let cursor = f(hookLen(props));
   const scenes = looks.map((look, i) => {
-    const len = f(lookTiming(look).end);
+    const len = f(lookTiming(look).end) + (solo ? f(outroLen(props)) : 0);
     const s = (
       <Sequence key={i} from={cursor} durationInFrames={len}>
-        <LookScene look={look} index={i} />
+        <LookScene look={look} index={i} side={side} showTitle={!solo} cta={solo ? outro : undefined} />
       </Sequence>
     );
     cursor += len;
@@ -363,9 +416,11 @@ export const Lookbook: React.FC<LookbookProps> = (props) => {
         <Hook text={hook.text} id={hook.id} />
       </Sequence>
       {scenes}
-      <Sequence from={cursor}>
-        <Outro looks={looks} text={outro.text} id={outro.id} />
-      </Sequence>
+      {solo ? null : (
+        <Sequence from={cursor}>
+          <Outro looks={looks} text={outro.text} id={outro.id} />
+        </Sequence>
+      )}
     </AbsoluteFill>
   );
 };

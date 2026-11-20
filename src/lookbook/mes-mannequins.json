@@ -1,7 +1,7 @@
 {
   "hook": {
-    "text": "Du sport\nà la soirée…\n3 looks 👀",
-    "voice": "Du sport à la soirée… trois looks.",
+    "text": "Du sport\nà la soirée…\n2 looks 👀",
+    "voice": "Du sport à la soirée… deux looks.",
     "id": "hook"
   },
   "looks": [
@@ -74,57 +74,11 @@
         "voice": "Et voilà le look soirée glam !",
         "id": "l2-reveal"
       }
-    },
-    {
-      "image": "mannequins/casual-cutout.png",
-      "photo": "mannequins/casual-cutout.png",
-      "mode": "cutout",
-      "intro": {
-        "voice": "Look numéro trois.",
-        "id": "l3-intro"
-      },
-      "pieces": [
-        {
-          "voice": "Une chemise blanche,",
-          "id": "l3-chemise",
-          "art": "chemise",
-          "photo": "mannequins/pieces/chemise-blanche.jpg",
-          "fit": "cover"
-        },
-        {
-          "voice": "un pull rose torsadé,",
-          "id": "l3-pull",
-          "art": "pull",
-          "photo": "mannequins/pieces/pull.png"
-        },
-        {
-          "voice": "un legging noir,",
-          "id": "l3-legging",
-          "art": "legging",
-          "photo": "mannequins/pieces/legging-noir.png"
-        },
-        {
-          "voice": "des cuissardes blanches,",
-          "id": "l3-bottes",
-          "art": "bottes",
-          "photo": "mannequins/pieces/bottes.png"
-        },
-        {
-          "voice": "et une casquette noire.",
-          "id": "l3-casquette",
-          "art": "casquette",
-          "photo": "mannequins/pieces/casquette.png"
-        }
-      ],
-      "reveal": {
-        "voice": "Et voilà le look casual chic !",
-        "id": "l3-reveal"
-      }
     }
   ],
   "outro": {
-    "text": "Ton préféré ? 1, 2 ou 3 👇",
-    "voice": "Alors, ton préféré ? Le un, le deux ou le trois ? Dis-le moi en commentaire !",
+    "text": "Ton préféré ? 1 ou 2 👇",
+    "voice": "Alors, ton préféré ? Le un ou le deux ? Dis-le moi en commentaire !",
     "id": "outro"
   }
 }

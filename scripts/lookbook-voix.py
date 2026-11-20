@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prépare la vidéo LookbookMannequins à partir de src/lookbook/mes-mannequins.json :
+"""Prépare la vidéo LookbookMannequins à partir de src/lookbook/mes-mannequins.json et look-casual.json :
 - génère la voix off, une phrase par fichier (public/mannequins/voix/),
 - écrit la durée de chaque phrase dans src/lookbook/voix-durees.json.
 
@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "src/lookbook/mes-mannequins.json"
+DATAS = [ROOT / "src/lookbook/mes-mannequins.json", ROOT / "src/lookbook/look-casual.json"]
 PUBLIC = ROOT / "public"
 VOIX = PUBLIC / "mannequins/voix"
 MODEL_DIR = Path.home() / ".cache/piper"
@@ -45,13 +45,15 @@ def speak(text, out):
 
 
 def main():
-    data = json.loads(DATA.read_text())
     VOIX.mkdir(parents=True, exist_ok=True)
     ensure_model()
 
-    lines = [data["hook"], data["outro"]]
-    for look in data["looks"]:
-        lines += [look["intro"], *look["pieces"], look["reveal"]]
+    lines = []
+    for path in DATAS:
+        data = json.loads(path.read_text())
+        lines += [data["hook"], data["outro"]]
+        for look in data["looks"]:
+            lines += [look["intro"], *look["pieces"], look["reveal"]]
 
     durees = {}
     for line in lines:

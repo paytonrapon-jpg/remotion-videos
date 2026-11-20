@@ -1,0 +1,61 @@
+{
+  "layout": "side",
+  "hook": {
+    "text": "Qui a dit\nque le legging\nne pouvait pas\nêtre chic ? 👀",
+    "voice": "Qui a dit que le legging ne pouvait pas être chic ?",
+    "id": "c-hook"
+  },
+  "looks": [
+    {
+      "image": "mannequins/casual-cutout.png",
+      "photo": "mannequins/casual-cutout.png",
+      "mode": "cutout",
+      "intro": {
+        "voice": "Pour ce look, il te faut…",
+        "id": "c-intro"
+      },
+      "pieces": [
+        {
+          "voice": "une casquette noire,",
+          "id": "c-casquette",
+          "art": "casquette",
+          "photo": "mannequins/pieces/casquette.png"
+        },
+        {
+          "voice": "une chemise blanche,",
+          "id": "c-chemise",
+          "art": "chemise",
+          "photo": "mannequins/pieces/chemise-blanche.jpg",
+          "fit": "cover"
+        },
+        {
+          "voice": "un pull rose torsadé,",
+          "id": "c-pull",
+          "art": "pull",
+          "photo": "mannequins/pieces/pull.png"
+        },
+        {
+          "voice": "un legging noir,",
+          "id": "c-legging",
+          "art": "legging",
+          "photo": "mannequins/pieces/legging-noir.png"
+        },
+        {
+          "voice": "et des cuissardes blanches.",
+          "id": "c-bottes",
+          "art": "bottes",
+          "photo": "mannequins/pieces/bottes.png"
+        }
+      ],
+      "reveal": {
+        "voice": "Et voilà le résultat !",
+        "id": "c-reveal"
+      }
+    }
+  ],
+  "outro": {
+    "text": "Tu le porterais ? 👇",
+    "voice": "Tu le porterais ? Dis-le moi en commentaire !",
+    "id": "c-outro"
+  }
+}

@@ -2,7 +2,8 @@ import { Composition } from "remotion";
 import { EmptyLeg, emptyLegDuration } from "./emptyleg/EmptyLeg";
 import { gvaMpl } from "./emptyleg/gva-mpl";
 import { HelloWorld } from "./HelloWorld";
-import { Lookbook, lookbookDuration } from "./lookbook/Lookbook";
+import { Lookbook, lookbookDuration, type LookbookProps } from "./lookbook/Lookbook";
+import lookCasual from "./lookbook/look-casual.json";
 import mesMannequins from "./lookbook/mes-mannequins.json";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
@@ -58,6 +59,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={mesMannequins}
+        calculateMetadata={({ props }) => ({ durationInFrames: lookbookDuration(props) })}
+      />
+      <Composition
+        id="LookCasual"
+        component={Lookbook}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={lookCasual as LookbookProps}
         calculateMetadata={({ props }) => ({ durationInFrames: lookbookDuration(props) })}
       />
     </>

@@ -27,6 +27,7 @@ La vidéo arrive dans **Mon Drive › Vidéos Remotion**, nommée avec la date d
 | Nom | Vidéo |
 |---|---|
 | `LookbookMannequins` | Reel 2 looks avec voix off : chaque pièce est nommée et montrée, puis la mannequin habillée apparaît. Phrases et pièces dans `src/lookbook/mes-mannequins.json` ; après modification : `pip install piper-tts` puis `python3 scripts/lookbook-voix.py` |
+| `LookCasual` | Reel d'un seul look : les pièces s'empilent à gauche pendant la voix off et restent affichées, puis la mannequin apparaît à droite (`src/lookbook/look-casual.json`) |
 | `EmptyLegGvaMpl` | Reel du vol Genève → Montpellier |
 | `RdvClient` | Vidéo face caméra « RDV client » (nécessite `public/rdv.mp4`, non inclus dans le dépôt) |
 | `TalkingHead` | Démo du modèle face caméra |
