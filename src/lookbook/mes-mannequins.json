@@ -45,24 +45,29 @@
       },
       "pieces": [
         {
-          "voice": "Une chemise en satin crème,",
+          "voice": "Une chemise crème toute douce,",
           "id": "l2-chemise",
-          "art": "chemise"
+          "art": "chemise",
+          "photo": "mannequins/pieces/chemise.jpg",
+          "fit": "cover"
         },
         {
-          "voice": "une mini-jupe effet croco,",
+          "voice": "une jupe marron,",
           "id": "l2-jupe",
-          "art": "jupe"
+          "art": "jupe",
+          "photo": "mannequins/pieces/jupe.png"
         },
         {
-          "voice": "une pochette dorée,",
+          "voice": "un sac effet croco,",
           "id": "l2-pochette",
-          "art": "pochette"
+          "art": "pochette",
+          "photo": "mannequins/pieces/pochette.png"
         },
         {
-          "voice": "et des sandales à talons.",
+          "voice": "et des sandales à talons noires.",
           "id": "l2-sandales",
-          "art": "sandales"
+          "art": "sandales",
+          "photo": "mannequins/pieces/sandales.png"
         }
       ],
       "reveal": {

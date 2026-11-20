@@ -27,7 +27,7 @@ const FPS = 30;
 const GAP = 0.15; // silence entre deux phrases (s)
 
 type Line = { voice: string; id: string };
-type Piece = Line & { art: string; photo?: string };
+type Piece = Line & { art: string; photo?: string; fit?: string };
 type Look = {
   image: string;
   photo: string;
@@ -143,7 +143,15 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
     >
       <div style={{ width: "100%", height: "100%", padding: size * 0.06, transform: `scale(${zoom})` }}>
         {piece.photo ? (
-          <Img src={staticFile(piece.photo)} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          <Img
+            src={staticFile(piece.photo)}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: piece.fit === "cover" ? "cover" : "contain",
+              borderRadius: piece.fit === "cover" ? 12 : 0,
+            }}
+          />
         ) : Art ? (
           <Art />
         ) : null}
