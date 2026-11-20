@@ -83,7 +83,7 @@ const Background: React.FC = () => {
 
 // Position d'une pièce : grande carte pendant l'énumération, vignette sous la mannequin ensuite.
 const gridPos = (i: number, n: number) => {
-  const size = n <= 2 ? 520 : 440;
+  const size = n <= 2 ? 520 : n <= 4 ? 440 : 370;
   const cols = n === 1 ? 1 : 2;
   const rows = Math.ceil(n / cols);
   const row = Math.floor(i / cols);
@@ -95,7 +95,7 @@ const gridPos = (i: number, n: number) => {
   const rowW = inRow * size + (inRow - 1) * gapX;
   return {
     x: (1080 - rowW) / 2 + col * (size + gapX),
-    y: 330 + (1300 - totalH) / 2 + row * (size + gapY),
+    y: 300 + (1340 - totalH) / 2 + row * (size + gapY),
     size,
     rot: (i % 2 === 0 ? -1 : 1) * (3 + (i % 3)),
   };
