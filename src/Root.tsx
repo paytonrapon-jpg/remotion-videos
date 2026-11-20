@@ -3,7 +3,7 @@ import { EmptyLeg, emptyLegDuration } from "./emptyleg/EmptyLeg";
 import { gvaMpl } from "./emptyleg/gva-mpl";
 import { HelloWorld } from "./HelloWorld";
 import { Lookbook, lookbookDuration } from "./lookbook/Lookbook";
-import { mesMannequins } from "./lookbook/mes-mannequins";
+import mesMannequins from "./lookbook/mes-mannequins.json";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
 import { TalkingHead } from "./talking/TalkingHead";

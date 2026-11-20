@@ -1,0 +1,41 @@
+{
+  "hook": {
+    "text": "Du sport\nà la soirée…\n2 looks 👀",
+    "voice": "Du sport à la soirée… deux looks.",
+    "id": "hook"
+  },
+  "looks": [
+    {
+      "image": "mannequins/sport-cutout.png",
+      "photo": "mannequins/sport.jpg",
+      "source": "mannequins/originaux/sport.jpg",
+      "mode": "cutout",
+      "intro": { "voice": "Look numéro un.", "id": "l1-intro" },
+      "pieces": [
+        { "voice": "Une brassière rose pastel,", "id": "l1-brassiere", "crop": [218, 1092, 906, 1638] },
+        { "voice": "un legging taille haute,", "id": "l1-legging", "crop": [164, 1725, 983, 2183] },
+        { "voice": "et sa gourde assortie.", "id": "l1-gourde", "crop": [60, 1354, 340, 1998] }
+      ],
+      "reveal": { "voice": "Et voilà le look sport chic !", "id": "l1-reveal" }
+    },
+    {
+      "image": "mannequins/chic.jpg",
+      "photo": "mannequins/chic.jpg",
+      "source": "mannequins/originaux/chic.png",
+      "mode": "photo",
+      "intro": { "voice": "Look numéro deux.", "id": "l2-intro" },
+      "pieces": [
+        { "voice": "Une chemise en satin crème,", "id": "l2-chemise", "crop": [332, 779, 919, 1226] },
+        { "voice": "une mini-jupe effet croco,", "id": "l2-jupe", "crop": [485, 1009, 881, 1379] },
+        { "voice": "une pochette dorée,", "id": "l2-pochette", "crop": [190, 1330, 440, 1700] },
+        { "voice": "et des sandales à talons.", "id": "l2-sandales", "crop": [613, 1800, 983, 2209] }
+      ],
+      "reveal": { "voice": "Et voilà le look soirée glam !", "id": "l2-reveal" }
+    }
+  ],
+  "outro": {
+    "text": "Ton préféré ? 1 ou 2 👇",
+    "voice": "Alors, ton préféré ? Le un ou le deux ? Dis-le moi en commentaire !",
+    "id": "outro"
+  }
+}

@@ -1,8 +1,8 @@
 import {
   AbsoluteFill,
+  Audio,
   Img,
   interpolate,
-  OffthreadVideo,
   Sequence,
   spring,
   staticFile,
@@ -10,6 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { fontFamily } from "../talking/theme";
+import durees from "./voix-durees.json";
 
 const c = {
   bg1: "#F7EDE6",
@@ -21,41 +22,54 @@ const c = {
 };
 
 const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+const FPS = 30;
+const GAP = 0.15; // silence entre deux phrases (s)
 
-export type Piece = {
-  /** Nom de la pièce, ex. "Brassière pastel" */
-  name: string;
-  /** Marque ou magasin, ex. "ola" (laisser vide si inconnu) */
-  shop?: string;
-  /** Position de l'étiquette en % de l'image */
-  x: number;
-  y: number;
-};
-
-export type Look = {
-  title: string;
+type Line = { voice: string; id: string };
+type Piece = Line & { crop: number[] };
+type Look = {
   image: string;
-  /** "cutout" = mannequin détourée posée sur le fond ; "photo" = photo en carte */
-  mode: "cutout" | "photo";
+  photo: string;
+  source: string;
+  mode: string;
+  intro: Line;
   pieces: Piece[];
-  caption: string;
+  reveal: Line;
 };
-
 export type LookbookProps = {
-  hook: string;
+  hook: Line & { text: string };
   looks: Look[];
-  cta: string;
-  /** Vidéo de fond facultative dans public/, ex. "mannequins/fond.mp4" */
-  backgroundVideo?: string;
+  outro: Line & { text: string };
 };
 
-export const HOOK_S = 2.5;
-export const LOOK_S = 5;
-export const OUTRO_S = 3;
-export const lookbookDuration = (p: LookbookProps) =>
-  Math.round((HOOK_S + p.looks.length * LOOK_S + OUTRO_S) * 30);
+const sec = (id: string) => (durees as Record<string, number>)[id] ?? 1.5;
+const f = (s: number) => Math.round(s * FPS);
 
-const Background: React.FC<{ video?: string }> = ({ video }) => {
+// Minutage calé sur la durée de chaque phrase de la voix off.
+const lookTiming = (look: Look) => {
+  let t = sec(look.intro.id) + GAP;
+  const pieces = look.pieces.map((p) => {
+    const start = t;
+    t += sec(p.id) + GAP;
+    return start;
+  });
+  const reveal = t + 0.2;
+  const end = reveal + Math.max(sec(look.reveal.id) + 1.6, 2.8);
+  return { pieces, reveal, end };
+};
+const hookLen = (p: LookbookProps) => sec(p.hook.id) + 0.6;
+const outroLen = (p: LookbookProps) => sec(p.outro.id) + 1;
+
+export const lookbookDuration = (p: LookbookProps) =>
+  f(hookLen(p)) + p.looks.reduce((a, l) => a + f(lookTiming(l).end), 0) + f(outroLen(p));
+
+const Voice: React.FC<{ id: string; at?: number }> = ({ id, at = 0 }) => (
+  <Sequence from={f(at)} layout="none">
+    <Audio src={staticFile(`mannequins/voix/${id}.wav`)} />
+  </Sequence>
+);
+
+const Background: React.FC = () => {
   const frame = useCurrentFrame();
   const x = 50 + Math.sin(frame / 70) * 20;
   return (
@@ -63,76 +77,73 @@ const Background: React.FC<{ video?: string }> = ({ video }) => {
       style={{
         background: `radial-gradient(circle at ${x}% 35%, rgba(255,255,255,0.7), transparent 55%), linear-gradient(180deg, ${c.bg1}, ${c.bg2})`,
       }}
-    >
-      {video ? (
-        <OffthreadVideo src={staticFile(video)} muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      ) : null}
-    </AbsoluteFill>
+    />
   );
 };
 
-const Caption: React.FC<{ text: string }> = ({ text }) => {
-  const frame = useCurrentFrame();
-  const words = text.split(" ");
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: 110,
-        left: 70,
-        right: 70,
-        background: "rgba(42,30,26,0.82)",
-        borderRadius: 32,
-        padding: "22px 30px",
-        textAlign: "center",
-        fontFamily,
-        fontWeight: 900,
-        fontSize: 46,
-        lineHeight: 1.25,
-        color: c.white,
-              }}
-    >
-      {words.map((w, i) => {
-        const start = 6 + i * 4;
-        const o = interpolate(frame, [start, start + 4], [0, 1], clamp);
-        const active = frame >= start && frame < start + 8;
-        return (
-          <span key={i} style={{ opacity: o, color: active ? c.rose : c.white }}>
-            {w}{" "}
-          </span>
-        );
-      })}
-    </div>
-  );
+// Position d'une pièce : grande carte pendant l'énumération, vignette sous la mannequin ensuite.
+const gridPos = (i: number, n: number) => {
+  const size = n <= 2 ? 520 : 440;
+  const cols = n === 1 ? 1 : 2;
+  const rows = Math.ceil(n / cols);
+  const row = Math.floor(i / cols);
+  const inRow = row === rows - 1 ? n - row * cols : cols;
+  const col = i - row * cols;
+  const gapX = 40;
+  const gapY = 50;
+  const totalH = rows * size + (rows - 1) * gapY;
+  const rowW = inRow * size + (inRow - 1) * gapX;
+  return {
+    x: (1080 - rowW) / 2 + col * (size + gapX),
+    y: 330 + (1300 - totalH) / 2 + row * (size + gapY),
+    size,
+    rot: (i % 2 === 0 ? -1 : 1) * (3 + (i % 3)),
+  };
+};
+const thumbPos = (i: number, n: number) => {
+  const size = 170;
+  const gap = 24;
+  const w = n * size + (n - 1) * gap;
+  return { x: (1080 - w) / 2 + i * (size + gap), y: 1610, size, rot: 0 };
 };
 
-const Tag: React.FC<{ piece: Piece; delay: number }> = ({ piece, delay }) => {
+const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; reveal: number }> = ({
+  piece,
+  i,
+  n,
+  start,
+  reveal,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const p = spring({ frame: frame - delay, fps, config: { damping: 12 } });
+  const pop = spring({ frame: frame - f(start), fps, config: { damping: 11, mass: 0.8 } });
+  const move = spring({ frame: frame - f(reveal) - i * 3, fps, config: { damping: 15 } });
+  const a = gridPos(i, n);
+  const b = thumbPos(i, n);
+  const lerp = (k: "x" | "y" | "size" | "rot") => a[k] + (b[k] - a[k]) * move;
+  const size = lerp("size");
+  const zoom = interpolate(frame, [f(start), f(reveal)], [1.15, 1], clamp);
   return (
     <div
       style={{
         position: "absolute",
-        left: `${piece.x}%`,
-        top: `${piece.y}%`,
-        transform: `translate(-50%, -50%) scale(${p})`,
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        background: "rgba(255,255,255,0.94)",
-        borderRadius: 999,
-        padding: "14px 26px 14px 16px",
-        boxShadow: "0 10px 30px rgba(42,30,26,0.25)",
-        fontFamily,
-        whiteSpace: "nowrap",
+        left: lerp("x"),
+        top: lerp("y"),
+        width: size,
+        height: size,
+        transform: `scale(${pop}) rotate(${lerp("rot")}deg)`,
+        borderRadius: 24 + move * 6,
+        border: `${12 - move * 5}px solid ${c.white}`,
+        overflow: "hidden",
+        boxShadow: "0 20px 50px rgba(42,30,26,0.3)",
+        background: c.white,
+        zIndex: 2,
       }}
     >
-      <div style={{ width: 22, height: 22, borderRadius: 99, background: c.rose, border: `4px solid ${c.ink}` }} />
-      <div style={{ fontSize: 34, fontWeight: 800, color: c.ink }}>
-        {piece.name}
-        {piece.shop ? <span style={{ color: c.gold }}> · {piece.shop}</span> : null}
-      </div>
+      <Img
+        src={staticFile(`mannequins/pieces/${piece.id}.jpg`)}
+        style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${zoom})` }}
+      />
     </div>
   );
 };
@@ -140,80 +151,92 @@ const Tag: React.FC<{ piece: Piece; delay: number }> = ({ piece, delay }) => {
 const LookScene: React.FC<{ look: Look; index: number }> = ({ look, index }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
-  const enter = spring({ frame, fps, config: { damping: 15 } });
+  const t = lookTiming(look);
   const exit = interpolate(frame, [durationInFrames - 8, durationInFrames], [1, 0], clamp);
-  const zoom = interpolate(frame, [0, durationInFrames], [1, 1.07]);
-  const titleP = spring({ frame: frame - 4, fps, config: { damping: 14 } });
-
+  const titleP = spring({ frame: frame - 2, fps, config: { damping: 14 } });
+  const enter = spring({ frame: frame - f(t.reveal), fps, config: { damping: 15 } });
+  const zoom = interpolate(frame, [f(t.reveal), durationInFrames], [1, 1.05], clamp);
   const isCutout = look.mode === "cutout";
   const box: React.CSSProperties = isCutout
-    ? { left: 60, right: 60, top: 300, bottom: 330 }
-    : { left: 120, right: 120, top: 330, bottom: 360 };
+    ? { left: 80, right: 80, top: 300, bottom: 360 }
+    : { left: 170, right: 170, top: 290, bottom: 400 };
 
   return (
     <AbsoluteFill style={{ opacity: exit }}>
+      <Voice id={look.intro.id} />
+      {look.pieces.map((p, i) => (
+        <Voice key={p.id} id={p.id} at={t.pieces[i]} />
+      ))}
+      <Voice id={look.reveal.id} at={t.reveal} />
+
       <div
         style={{
           position: "absolute",
-          top: 120,
+          top: 130,
           width: "100%",
           textAlign: "center",
           fontFamily,
+          fontWeight: 900,
+          fontSize: 64,
+          letterSpacing: 14,
+          color: c.gold,
           opacity: titleP,
           transform: `translateY(${(1 - titleP) * -40}px)`,
         }}
       >
-        <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: 8, color: c.gold }}>LOOK {index + 1}</div>
-        <div style={{ fontSize: 76, fontWeight: 900, color: c.ink }}>{look.title}</div>
+        LOOK {index + 1}
       </div>
 
-      <div
-        style={{
-          position: "absolute",
-          ...box,
-          transform: `translateY(${(1 - enter) * 700}px) rotate(${isCutout ? 0 : (1 - enter) * 8 - 2}deg)`,
-        }}
-      >
+      {frame >= f(t.reveal) ? (
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            overflow: isCutout ? "visible" : "hidden",
-            borderRadius: isCutout ? 0 : 36,
-            border: isCutout ? undefined : `14px solid ${c.white}`,
-            boxShadow: isCutout ? undefined : "0 30px 70px rgba(42,30,26,0.35)",
+            ...box,
+            opacity: enter,
+            transform: `translateY(${(1 - enter) * 500}px) rotate(${isCutout ? 0 : (1 - enter) * 8 - 2}deg)`,
           }}
         >
-          <Img
-            src={staticFile(look.image)}
+          <div
             style={{
-              width: "100%",
-              height: "100%",
-              objectFit: isCutout ? "contain" : "cover",
-              objectPosition: isCutout ? "bottom center" : "center",
-              transform: `scale(${zoom})`,
-              transformOrigin: "50% 100%",
-              filter: isCutout ? "drop-shadow(0 25px 40px rgba(42,30,26,0.35))" : undefined,
+              position: "absolute",
+              inset: 0,
+              overflow: isCutout ? "visible" : "hidden",
+              borderRadius: isCutout ? 0 : 36,
+              border: isCutout ? undefined : `14px solid ${c.white}`,
+              boxShadow: isCutout ? undefined : "0 30px 70px rgba(42,30,26,0.35)",
             }}
-          />
+          >
+            <Img
+              src={staticFile(look.image)}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: isCutout ? "contain" : "cover",
+                objectPosition: isCutout ? "bottom center" : "center",
+                transform: `scale(${zoom})`,
+                transformOrigin: "50% 100%",
+                filter: isCutout ? "drop-shadow(0 25px 40px rgba(42,30,26,0.35))" : undefined,
+              }}
+            />
+          </div>
         </div>
-        {look.pieces.map((p, i) => (
-          <Tag key={i} piece={p} delay={18 + i * 12} />
-        ))}
-      </div>
+      ) : null}
 
-      <Caption text={look.caption} />
+      {look.pieces.map((p, i) => (
+        <PieceCard key={p.id} piece={p} i={i} n={look.pieces.length} start={t.pieces[i]} reveal={t.reveal} />
+      ))}
     </AbsoluteFill>
   );
 };
 
-const Hook: React.FC<{ text: string }> = ({ text }) => {
+const Hook: React.FC<{ text: string; id: string }> = ({ text, id }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const exit = interpolate(frame, [durationInFrames - 8, durationInFrames], [1, 0], clamp);
   const lines = text.split("\n");
   return (
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", opacity: exit }}>
+      <Voice id={id} />
       {lines.map((l, i) => {
         const p = spring({ frame: frame - i * 8, fps, config: { damping: 13 } });
         return (
@@ -239,59 +262,56 @@ const Hook: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-const Outro: React.FC<{ looks: Look[]; cta: string }> = ({ looks, cta }) => {
+const Outro: React.FC<{ looks: Look[]; text: string; id: string }> = ({ looks, text, id }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const n = looks.length;
+  const w = 900 / n;
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", top: 260, left: 0, right: 0, height: 1100 }}>
-        {looks.map((l, i) => {
-          const p = spring({ frame: frame - i * 6, fps, config: { damping: 14 } });
-          const n = looks.length;
-          const w = 900 / n;
-          const rot = (i - (n - 1) / 2) * 6;
-          return (
+      <Voice id={id} />
+      {looks.map((l, i) => {
+        const p = spring({ frame: frame - i * 6, fps, config: { damping: 14 } });
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: 90 + i * w - 20,
+              top: 320,
+              width: w + 40,
+              height: 980,
+              transform: `translateY(${(1 - p) * 500}px) rotate(${(i - (n - 1) / 2) * 6}deg)`,
+              borderRadius: 30,
+              overflow: "hidden",
+              border: `12px solid ${c.white}`,
+              boxShadow: "0 25px 60px rgba(42,30,26,0.35)",
+            }}
+          >
+            <Img src={staticFile(l.photo)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             <div
-              key={i}
               style={{
                 position: "absolute",
-                left: 90 + i * w - 20,
-                top: 60,
-                width: w + 40,
-                height: 980,
-                transform: `translateY(${(1 - p) * 500}px) rotate(${rot}deg)`,
-                borderRadius: 30,
-                overflow: "hidden",
-                border: `12px solid ${c.white}`,
-                boxShadow: "0 25px 60px rgba(42,30,26,0.35)",
-                background: c.rose,
+                top: 20,
+                left: 20,
+                width: 80,
+                height: 80,
+                borderRadius: 99,
+                background: c.ink,
+                color: c.white,
+                fontFamily,
+                fontWeight: 900,
+                fontSize: 48,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Img src={staticFile(l.image.replace("-cutout.png", ".jpg"))} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              <div
-                style={{
-                  position: "absolute",
-                  top: 20,
-                  left: 20,
-                  width: 80,
-                  height: 80,
-                  borderRadius: 99,
-                  background: c.ink,
-                  color: c.white,
-                  fontFamily,
-                  fontWeight: 900,
-                  fontSize: 48,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {i + 1}
-              </div>
+              {i + 1}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
       <div
         style={{
           position: "absolute",
@@ -305,29 +325,34 @@ const Outro: React.FC<{ looks: Look[]; cta: string }> = ({ looks, cta }) => {
           opacity: interpolate(frame, [14, 24], [0, 1], clamp),
         }}
       >
-        {cta}
+        {text}
       </div>
     </AbsoluteFill>
   );
 };
 
-export const Lookbook: React.FC<LookbookProps> = ({ hook, looks, cta, backgroundVideo }) => {
-  const { fps } = useVideoConfig();
-  const hookF = HOOK_S * fps;
-  const lookF = LOOK_S * fps;
+export const Lookbook: React.FC<LookbookProps> = (props) => {
+  const { hook, looks, outro } = props;
+  let cursor = f(hookLen(props));
+  const scenes = looks.map((look, i) => {
+    const len = f(lookTiming(look).end);
+    const s = (
+      <Sequence key={i} from={cursor} durationInFrames={len}>
+        <LookScene look={look} index={i} />
+      </Sequence>
+    );
+    cursor += len;
+    return s;
+  });
   return (
     <AbsoluteFill style={{ background: c.bg1 }}>
-      <Background video={backgroundVideo} />
-      <Sequence durationInFrames={hookF}>
-        <Hook text={hook} />
+      <Background />
+      <Sequence durationInFrames={f(hookLen(props))}>
+        <Hook text={hook.text} id={hook.id} />
       </Sequence>
-      {looks.map((look, i) => (
-        <Sequence key={i} from={hookF + i * lookF} durationInFrames={lookF}>
-          <LookScene look={look} index={i} />
-        </Sequence>
-      ))}
-      <Sequence from={hookF + looks.length * lookF}>
-        <Outro looks={looks} cta={cta} />
+      {scenes}
+      <Sequence from={cursor}>
+        <Outro looks={looks} text={outro.text} id={outro.id} />
       </Sequence>
     </AbsoluteFill>
   );
