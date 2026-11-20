@@ -244,16 +244,23 @@ test("postuler depuis un texte d'annonce : CV et lettre adaptés, autorisation o
   assert.equal((await api("POST", `/candidatures/${c.id}/envoyer`)).status, 403);
 });
 
-test("accès téléphone : code obligatoire", async () => {
-  const { protegerPar } = await import("./acces.js");
+test("accès protégé : page de connexion, cookie de session, limite d'essais", async () => {
   const { createApp: creer } = await import("./app.js");
-  const srv = creer({ proteger: protegerPar("1234-5678") }).listen(0);
+  const srv = creer({ motDePasse: "secret-1234" }).listen(0);
   await new Promise((r) => srv.once("listening", r));
-  const url = `http://127.0.0.1:${srv.address().port}/api/config`;
-  assert.equal((await fetch(url)).status, 401);
-  const mauvais = Buffer.from("moi:0000-0000").toString("base64");
-  assert.equal((await fetch(url, { headers: { Authorization: `Basic ${mauvais}` } })).status, 401);
-  const bon = Buffer.from("moi:1234-5678").toString("base64");
-  assert.equal((await fetch(url, { headers: { Authorization: `Basic ${bon}` } })).status, 200);
+  const b = `http://127.0.0.1:${srv.address().port}`;
+  assert.equal((await fetch(`${b}/sante`)).status, 200, "vérification de l'hébergeur sans mot de passe");
+  assert.equal((await fetch(`${b}/api/config`)).status, 401);
+  const r0 = await fetch(`${b}/`, { redirect: "manual" });
+  assert.equal(r0.headers.get("location"), "/connexion");
+  const poste = (code) => fetch(`${b}/connexion`, { method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: `code=${encodeURIComponent(code)}` });
+  assert.equal((await poste("faux")).status, 401);
+  const ok = await poste("secret-1234");
+  assert.equal(ok.status, 303);
+  const cookie = ok.headers.get("set-cookie").split(";")[0];
+  assert.equal((await fetch(`${b}/api/config`, { headers: { cookie } })).status, 200);
+  assert.equal((await fetch(`${b}/api/config`, { headers: { cookie: "es_session=1999999999999.faux" } })).status, 401, "cookie falsifié refusé");
+  for (let i = 0; i < 8; i++) await poste("faux");
+  assert.equal((await poste("secret-1234")).status, 429, "trop d'essais");
   srv.close();
 });

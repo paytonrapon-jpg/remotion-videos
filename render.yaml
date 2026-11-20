@@ -1,0 +1,29 @@
+# Déploiement de l'application « Emploi Social » sur Render (https://render.com).
+# Render → New → Blueprint → choisir ce dépôt et la branche « emploi-social ».
+services:
+  - type: web
+    name: emploi-social
+    runtime: node
+    region: frankfurt
+    # Pas de « plan » : Render prend sa plus petite formule payante, nécessaire
+    # pour le disque permanent (il n'existe pas en formule gratuite).
+    branch: emploi-social
+    rootDir: emploi-social
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: node server/index.js
+    healthCheckPath: /sante
+    disk:
+      name: donnees
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      # Demandé à la création : le mot de passe pour ouvrir l'application.
+      - key: MOT_DE_PASSE
+        sync: false
+      # Facultatif (peut rester vide) : adaptation du CV et de la lettre par Claude.
+      - key: ANTHROPIC_API_KEY
+        sync: false

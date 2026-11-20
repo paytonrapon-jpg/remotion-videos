@@ -41,7 +41,10 @@ export function JournalPage() {
             <input type="number" min={1} max={60} value={r.delaiRelanceJours} onChange={(e) => setR({ ...r, delaiRelanceJours: Number(e.target.value) })} />
           </label>
         </div>
-        <div className="actions"><button className="btn primaire" onClick={enregistrer}>Enregistrer</button></div>
+        <div className="actions">
+          {config.protege && <a className="btn discret" href="/deconnexion">Se déconnecter de cet appareil</a>}
+          <button className="btn primaire" onClick={enregistrer}>Enregistrer</button>
+        </div>
       </section>
 
       <section>

@@ -95,6 +95,7 @@ export type Profil = {
 
 export type Config = {
   sourceOffres: "job-room" | "demo";
+  protege: boolean;
   ia: boolean;
   smtp: boolean;
   envoisDuJour: number;
@@ -142,6 +143,10 @@ export async function api<T>(method: string, url: string, body?: unknown): Promi
   });
   if (res.status === 204) return undefined as T;
   const json = await res.json().catch(() => ({ erreur: `Erreur ${res.status}` }));
+  if (res.status === 401 && json.connexion) {
+    // Session expirée (application en ligne ou sur le Wi-Fi) : retour à la connexion.
+    window.location.href = "/connexion";
+  }
   if (!res.ok) throw new ApiError(json.erreur ?? `Erreur ${res.status}`, json.details ?? []);
   return json as T;
 }

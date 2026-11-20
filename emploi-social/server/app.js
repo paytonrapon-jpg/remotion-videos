@@ -11,6 +11,7 @@ import { adapter, iaDisponible, structurerCvIa } from "./adaptation.js";
 import { annonceDepuisTexte, lireAnnonce } from "./annonce.js";
 import { analyserTexte, cvVide, ecrirePdf, extraireTexte, genererPdf, normaliserCv } from "./cv.js";
 import { scorer } from "./matching.js";
+import { installerConnexion } from "./acces.js";
 import { CANTONS, CANTONS_VOISINS, CONTRATS, DIPLOMES, diplomesCites, METIERS, metierDuTitre, PERMIS_TRAVAIL } from "./referentiel.js";
 import { db, logEvent, newId, UPLOAD_DIR } from "./store.js";
 
@@ -60,9 +61,12 @@ function verifierLimite(data) {
   }
 }
 
-export function createApp({ proteger = null } = {}) {
+export function createApp({ motDePasse = null } = {}) {
   const app = express();
-  if (proteger) app.use(proteger);
+  // Derrière l'hébergeur (Render), l'adresse et le https réels viennent du proxy.
+  if (process.env.RENDER) app.set("trust proxy", 1);
+  app.get("/sante", (_req, res) => res.json({ ok: true }));
+  if (motDePasse) installerConnexion(app, motDePasse);
   app.use(express.json({ limit: "1mb" }));
 
   // ---- Configuration -------------------------------------------------------
@@ -70,6 +74,7 @@ export function createApp({ proteger = null } = {}) {
     const data = db.get();
     res.json({
       sourceOffres: modeDemo() ? "demo" : "job-room",
+      protege: Boolean(motDePasse),
       ia: iaDisponible(),
       smtp: smtpConfigure(),
       referentiel: {

@@ -74,9 +74,24 @@ npm run telephone
 ```
 
 Le Terminal affiche l'adresse à ouvrir sur le téléphone (par ex. `http://192.168.1.23:5175`) et un
-**code d'accès**. Au premier accès, le téléphone demande un nom d'utilisateur (ce que vous voulez) et
-un mot de passe (le code). Le Mac doit rester allumé avec la fenêtre du Terminal ouverte. Si macOS
+**mot de passe**, à saisir une fois sur la page de connexion (l'appareil reste connecté 30 jours). Le Mac doit rester allumé avec la fenêtre du Terminal ouverte. Si macOS
 demande d'autoriser les connexions entrantes pour « node », cliquez sur **Autoriser**.
+
+## Mettre l'application en ligne (Render) : téléphone, iPad, partout
+
+Le fichier `render.yaml` (à la racine du dépôt) configure tout : serveur à Francfort, disque permanent
+pour vos données (sauvegardé chaque jour par Render), mot de passe obligatoire.
+
+1. Créez un compte sur https://render.com (bouton « Sign in with GitHub »).
+2. **New → Blueprint**, choisissez le dépôt `remotion-videos` et la branche `emploi-social`.
+3. Renseignez `MOT_DE_PASSE` (10 caractères ou plus) ; `ANTHROPIC_API_KEY` est facultatif.
+4. Validez (**Deploy Blueprint**) et ajoutez un moyen de paiement si Render le demande
+   (formule payante nécessaire pour le disque permanent).
+5. Après quelques minutes, ouvrez l'adresse `https://emploi-social-….onrender.com` sur n'importe quel
+   appareil, entrez le mot de passe, et ajoutez-la à l'écran d'accueil du téléphone.
+
+Pour l'envoi réel des e-mails, ajoutez dans Render (**Environment**) les variables `SMTP_HOST`,
+`SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` décrites ci-dessous.
 
 ## Envoyer réellement les e-mails
 
