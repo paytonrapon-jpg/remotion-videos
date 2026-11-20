@@ -1,15 +1,15 @@
 {
-  "hook": 1.741,
-  "outro": 4.528,
-  "l1-intro": 1.3,
-  "l1-brassiere": 1.776,
-  "l1-legging": 1.533,
-  "l1-gourde": 1.289,
+  "hook": 1.66,
+  "outro": 4.516,
+  "l1-intro": 1.277,
+  "l1-brassiere": 1.73,
+  "l1-legging": 1.521,
+  "l1-gourde": 1.347,
   "l1-reveal": 1.486,
-  "l2-intro": 1.254,
+  "l2-intro": 1.265,
   "l2-chemise": 1.649,
-  "l2-jupe": 1.579,
-  "l2-pochette": 1.265,
-  "l2-sandales": 1.3,
-  "l2-reveal": 1.73
+  "l2-jupe": 1.625,
+  "l2-pochette": 1.277,
+  "l2-sandales": 1.37,
+  "l2-reveal": 1.672
 }

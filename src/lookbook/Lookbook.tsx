@@ -11,6 +11,7 @@ import {
 } from "remotion";
 import { fontFamily } from "../talking/theme";
 import durees from "./voix-durees.json";
+import { pieceArt } from "./pieces";
 
 const c = {
   bg1: "#F7EDE6",
@@ -26,11 +27,10 @@ const FPS = 30;
 const GAP = 0.15; // silence entre deux phrases (s)
 
 type Line = { voice: string; id: string };
-type Piece = Line & { crop: number[] };
+type Piece = Line & { art: string; photo?: string };
 type Look = {
   image: string;
   photo: string;
-  source: string;
   mode: string;
   intro: Line;
   pieces: Piece[];
@@ -122,7 +122,8 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
   const b = thumbPos(i, n);
   const lerp = (k: "x" | "y" | "size" | "rot") => a[k] + (b[k] - a[k]) * move;
   const size = lerp("size");
-  const zoom = interpolate(frame, [f(start), f(reveal)], [1.15, 1], clamp);
+  const zoom = interpolate(frame, [f(start), f(reveal)], [0.92, 1.02], clamp);
+  const Art = pieceArt[piece.art];
   return (
     <div
       style={{
@@ -136,14 +137,17 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
         border: `${12 - move * 5}px solid ${c.white}`,
         overflow: "hidden",
         boxShadow: "0 20px 50px rgba(42,30,26,0.3)",
-        background: c.white,
+        background: "#FFFDFB",
         zIndex: 2,
       }}
     >
-      <Img
-        src={staticFile(`mannequins/pieces/${piece.id}.jpg`)}
-        style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${zoom})` }}
-      />
+      <div style={{ width: "100%", height: "100%", padding: size * 0.06, transform: `scale(${zoom})` }}>
+        {piece.photo ? (
+          <Img src={staticFile(piece.photo)} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        ) : Art ? (
+          <Art />
+        ) : null}
+      </div>
     </div>
   );
 };
