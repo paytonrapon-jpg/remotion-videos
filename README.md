@@ -26,6 +26,7 @@ La vidéo arrive dans **Mon Drive › Vidéos Remotion**, nommée avec la date d
 
 | Nom | Vidéo |
 |---|---|
+| `LookbookMannequins` | Reel 2 looks avec les mannequins IA (images dans `public/mannequins/`, textes dans `src/lookbook/mes-mannequins.ts`) |
 | `EmptyLegGvaMpl` | Reel du vol Genève → Montpellier |
 | `RdvClient` | Vidéo face caméra « RDV client » (nécessite `public/rdv.mp4`, non inclus dans le dépôt) |
 | `TalkingHead` | Démo du modèle face caméra |
