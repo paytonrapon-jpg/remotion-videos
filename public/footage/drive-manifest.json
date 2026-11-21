@@ -297,5 +297,104 @@
     ],
     "usable_seconds": 6.6,
     "note": "Idéale pour les destinations de bord de mer (Baléares, Côte d'Azur, Italie, Grèce, Malte). La vieille ville visible est La Valette (Malte)."
+  },
+  {
+    "file": "footage/drive/161b235a1f4b461ca8506f75b2ec62cd.mp4",
+    "duration": 18.9,
+    "tags": [
+      "jet",
+      "tarmac",
+      "voiture",
+      "chauffeur",
+      "bagages",
+      "transfert VIP",
+      "soleil"
+    ],
+    "watermark": "Aucun filigrane avant la carte Instagram finale (après 17,9 s : à éviter). Source presque carrée 720x646 recadrée en vertical.",
+    "segments": [
+      {
+        "from": 0.5,
+        "to": 5.5,
+        "tags": [
+          "jet",
+          "voiture"
+        ],
+        "label": "Jet noir vu à travers le pare-brise d'une voiture"
+      },
+      {
+        "from": 6.0,
+        "to": 8.0,
+        "tags": [
+          "voiture",
+          "jet"
+        ],
+        "label": "SUV noir devant un jet"
+      },
+      {
+        "from": 8.5,
+        "to": 11.5,
+        "tags": [
+          "voiture",
+          "jet"
+        ],
+        "label": "Calandre du SUV, porte du jet ouverte"
+      },
+      {
+        "from": 12.0,
+        "to": 15.5,
+        "tags": [
+          "voiture",
+          "jet"
+        ],
+        "label": "Arrière du SUV, aile du jet"
+      },
+      {
+        "from": 15.8,
+        "to": 17.8,
+        "tags": [
+          "chauffeur",
+          "bagages"
+        ],
+        "label": "Chauffeur qui charge les valises"
+      }
+    ],
+    "usable_seconds": 16.4
+  },
+  {
+    "file": "footage/drive/2f91d1c9682b45dc90db4d330c7add8e.mp4",
+    "duration": 9.1,
+    "tags": [
+      "cabine",
+      "Gulfstream",
+      "luxe"
+    ],
+    "watermark": "Logo @flywithzurriye en haut à droite sur toute la durée : on le laisse visible (ne pas l'effacer).",
+    "segments": [
+      {
+        "from": 0.2,
+        "to": 3.0,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Allée de fauteuils blancs"
+      },
+      {
+        "from": 3.0,
+        "to": 6.0,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Salon, canapés gris et hublots"
+      },
+      {
+        "from": 6.0,
+        "to": 8.8,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Hublots dorés, fond de cabine"
+      }
+    ],
+    "usable_seconds": 8.6
   }
 ]
