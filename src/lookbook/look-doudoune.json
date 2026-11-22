@@ -1,0 +1,72 @@
+{
+  "layout": "side",
+  "hook": {
+    "text": "Le look\ncasual chic\nde l'hiver ❄️",
+    "voice": "Le look casual chic parfait pour l'hiver.",
+    "id": "d-hook"
+  },
+  "looks": [
+    {
+      "image": "mannequins/doudoune-cutout.png",
+      "photo": "mannequins/doudoune-cutout.png",
+      "mode": "cutout",
+      "intro": {
+        "voice": "Pour ce look, il te faut…",
+        "id": "d-intro"
+      },
+      "pieces": [
+        {
+          "voice": "une casquette noire,",
+          "id": "d-casquette",
+          "art": "casquette",
+          "photo": "mannequins/pieces/casquette2.png"
+        },
+        {
+          "voice": "des lunettes de soleil,",
+          "id": "d-lunettes",
+          "art": "lunettes",
+          "photo": "mannequins/pieces/lunettes.png"
+        },
+        {
+          "voice": "une doudoune courte kaki,",
+          "id": "d-doudoune",
+          "art": "doudoune",
+          "photo": "mannequins/pieces/doudoune.png"
+        },
+        {
+          "voice": "une chemise blanche oversize,",
+          "id": "d-chemise",
+          "art": "chemise",
+          "photo": "mannequins/pieces/chemise2.png"
+        },
+        {
+          "voice": "un legging noir,",
+          "id": "d-legging",
+          "art": "legging",
+          "photo": "mannequins/pieces/legging2.png"
+        },
+        {
+          "voice": "des chaussettes blanches montantes,",
+          "id": "d-chaussettes",
+          "art": "chaussettes",
+          "photo": "mannequins/pieces/chaussettes.png"
+        },
+        {
+          "voice": "et des baskets blanches.",
+          "id": "d-baskets",
+          "art": "baskets",
+          "photo": "mannequins/pieces/baskets.png"
+        }
+      ],
+      "reveal": {
+        "voice": "Et voilà le résultat !",
+        "id": "d-reveal"
+      }
+    }
+  ],
+  "outro": {
+    "text": "Tu le porterais ? 👇",
+    "voice": "Tu le porterais ? Dis-le moi en commentaire !",
+    "id": "d-outro"
+  }
+}

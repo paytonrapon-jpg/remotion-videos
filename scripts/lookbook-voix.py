@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prépare la vidéo LookbookMannequins à partir de src/lookbook/mes-mannequins.json et look-casual.json :
+"""Prépare la vidéo LookbookMannequins à partir de tous les fichiers JSON de src/lookbook/ (un par vidéo) :
 - génère la voix off, une phrase par fichier (public/mannequins/voix/),
 - écrit la durée de chaque phrase dans src/lookbook/voix-durees.json.
 
@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DATAS = [ROOT / "src/lookbook/mes-mannequins.json", ROOT / "src/lookbook/look-casual.json"]
+DATAS = sorted(p for p in (ROOT / "src/lookbook").glob("*.json") if p.name != "voix-durees.json")
 PUBLIC = ROOT / "public"
 VOIX = PUBLIC / "mannequins/voix"
 MODEL_DIR = Path.home() / ".cache/piper"

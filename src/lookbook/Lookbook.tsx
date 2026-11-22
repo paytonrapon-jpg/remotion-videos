@@ -70,7 +70,7 @@ const sidePos = (i: number, n: number) => {
   const gap = 18;
   const size = Math.min(310, (1600 - (n - 1) * gap) / n);
   const total = n * size + (n - 1) * gap;
-  return { x: 40, y: 160 + (1640 - total) / 2 + i * (size + gap), size, rot: 0 };
+  return { x: 40, y: 160 + (1640 - total) / 2 + i * (size + gap), size, rot: 0, w: Math.max(size, 310) };
 };
 
 const Voice: React.FC<{ id: string; at?: number }> = ({ id, at = 0 }) => (
@@ -133,6 +133,7 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
   const b = side ? a : thumbPos(i, n);
   const lerp = (k: "x" | "y" | "size" | "rot") => a[k] + (b[k] - a[k]) * move;
   const size = lerp("size");
+  const cardW = side ? sidePos(i, n).w : size;
   const zoom = side ? 1 : interpolate(frame, [f(start), f(reveal)], [0.92, 1.02], clamp);
   const Art = pieceArt[piece.art];
   return (
@@ -141,7 +142,7 @@ const PieceCard: React.FC<{ piece: Piece; i: number; n: number; start: number; r
         position: "absolute",
         left: lerp("x"),
         top: lerp("y"),
-        width: size,
+        width: cardW,
         height: size,
         transform: side
           ? `translateX(${(1 - pop) * -420}px)`
