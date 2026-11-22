@@ -7,9 +7,9 @@
   },
   "looks": [
     {
-      "image": "mannequins/doudoune-cutout.png",
-      "photo": "mannequins/doudoune-cutout.png",
-      "mode": "cutout",
+      "image": "mannequins/doudoune-photo.jpg",
+      "photo": "mannequins/doudoune-photo.jpg",
+      "mode": "photo",
       "intro": {
         "voice": "Pour ce look, il te faut…",
         "id": "d-intro"
@@ -19,43 +19,50 @@
           "voice": "une casquette noire,",
           "id": "d-casquette",
           "art": "casquette",
-          "photo": "mannequins/pieces/casquette2.png"
+          "photo": "mannequins/pieces/casquette2-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "des lunettes de soleil,",
           "id": "d-lunettes",
           "art": "lunettes",
-          "photo": "mannequins/pieces/lunettes.png"
+          "photo": "mannequins/pieces/lunettes-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "une doudoune courte kaki,",
           "id": "d-doudoune",
           "art": "doudoune",
-          "photo": "mannequins/pieces/doudoune.png"
+          "photo": "mannequins/pieces/doudoune-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "une chemise blanche oversize,",
           "id": "d-chemise",
           "art": "chemise",
-          "photo": "mannequins/pieces/chemise2.png"
+          "photo": "mannequins/pieces/chemise2-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "un legging noir,",
           "id": "d-legging",
           "art": "legging",
-          "photo": "mannequins/pieces/legging2.png"
+          "photo": "mannequins/pieces/legging2-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "des chaussettes blanches montantes,",
           "id": "d-chaussettes",
           "art": "chaussettes",
-          "photo": "mannequins/pieces/chaussettes.png"
+          "photo": "mannequins/pieces/chaussettes-fond.jpg",
+          "fit": "cover"
         },
         {
           "voice": "et des baskets blanches.",
           "id": "d-baskets",
           "art": "baskets",
-          "photo": "mannequins/pieces/baskets.png"
+          "photo": "mannequins/pieces/baskets-fond.jpg",
+          "fit": "cover"
         }
       ],
       "reveal": {

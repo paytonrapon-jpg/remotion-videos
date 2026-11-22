@@ -232,7 +232,7 @@ const LookScene: React.FC<{
             position: "absolute",
             ...box,
             opacity: enter,
-            transform: `translateY(${(1 - enter) * 500}px) rotate(${isCutout ? 0 : (1 - enter) * 8 - 2}deg)`,
+            transform: `translateY(${(1 - enter) * 500}px) rotate(${isCutout || side ? 0 : (1 - enter) * 8 - 2}deg)`,
           }}
         >
           <div
