@@ -396,5 +396,102 @@
       }
     ],
     "usable_seconds": 8.6
+  },
+  {
+    "file": "footage/drive/ebcd0297b55945a88110edc4857d00f5.mp4",
+    "duration": 32.8,
+    "tags": [
+      "jet",
+      "nuit",
+      "embarquement",
+      "cabine",
+      "hublot",
+      "coucher de soleil",
+      "ville",
+      "tarmac"
+    ],
+    "watermark": "Logo @cesar.jets visible sur toute la durée : on le laisse visible (ne pas l'effacer). Carte Instagram après 29 s : à éviter.",
+    "segments": [
+      {
+        "from": 0.5,
+        "to": 3.8,
+        "tags": [
+          "nuit",
+          "embarquement"
+        ],
+        "label": "Marche de nuit vers le jet sur le tarmac mouillé"
+      },
+      {
+        "from": 4.0,
+        "to": 6.8,
+        "tags": [
+          "nuit",
+          "jet"
+        ],
+        "label": "Escalier éclairé et hublots de nuit"
+      },
+      {
+        "from": 7.0,
+        "to": 9.8,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Allée de cabine et écran de vol"
+      },
+      {
+        "from": 10.0,
+        "to": 13.8,
+        "tags": [
+          "cabine",
+          "hublot"
+        ],
+        "label": "Fauteuil crème devant un hublot"
+      },
+      {
+        "from": 14.0,
+        "to": 16.8,
+        "tags": [
+          "hublot",
+          "coucher de soleil"
+        ],
+        "label": "Aile au coucher du soleil par le hublot"
+      },
+      {
+        "from": 17.0,
+        "to": 18.8,
+        "tags": [
+          "cabine"
+        ],
+        "label": "Cabine, pieds sur le fauteuil"
+      },
+      {
+        "from": 19.0,
+        "to": 23.8,
+        "tags": [
+          "hublot",
+          "ville"
+        ],
+        "label": "Aile au-dessus d'une ville, atterrissage"
+      },
+      {
+        "from": 24.0,
+        "to": 25.8,
+        "tags": [
+          "tarmac",
+          "jet"
+        ],
+        "label": "Jet au sol devant un terminal"
+      },
+      {
+        "from": 26.0,
+        "to": 28.8,
+        "tags": [
+          "jet",
+          "tarmac"
+        ],
+        "label": "Gulfstream escalier déplié, ciel bleu"
+      }
+    ],
+    "usable_seconds": 26.0
   }
 ]
