@@ -3,6 +3,7 @@
     "file": "footage/drive/2494a02094b1417ab794a706a2e7af69.mp4",
     "duration": 12.3,
     "tags": [
+      "logo",
       "jet",
       "tarmac",
       "soleil"
@@ -21,12 +22,13 @@
     ],
     "delogo": "delogo=x=760:y=470:w=260:h=165",
     "usable_seconds": 2.5,
-    "note": "Courte (2,5 s utilisables) : seulement comme plan d'appoint dans un reel qui mélange plusieurs sources."
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/62095801daa34eefa9a4b3a389dbaca8.mp4",
     "duration": 22.4,
     "tags": [
+      "logo",
       "cabine",
       "hublot",
       "coucher de soleil"
@@ -61,7 +63,8 @@
       }
     ],
     "delogo": "delogo=x=680:y=430:w=390:h=250:enable='lt(t,9)',delogo=x=60:y=1040:w=230:h=165:enable='between(t,9,18)'",
-    "usable_seconds": 11.3
+    "usable_seconds": 11.3,
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/253cb17c57214daa9dd7498a2b39b251.mp4",
@@ -84,6 +87,7 @@
     "duration": 17.9,
     "usable_seconds": 17.5,
     "tags": [
+      "logo",
       "jet",
       "tarmac",
       "nuit"
@@ -121,12 +125,14 @@
         ],
         "label": "Profil du jet qui roule, hublots éclairés"
       }
-    ]
+    ],
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/f5b13fb02f7344e8abff0b6885703b1f.mp4",
     "duration": 36.3,
     "tags": [
+      "logo",
       "jet",
       "hangar",
       "extérieur",
@@ -197,7 +203,8 @@
       }
     ],
     "delogo": "delogo=x=840:y=475:w=175:h=190:enable='not(between(t,13.9,17))',delogo=x=75:y=1045:w=170:h=145:enable='between(t,13.9,17)'",
-    "usable_seconds": 17.1
+    "usable_seconds": 17.1,
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/229620d288f74d10b37dd1cc4cf2ac10.mp4",
@@ -211,6 +218,7 @@
     "file": "footage/drive/0c62392e737d43c68029e01668d5286c.mp4",
     "duration": 23.5,
     "tags": [
+      "logo",
       "hélicoptère",
       "villa",
       "transfert VIP",
@@ -248,7 +256,8 @@
       }
     ],
     "delogo": "delogo=x=725:y=480:w=290:h=140:enable='lt(t,9.5)',delogo=x=75:y=1045:w=290:h=145:enable='gte(t,9.5)'",
-    "usable_seconds": 12.3
+    "usable_seconds": 12.3,
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/45b88fe9d7d440c082c4464c4db515d9.mp4",
@@ -364,6 +373,7 @@
     "file": "footage/drive/2f91d1c9682b45dc90db4d330c7add8e.mp4",
     "duration": 9.1,
     "tags": [
+      "logo",
       "cabine",
       "Gulfstream",
       "luxe"
@@ -395,12 +405,14 @@
         "label": "Hublots dorés, fond de cabine"
       }
     ],
-    "usable_seconds": 8.6
+    "usable_seconds": 8.6,
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   },
   {
     "file": "footage/drive/ebcd0297b55945a88110edc4857d00f5.mp4",
     "duration": 32.8,
     "tags": [
+      "logo",
       "jet",
       "nuit",
       "embarquement",
@@ -492,6 +504,7 @@
         "label": "Gulfstream escalier déplié, ciel bleu"
       }
     ],
-    "usable_seconds": 26.0
+    "usable_seconds": 26.0,
+    "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
   }
 ]
