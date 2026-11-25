@@ -2,6 +2,7 @@ import { Composition } from "remotion";
 import { EmptyLeg, emptyLegDuration } from "./emptyleg/EmptyLeg";
 import { gvaMpl } from "./emptyleg/gva-mpl";
 import { HelloWorld } from "./HelloWorld";
+import { LogoOverlay } from "./logo/LogoOverlay";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
 import { TalkingHead } from "./talking/TalkingHead";
@@ -48,6 +49,19 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         durationInFrames={emptyLegDuration * 30}
         defaultProps={gvaMpl}
+      />
+      <Composition
+        id="CjPerruques"
+        component={LogoOverlay}
+        fps={30}
+        width={1080}
+        height={1920}
+        durationInFrames={526}
+        defaultProps={{
+          video: "cj-perruques.mp4",
+          brand: "luxbeouty",
+          suffix: ".hair",
+        }}
       />
     </>
   );
