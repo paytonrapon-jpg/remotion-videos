@@ -1,23 +1,23 @@
 {
   "avatar": "katy/katy-bleu.mp4",
-  "avatarPosition": "50% 25%",
-  "duration": 17.2,
-  "hook": { "text": "Le look\nnuit bleue 💙", "from": 0, "to": 3.0 },
+  "avatarPosition": "50% 22%",
+  "duration": 20.0,
+  "hook": { "text": "Le look\nnuit bleue 💙", "from": 0, "to": 4.3 },
   "pieces": [
-    { "photo": "mannequins/pieces/body-bleu.jpg", "at": 5.96 },
-    { "photo": "mannequins/pieces/peignoir-bleu.jpg", "at": 8.32 },
-    { "photo": "mannequins/pieces/resille-bleue.jpg", "at": 9.9 }
+    { "photo": "mannequins/pieces/body-bleu.jpg", "at": 7.1 },
+    { "photo": "mannequins/pieces/peignoir-bleu.jpg", "at": 9.7 },
+    { "photo": "mannequins/pieces/resille-bleue.jpg", "at": 12.6 }
   ],
-  "reveal": { "photo": "mannequins/bleu-photo.jpg", "at": 11.64 },
+  "reveal": { "photo": "mannequins/bleu-photo.jpg", "at": 14.78 },
   "captions": [
-    { "text": "NUIT BLEUE", "from": 0.3, "to": 1.3 },
-    { "text": "SENSUEL", "from": 1.38, "to": 3.0 },
-    { "text": "IL TE FAUT", "from": 3.24, "to": 5.9 },
-    { "text": "BODY", "from": 5.96, "to": 8.3 },
-    { "text": "PEIGNOIR", "from": 8.32, "to": 9.88 },
-    { "text": "RÉSILLE", "from": 9.9, "to": 11.6 },
-    { "text": "RÉSULTAT", "from": 11.64, "to": 13.0 },
-    { "text": "TU LE PORTERAIS ?", "from": 13.08, "to": 14.7 },
-    { "text": "COMMENTE 👇", "from": 14.76, "to": 17.2 }
+    { "text": "NUIT BLEUE", "from": 0.9, "to": 2.2 },
+    { "text": "SENSUEL", "from": 2.24, "to": 4.3 },
+    { "text": "IL TE FAUT", "from": 4.44, "to": 7.0 },
+    { "text": "BODY", "from": 7.1, "to": 9.6 },
+    { "text": "PEIGNOIR", "from": 9.7, "to": 12.55 },
+    { "text": "RÉSILLE", "from": 12.6, "to": 14.7 },
+    { "text": "RÉSULTAT", "from": 14.78, "to": 16.9 },
+    { "text": "TU LE PORTERAIS ?", "from": 16.98, "to": 18.35 },
+    { "text": "COMMENTE 👇", "from": 18.38, "to": 20.0 }
   ]
 }
