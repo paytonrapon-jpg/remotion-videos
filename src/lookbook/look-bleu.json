@@ -1,0 +1,51 @@
+{
+  "layout": "side",
+  "hook": {
+    "text": "Le look\nnuit bleue 💙",
+    "voice": "Le look nuit bleue, élégant et sensuel.",
+    "id": "b-hook"
+  },
+  "looks": [
+    {
+      "image": "mannequins/bleu-photo.jpg",
+      "photo": "mannequins/bleu-photo.jpg",
+      "mode": "photo",
+      "intro": {
+        "voice": "Pour ce look, il te faut…",
+        "id": "b-intro"
+      },
+      "pieces": [
+        {
+          "voice": "un body en dentelle bleu marine,",
+          "id": "b-body",
+          "art": "body",
+          "photo": "mannequins/pieces/body-bleu.jpg",
+          "fit": "cover"
+        },
+        {
+          "voice": "un peignoir en voile bleu à volants,",
+          "id": "b-peignoir",
+          "art": "peignoir",
+          "photo": "mannequins/pieces/peignoir-bleu.jpg",
+          "fit": "cover"
+        },
+        {
+          "voice": "et des bas résille bleus.",
+          "id": "b-resille",
+          "art": "resille",
+          "photo": "mannequins/pieces/resille-bleue.jpg",
+          "fit": "cover"
+        }
+      ],
+      "reveal": {
+        "voice": "Et voilà le résultat !",
+        "id": "b-reveal"
+      }
+    }
+  ],
+  "outro": {
+    "text": "Tu le porterais ? 👇",
+    "voice": "Tu le porterais ? Dis-le moi en commentaire !",
+    "id": "b-outro"
+  }
+}

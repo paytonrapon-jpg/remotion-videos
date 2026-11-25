@@ -5,6 +5,7 @@ import { HelloWorld } from "./HelloWorld";
 import { Lookbook, lookbookDuration, type LookbookProps } from "./lookbook/Lookbook";
 import lookCasual from "./lookbook/look-casual.json";
 import lookDoudoune from "./lookbook/look-doudoune.json";
+import lookBleu from "./lookbook/look-bleu.json";
 import mesMannequins from "./lookbook/mes-mannequins.json";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
@@ -78,6 +79,15 @@ export const RemotionRoot: React.FC = () => {
         width={1080}
         height={1920}
         defaultProps={lookDoudoune as LookbookProps}
+        calculateMetadata={({ props }) => ({ durationInFrames: lookbookDuration(props) })}
+      />
+      <Composition
+        id="LookBleu"
+        component={Lookbook}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={lookBleu as LookbookProps}
         calculateMetadata={({ props }) => ({ durationInFrames: lookbookDuration(props) })}
       />
     </>
