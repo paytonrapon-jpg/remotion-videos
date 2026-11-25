@@ -17,6 +17,25 @@ export type LogoOverlayProps = {
 
 const gold = "#E9C98B";
 
+// Icône « Internet » : globe dessiné à la main en SVG
+const Globe: React.FC<{ size: number; spin: number }> = ({ size, spin }) => {
+  const r = 44;
+  // Méridien qui tourne pour donner l'effet de rotation
+  const rx = Math.abs(Math.cos(spin)) * r;
+  return (
+    <svg width={size} height={size} viewBox="-50 -50 100 100">
+      <g fill="none" stroke={gold} strokeWidth={4} strokeLinecap="round">
+        <circle r={r} />
+        <ellipse rx={r * 0.45} ry={r} />
+        <ellipse rx={rx} ry={r} opacity={0.6} />
+        <line x1={-r} y1={0} x2={r} y2={0} />
+        <path d={`M ${-r * 0.88} ${-r * 0.48} Q 0 ${-r * 0.3} ${r * 0.88} ${-r * 0.48}`} />
+        <path d={`M ${-r * 0.88} ${r * 0.48} Q 0 ${r * 0.3} ${r * 0.88} ${r * 0.48}`} />
+      </g>
+    </svg>
+  );
+};
+
 export const LogoOverlay: React.FC<LogoOverlayProps> = ({
   video,
   brand,
@@ -49,9 +68,10 @@ export const LogoOverlay: React.FC<LogoOverlayProps> = ({
             opacity: enter,
             transform: `translateY(${(1 - enter) * -30}px)`,
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             alignItems: "center",
-            padding: "26px 54px 22px",
+            gap: 30,
+            padding: "24px 56px 22px 34px",
             borderRadius: 999,
             background: "rgba(12, 10, 9, 0.55)",
             border: `1.5px solid rgba(233, 201, 139, 0.55)`,
@@ -59,6 +79,14 @@ export const LogoOverlay: React.FC<LogoOverlayProps> = ({
             fontFamily: "Montserrat",
           }}
         >
+          <Globe size={96} spin={frame / 30} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
           <div
             style={{
               fontSize: 64,
@@ -90,6 +118,7 @@ export const LogoOverlay: React.FC<LogoOverlayProps> = ({
             <span style={{ width: 46, height: 1.5, background: gold }} />
             {suffix.toUpperCase()}
             <span style={{ width: 46, height: 1.5, background: gold, marginLeft: "-0.5em" }} />
+          </div>
           </div>
         </div>
       </AbsoluteFill>
