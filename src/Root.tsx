@@ -6,6 +6,8 @@ import { Lookbook, lookbookDuration, type LookbookProps } from "./lookbook/Lookb
 import lookCasual from "./lookbook/look-casual.json";
 import lookDoudoune from "./lookbook/look-doudoune.json";
 import lookBleu from "./lookbook/look-bleu.json";
+import katyBleu from "./lookbook/katy-bleu.json";
+import { KatyLook, KatyLookProps, katyLookDuration } from "./lookbook/KatyLook";
 import mesMannequins from "./lookbook/mes-mannequins.json";
 import { demo } from "./talking/demo";
 import { rdv } from "./talking/rdv";
@@ -89,6 +91,15 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={lookBleu as LookbookProps}
         calculateMetadata={({ props }) => ({ durationInFrames: lookbookDuration(props) })}
+      />
+      <Composition
+        id="KatyLookBleu"
+        component={KatyLook}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={katyBleu as KatyLookProps}
+        calculateMetadata={({ props }) => ({ durationInFrames: katyLookDuration(props) })}
       />
     </>
   );
