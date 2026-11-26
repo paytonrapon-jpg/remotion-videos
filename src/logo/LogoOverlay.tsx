@@ -13,6 +13,9 @@ export type LogoOverlayProps = {
   video: string;
   brand: string;
   suffix: string;
+  // Placement : centré (vertical) ou en haut à gauche (paysage)
+  position?: "top-center" | "top-left";
+  scale?: number;
 };
 
 const gold = "#E9C98B";
@@ -40,6 +43,8 @@ export const LogoOverlay: React.FC<LogoOverlayProps> = ({
   video,
   brand,
   suffix,
+  position = "top-center",
+  scale = 1,
 }) => {
   const frame = useCurrentFrame();
   const enter = interpolate(frame, [6, 30], [0, 1], {
@@ -58,15 +63,17 @@ export const LogoOverlay: React.FC<LogoOverlayProps> = ({
       />
       <AbsoluteFill
         style={{
-          alignItems: "center",
+          alignItems: position === "top-left" ? "flex-start" : "center",
           justifyContent: "flex-start",
-          paddingTop: 150,
+          paddingTop: position === "top-left" ? 28 : 150,
+          paddingLeft: position === "top-left" ? 28 : 0,
         }}
       >
         <div
           style={{
             opacity: enter,
-            transform: `translateY(${(1 - enter) * -30}px)`,
+            transform: `translateY(${(1 - enter) * -30}px) scale(${scale})`,
+            transformOrigin: position === "top-left" ? "top left" : "top center",
             display: "flex",
             flexDirection: "row",
             alignItems: "center",

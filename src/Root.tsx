@@ -63,6 +63,21 @@ export const RemotionRoot: React.FC = () => {
           suffix: ".hair",
         }}
       />
+      <Composition
+        id="CjPerruques2"
+        component={LogoOverlay}
+        fps={30}
+        width={1280}
+        height={720}
+        durationInFrames={1112}
+        defaultProps={{
+          video: "cj-perruques-2.mp4",
+          brand: "luxbeouty",
+          suffix: ".hair",
+          position: "top-left" as const,
+          scale: 0.6,
+        }}
+      />
     </>
   );
 };
