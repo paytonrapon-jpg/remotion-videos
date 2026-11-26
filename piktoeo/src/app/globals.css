@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/* Une seule police (Inter) et une seule couleur d'accent (violet). */
+@theme inline {
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --color-accent: #7c3aed;
+  --color-accent-dark: #6d28d9;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden; /* zéro débordement horizontal */
+}
+
+body {
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-sans);
+}
