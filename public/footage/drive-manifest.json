@@ -506,5 +506,14 @@
     ],
     "usable_seconds": 26.0,
     "note": "Logo ou filigrane d'un autre compte dans la vidéo d'origine : NE PAS UTILISER (consigne : seulement des passages sans logo, jamais d'effacement de filigrane)."
+  },
+  {
+    "file": "footage/drive/c4b912f1c20442aea730b50a130286a4.mp4",
+    "duration": 24.8,
+    "tags": [
+      "logo"
+    ],
+    "watermark": "Logo @filippi.jets et titres incrustés (« GLOBAL 7500 VS », « G700 ») sur toute la durée : ne pas utiliser.",
+    "note": "Logo d'un autre compte sur toute la durée : NE PAS UTILISER."
   }
 ]
